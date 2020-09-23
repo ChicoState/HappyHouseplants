@@ -1,11 +1,15 @@
 # Getting Started
+- React-Native
+- Node.js
+- ESLint - AirBnB Styleguide
+- Travis-CI
 
 # Contributions
-- Software needed:
-    - Docker
-    - Node 
-    - Android Studio
-    - Watchman? 
+## Software needed:
+- Docker
+- Node 
+- Android Studio
+- Watchman? 
 
 ## To contribute:
 - Make a fork of ChicoState/HappyHouseplants
