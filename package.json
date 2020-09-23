@@ -22,7 +22,13 @@
     "url": "git+https://github.com/Neodusk/HappyHouseplants.git"
   },
   "author": "Haley Tortorich",
-  "contributors": ["Aaron Leggett",  "Dylan Davidson", "Haley Tortorich", "Israel Ramos", "Makena Haroldson"],
+  "contributors": [
+    "Aaron Leggett",
+    "Dylan Davidson",
+    "Haley Tortorich",
+    "Israel Ramos",
+    "Makena Haroldson"
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Neodusk/HappyHouseplants/issues"
