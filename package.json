@@ -14,14 +14,21 @@
     "eslint-plugin-react-native": "^3.9.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Neodusk/HappyHouseplants.git"
   },
   "author": "Haley Tortorich",
-  "contributors": ["Aaron Leggett",  "Dylan Davidson", "Haley Tortorich", "Israel Ramos", "Makena Haroldson"],
+  "contributors": [
+    "Aaron Leggett",
+    "Dylan Davidson",
+    "Haley Tortorich",
+    "Israel Ramos",
+    "Makena Haroldson"
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Neodusk/HappyHouseplants/issues"
