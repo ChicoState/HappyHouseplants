@@ -4,4 +4,4 @@ node_js:
 
 script:
   - cd backend && npm run lint
-  - cd frontend && npm run lint frontend
+  - cd frontend && npm run lint

@@ -1,17 +1,12 @@
 {
   "name": "happyhouseplants",
   "version": "1.0.0",
-  "description": "An app designed to assist with taking care of house plants.",
+  "description": "The backend service for Happy Houseplants",
   "main": "index.js",
   "dependencies": {},
-  "devDependencies": {
-    "eslint": "^7.9.0",
-    "eslint-config-airbnb": "^18.2.0",
-    "eslint-plugin-import": "^2.22.0"
-  },
+  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint ."
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
