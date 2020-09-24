@@ -1,0 +1,33 @@
+{
+  "name": "happyhouseplants",
+  "version": "1.0.0",
+  "description": "An app designed to assist with taking care of house plants.",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^7.9.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Neodusk/HappyHouseplants.git"
+  },
+  "author": "Haley Tortorich",
+  "contributors": [
+    "Aaron Leggett",
+    "Dylan Davidson",
+    "Haley Tortorich",
+    "Israel Ramos",
+    "Makena Haroldson"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Neodusk/HappyHouseplants/issues"
+  },
+  "homepage": "https://github.com/Neodusk/HappyHouseplants#readme"
+}
