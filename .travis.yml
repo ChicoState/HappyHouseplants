@@ -3,5 +3,5 @@ node_js:
   - "lts/*"
 
 script:
-  - npm run lint backend
-  - npm run lint frontend
+  - cd backend && npm run lint
+  - cd frontend && npm run lint frontend
