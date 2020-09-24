@@ -1,15 +1,19 @@
 # Getting Started
+## Frameworks and tools:
 - React-Native
 - Node.js
 - ESLint - AirBnB Styleguide
 - Travis-CI
+
+## Setup
+After you have forked and cloned the repository, run `npm install` in the root directory.
 
 # Contributions
 ## Software needed:
 - Docker
 - Node 
 - Android Studio
-- Watchman? 
+- Watchman [optional]
 
 ## To contribute:
 - Make a fork of ChicoState/HappyHouseplants
