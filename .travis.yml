@@ -4,12 +4,14 @@ node_js:
 cache:
   directories:
   - "$HOME/.npm"
-matrix:
+jobs:
   fast_finish: true
   include:
     - stage: root
       install:
         - npm ci
+      script:
+        - npm run lint
     - stage: backend
       install:
         - cd ./backend
@@ -18,8 +20,4 @@ matrix:
       install:
         - cd ./frontend
         - npm ci
-
-script:
-  - npm run lint
-on: 
-  branch: main
+script: echo "npm test temporarily disabled"
