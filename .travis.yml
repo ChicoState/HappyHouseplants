@@ -3,15 +3,10 @@ node_js:
   - "lts/*"
 install:
   - npm ci
-  - ls
   - cd ./backend
-  - ls
   - npm ci
-  - ls
   - cd ../frontend
-  - ls
   - npm ci
-  - ls
   - cd ..
 cache:
   directories:
