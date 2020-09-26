@@ -1,8 +1,11 @@
 language: node_js
 node_js:
   - "lts/*"
-cache:
-  directories:
-  - "$HOME/.npm"
+before_install:
+  - npm install
+  - cd ./backend
+  - npm install
+  - cd ../frontend
+  - npm install
 script:
   - npm run lint
