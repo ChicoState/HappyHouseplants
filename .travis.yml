@@ -8,8 +8,7 @@ jobs:
   fast_finish: true
   include:
     - stage: root
-      install:
-        - npm ci
+      install: true
       script:
         - npm run lint
     - stage: backend
