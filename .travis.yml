@@ -4,7 +4,7 @@ node_js:
 cache:
   directories:
   - "$HOME/.npm"
-matrix:
+jobs:
   fast_finish: true
   include:
     - stage: root
@@ -21,5 +21,3 @@ matrix:
 
 script:
   - npm run lint
-on: 
-  branch: main
