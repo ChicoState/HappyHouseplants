@@ -10,6 +10,8 @@ jobs:
     - stage: root
       install:
         - npm ci
+      script:
+        - npm run lint
     - stage: backend
       install:
         - cd ./backend
@@ -18,6 +20,3 @@ jobs:
       install:
         - cd ./frontend
         - npm ci
-
-script:
-  - npm run lint
