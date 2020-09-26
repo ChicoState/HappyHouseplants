@@ -1,17 +1,17 @@
 language: node_js
 node_js:
   - "lts/*"
-before_install:
+install:
   - ls
-  - npm install
+  - npm ci
   - ls
   - cd ./backend
   - ls
-  - npm install
+  - npm ci
   - ls
   - cd ../frontend
   - ls
-  - npm install
+  - npm ci
   - ls
   - cd ..
   - ls
