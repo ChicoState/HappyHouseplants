@@ -1,16 +1,25 @@
 language: node_js
 node_js:
   - "lts/*"
-install:
-  - npm ci
-  - cd ./backend
-  - npm ci
-  - cd ../frontend
-  - npm ci
-  - cd ..
 cache:
   directories:
   - "$HOME/.npm"
+matrix:
+  fast_finish: true
+  include:
+    - stage: root
+      install:
+        - npm ci
+    - stage: backend
+      install:
+        - cd ./backend
+        - npm ci
+    - stage: frontend
+      install:
+        - cd ./frontend
+        - npm ci
+
 script:
   - npm run lint
-  - ls
+on: 
+  branch: main
