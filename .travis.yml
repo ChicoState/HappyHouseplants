@@ -7,5 +7,6 @@ before_install:
   - npm install
   - cd ../frontend
   - npm install
+  - cd ..
 script:
   - npm run lint
