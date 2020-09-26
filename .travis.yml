@@ -2,11 +2,18 @@ language: node_js
 node_js:
   - "lts/*"
 before_install:
+  - ls
   - npm install
+  - ls
   - cd ./backend
+  - ls
   - npm install
+  - ls
   - cd ../frontend
+  - ls
   - npm install
+  - ls
   - cd ..
+  - ls
 script:
   - npm run lint
