@@ -18,7 +18,7 @@ jobs:
       install:
         - cd ./frontend
         - npm ci
-    # - stage: Run Linter
-    #   script:
-    #     - npm run lint
+    - stage: Run Linter
+      script:
+         - npm run lint
 script: echo "npm test temporarily disabled"
