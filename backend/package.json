@@ -1,0 +1,28 @@
+{
+  "name": "happyhouseplants",
+  "version": "1.0.0",
+  "description": "The backend service for Happy Houseplants",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Neodusk/HappyHouseplants.git"
+  },
+  "author": "Haley Tortorich",
+  "contributors": [
+    "Aaron Leggett",
+    "Dylan Davidson",
+    "Haley Tortorich",
+    "Israel Ramos",
+    "Makena Haroldson"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Neodusk/HappyHouseplants/issues"
+  },
+  "homepage": "https://github.com/Neodusk/HappyHouseplants#readme"
+}
