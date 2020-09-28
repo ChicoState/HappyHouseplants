@@ -2,12 +2,10 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
 class FloatingTip extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
-      visible: true,
-      title: "Here's a tip",
-      message: 'My tip message, which may contain multiple lines, but is still brief.',
+      visible: false,
     };
     this.styles = StyleSheet.create({
       background: {
@@ -32,6 +30,22 @@ class FloatingTip extends Component {
         padding: 10,
       },
     });
+  }
+
+  componentDidMount() {
+    const floatThis = this;
+    fetch('https://raw.githubusercontent.com/ChicoState/HappyHouseplants/main/package.json')
+      .then((response) => response.json())
+      .then((data) => {
+        floatThis.setState({
+          visible: true,
+          title: 'Here\'s a tip',
+          message: 'This tip will be downloaded in the future, right now it\'s a hard-coded string.',
+        });
+      }, (error) => {
+        console.log(`Failed to load a tip. Reason: ${error}`);
+        floatThis.setState({ visible: false });
+      });
   }
 
   render() {
