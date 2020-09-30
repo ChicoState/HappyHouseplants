@@ -1,21 +1,18 @@
-import {Button, View, Text} from 'react-native';
-
-
-import Calend from './components/Calendar';
-import 'react-native-gesture-handler';
-
-import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import { Button, View, Text } from 'react-native';
+import 'react-native-gesture-handler';
+import * as React from 'react';
+import Calend from './components/Calendar';
 
 const Stack = createStackNavigator();
 
-function HomeScreen({ navigation }) {
+function HomeScreen(obj) {
+  const { navigation } = obj;
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
-      <Calend></Calend>
+      <Calend />
       <Button
         title="Go to Details"
         onPress={() => {
@@ -29,21 +26,18 @@ function HomeScreen({ navigation }) {
   );
 }
 
-function DetailsScreen({ route, navigation }) {
+function DetailsScreen(obj) {
   /* 2. Get the param */
-  const { itemId } = route.params;
+  const { route, navigation } = obj;
   const { otherParam } = route.params;
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Details Screen</Text>
-      <Text></Text>
+      <Text />
       <Text>{JSON.stringify(otherParam)}</Text>
       <Button
         title="Go to Details... again"
-        onPress={() =>
-          navigation.push('Details', {
-          })
-        }
+        onPress={() => navigation.push('Details', {})}
       />
       <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
       <Button title="Go back" onPress={() => navigation.goBack()} />
@@ -63,5 +57,3 @@ function App() {
 }
 
 export default App;
-
-
