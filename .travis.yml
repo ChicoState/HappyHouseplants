@@ -1,6 +1,32 @@
 language: node_js
 node_js:
   - "lts/*"
-
-script:
-  - npm run lint
+cache:
+  directories:
+  - "$HOME/.npm"
+jobs:
+  fast_finish: true
+  include:
+    - stage: root
+      install:
+        - npm ci
+    - stage: backend
+      install:
+        - cd ./backend
+        - npm ci
+    - stage: frontend
+      install:
+        - cd ./frontend
+        - npm ci
+    - stage: Run Linter
+      before_install:
+        - cd ./backend
+        - npm ci
+        - cd ../frontend
+        - npm ci
+        - cd ..
+      install:
+        - npm ci
+      script:
+        - npm run lint
+script: echo "npm test temporarily disabled"
