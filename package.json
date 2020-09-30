@@ -4,8 +4,7 @@
   "description": "An app designed to assist with taking care of house plants.",
   "main": "index.js",
   "dependencies": {
-    "dotenv": "^8.2.0",
-    "mongoose": "^5.10.7"
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
     "eslint": "^7.9.0",
