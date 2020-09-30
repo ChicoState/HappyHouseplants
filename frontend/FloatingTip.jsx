@@ -10,11 +10,9 @@ class FloatingTip extends Component {
     this.styles = StyleSheet.create({
       background: {
         backgroundColor: '#32a852',
-        position: 'absolute',
         width: '80%',
-        left: '10%',
-        bottom: '5%',
         borderRadius: 15,
+        elevation: 3,
       },
       title: {
         fontWeight: 'bold',
