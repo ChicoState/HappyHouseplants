@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
+const tipSchema = new mongoose.Schema({
   tipSubject: String,
   tipMessage: String,
   tipID: String,
   plantType: String,
-  sourceURL: URL,
+  sourceURL: String,
 });
 
-const TIPS = mongoose.model('Tips', userSchema);
+const TIPS = mongoose.model('Tips', tipSchema);
 
 module.exports = { TIPS };
