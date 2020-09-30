@@ -15,9 +15,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lintRoot": "eslint .",
-    "lintFront": "eslint frontend/*.js && eslint frontend/*.jsx",
-    "lintBack": "eslint backend/*.js"
+    "lint": "eslint ./**",
   },
   "repository": {
     "type": "git",

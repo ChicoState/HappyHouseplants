@@ -28,7 +28,5 @@ jobs:
       install:
         - npm ci
       script:
-        - npm run lintRoot
-        - npm run lintFront
-        - npm run lintBack
+        - npm run lint
 script: echo "npm test temporarily disabled"
