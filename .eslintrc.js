@@ -19,6 +19,6 @@ module.exports = {
     'react-native',
   ],
   rules: {
-    "no-console": 0,
+    'no-console': 0,
   },
 };
