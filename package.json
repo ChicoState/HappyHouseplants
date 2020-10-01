@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "An app designed to assist with taking care of house plants.",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "dotenv": "^8.2.0"
+  },
   "devDependencies": {
+    "babel-eslint": "^10.1.0",
     "eslint": "^7.9.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-plugin-import": "^2.22.0",
