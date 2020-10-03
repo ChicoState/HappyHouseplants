@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import {
+  StyleSheet, View, Text, Linking,
+} from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 class FloatingTip extends Component {
   constructor() {
@@ -7,6 +10,7 @@ class FloatingTip extends Component {
     this.state = {
       visible: false,
     };
+    this.handlePress = this.handlePress.bind(this);
     this.styles = StyleSheet.create({
       background: {
         backgroundColor: '#32a852',
@@ -39,8 +43,9 @@ class FloatingTip extends Component {
       .then((data) => {
         floatThis.setState({
           visible: true,
-          title: 'Here\'s a tip',
-          message: 'This tip will be downloaded in the future, right now it\'s a hard-coded string.',
+          tipSubject: 'Here\'s a tip',
+          tipMessage: 'This tip will be downloaded in the future, right now it\'s a hard-coded string.',
+          sourceURL: 'http://www.google.com/',
         });
       }, (error) => {
         console.log(`Failed to load a tip. Reason: ${error}`);
@@ -48,15 +53,22 @@ class FloatingTip extends Component {
       });
   }
 
+  handlePress() {
+    const { sourceURL } = this.state;
+    Linking.openURL(sourceURL);
+  }
+
   render() {
-    const { visible, title, message } = this.state;
+    const { visible, tipSubject, tipMessage } = this.state;
     return (
       visible
       && (
-      <View style={this.styles.background}>
-        <Text style={this.styles.title}>{title}</Text>
-        <Text style={this.styles.message}>{message}</Text>
-      </View>
+      <TouchableOpacity style={this.styles.background} onPress={this.handlePress}>
+        <View>
+          <Text style={this.styles.title}>{tipSubject}</Text>
+          <Text style={this.styles.message}>{tipMessage}</Text>
+        </View>
+      </TouchableOpacity>
       )
     );
   }
