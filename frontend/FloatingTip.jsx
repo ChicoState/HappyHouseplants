@@ -13,6 +13,8 @@ class FloatingTip extends Component {
         width: '80%',
         borderRadius: 15,
         elevation: 3,
+        marginTop: 12,
+        marginBottom: 12,
       },
       title: {
         fontWeight: 'bold',
