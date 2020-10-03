@@ -14,11 +14,13 @@ class FloatingTip extends Component {
     this.styles = StyleSheet.create({
       background: {
         backgroundColor: '#32a852',
-        width: '80%',
+        width: '90%',
+        marginLeft: '5%',
+        marginRight: '5%',
         borderRadius: 15,
         elevation: 3,
-        marginTop: 12,
-        marginBottom: 12,
+        marginTop: '2.5%',
+        marginBottom: '2.5%',
       },
       title: {
         fontWeight: 'bold',
