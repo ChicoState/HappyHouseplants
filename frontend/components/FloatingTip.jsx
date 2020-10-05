@@ -77,5 +77,3 @@ class FloatingTip extends Component {
 }
 
 export default FloatingTip;
-
-
