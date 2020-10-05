@@ -4,10 +4,7 @@ module.exports = {
     commonjs: true,
     es2021: true,
   },
-  extends: [
-    'plugin:react/recommended',
-    'airbnb',
-  ],
+  parser: 'babel-eslint',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -19,5 +16,7 @@ module.exports = {
     'react-native',
   ],
   rules: {
+    'no-console': 0,
+    'import/prefer-default-export': 'off'
   },
 };

@@ -1,16 +1,17 @@
+import React from 'react';
 import {Calendar} from 'react-native-calendars';
 import {View, Text} from 'react-native';
-import React from 'react';
+//import { Calendar, Text } from '@ui-kitten/components';
 
 export default class Calend extends React.Component {
   render() {
     return (
       <View>
         <Calendar
-          style={{borderWidth: 5, borderColor: 'green', height: 400}}
+          style={{borderWidth: 10, borderColor: 'brown', height: 600}}
           theme={{
             backgroundColor: '#ffffff',
-            calendarBackground: '#ffffff',
+            calendarBackground: '#E8FFDA',
             textSectionTitleColor: 'black',
             textSectionTitleDisabledColor: '#d9e1e8',
             selectedDayBackgroundColor: '#00adf5',

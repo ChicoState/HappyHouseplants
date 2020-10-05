@@ -1,21 +1,24 @@
-import {Button, View, Text} from 'react-native';
-
-
-import Calend from './components/Calendar';
-import 'react-native-gesture-handler';
 
 import * as React from 'react';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Button, View } from 'react-native';
 
+import CalendarSimpleUsageShowcase from './components/Calendar';
+//import Calend from './components/Calendar';
+import 'react-native-gesture-handler';
 
 const Stack = createStackNavigator();
 
-function HomeScreen({ navigation }) {
+function HomeScreen(obj) {
+  const { navigation } = obj;
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
-      <Calend></Calend>
+      <CalendarSimpleUsageShowcase />
       <Button
         title="Go to Details"
         onPress={() => {
@@ -25,25 +28,22 @@ function HomeScreen({ navigation }) {
           });
         }}
       />
-    </View>
+    </Layout>
   );
 }
 
-function DetailsScreen({ route, navigation }) {
+function DetailsScreen(obj) {
   /* 2. Get the param */
-  const { itemId } = route.params;
+  const { route, navigation } = obj;
   const { otherParam } = route.params;
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Details Screen</Text>
-      <Text></Text>
+      <Text />
       <Text>{JSON.stringify(otherParam)}</Text>
       <Button
         title="Go to Details... again"
-        onPress={() =>
-          navigation.push('Details', {
-          })
-        }
+        onPress={() => navigation.push('Details', {})}
       />
       <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
       <Button title="Go back" onPress={() => navigation.goBack()} />
@@ -53,15 +53,15 @@ function DetailsScreen({ route, navigation }) {
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Details" component={DetailsScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ApplicationProvider>
   );
 }
 
 export default App;
-
-

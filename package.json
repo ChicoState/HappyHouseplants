@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "description": "An app designed to assist with taking care of house plants.",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "@eva-design/eva": "file:node_modules/@eva-design/eva",
+    "@ui-kitten/components": "file:node_modules/@ui-kitten/components",
+    "expo": "^39.0.3",
+    "react-native-svg": "12.1.0"
+  },
   "devDependencies": {
     "eslint": "^7.9.0",
     "eslint-config-airbnb": "^18.2.0",
