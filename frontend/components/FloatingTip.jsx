@@ -3,6 +3,8 @@ import {
   StyleSheet, View, Text, Linking,
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import PropTypes from 'prop-types';
+import MockTips from './MockTips.json';
 
 class FloatingTip extends Component {
   constructor() {
@@ -40,19 +42,14 @@ class FloatingTip extends Component {
 
   componentDidMount() {
     const floatThis = this;
-    fetch('https://raw.githubusercontent.com/ChicoState/HappyHouseplants/main/package.json')
-      .then((response) => response.json())
-      .then((data) => {
-        floatThis.setState({
-          visible: true,
-          tipSubject: 'Here\'s a tip',
-          tipMessage: 'This tip will be downloaded in the future, right now it\'s a hard-coded string.',
-          sourceURL: 'http://www.google.com/',
-        });
-      }, (error) => {
-        console.log(`Failed to load a tip. Reason: ${error}`);
-        floatThis.setState({ visible: false });
-      });
+    const { tipID } = this.props;
+    const data = MockTips.find((x) => x.tipID === tipID);
+    floatThis.setState({
+      visible: true,
+      tipSubject: data.tipSubject,
+      tipMessage: data.tipMessage,
+      sourceURL: data.sourceURL,
+    });
   }
 
   handlePress() {
@@ -75,5 +72,9 @@ class FloatingTip extends Component {
     );
   }
 }
+
+FloatingTip.propTypes = {
+  tipID: PropTypes.string.isRequired,
+};
 
 export default FloatingTip;

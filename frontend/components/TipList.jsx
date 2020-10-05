@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import { View, ScrollView, Text } from 'react-native';
+import MockTips from './MockTips.json';
 import FloatingTip from './FloatingTip';
 
 class TipList extends Component {
@@ -13,15 +14,10 @@ class TipList extends Component {
   }
 
   componentDidMount() {
-    const listThis = this;
-    fetch('https://raw.githubusercontent.com/ChicoState/HappyHouseplants/main/package.json')
-      .then((response) => response.json())
-      .catch((err) => {
-        listThis.setState({ loaded: false, error: `${err}` });
-      })
-      .then((data) => {
-        listThis.setState({ loaded: true, tipIDs: ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'] });
-      });
+    this.setState({
+      loaded: true,
+      tipIDs: MockTips.map((x) => x.tipID),
+    });
   }
 
   render() {
@@ -35,12 +31,12 @@ class TipList extends Component {
       return (<Text>Loading tips...</Text>);
     }
 
-    const tipViews = tipIDs.map((tipID) => (<FloatingTip key={tipID} />));
+    const tipViews = tipIDs.map((tipID) => (<FloatingTip key={tipID} tipID={tipID} />));
     return (
-      <View style={{flex:1,}}>
-      <ScrollView style={{flex:1,}}>
-        {tipViews}
-      </ScrollView>
+      <View style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1 }}>
+          {tipViews}
+        </ScrollView>
       </View>
     );
   }
