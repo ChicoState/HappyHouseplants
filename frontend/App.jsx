@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-};
+)};
 function App() {
   return (
     <View style={styles.container}>
