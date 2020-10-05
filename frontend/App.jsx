@@ -12,34 +12,55 @@ function HomeScreen(obj) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
-      <Calend />
-      <Button
-        title="Go to Details"
-        onPress={() => {
-          /* 1. Navigate to the Details route with params */
-          navigation.navigate('Details', {
-            otherParam: 'List of all of your plants',
-          });
-        }}
-      />
+      <Button title="Go to My Plants" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }} />
+      <Text />
+      <Button title="Go to Calendar" onPress={() => { navigation.navigate('Calendar'); }} />
+      <Text />
+      <Button title="Go to Tips" onPress={() => { navigation.navigate('Tips'); }} />
     </View>
   );
 }
 
-function DetailsScreen(obj) {
+function MyPlantsScreen(obj) {
   /* 2. Get the param */
   const { route, navigation } = obj;
   const { otherParam } = route.params;
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Details Screen</Text>
+      <Text>My Plants</Text>
       <Text />
       <Text>{JSON.stringify(otherParam)}</Text>
-      <Button
-        title="Go to Details... again"
-        onPress={() => navigation.push('Details', {})}
-      />
       <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+      <Text />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </View>
+  );
+}
+
+function CalendarScreen(obj) {
+  /* 2. Get the param */
+  const { navigation } = obj;
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Calendar</Text>
+      <Text />
+      <Calend />
+      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+      <Text />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </View>
+  );
+}
+
+function TipScreen(obj) {
+  /* 2. Get the param */
+  const { navigation } = obj;
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Tips</Text>
+      <Text />
+      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+      <Text />
       <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );
@@ -50,7 +71,9 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="My Plants" component={MyPlantsScreen} />
+        <Stack.Screen name="Calendar" component={CalendarScreen} />
+        <Stack.Screen name="Tips" component={TipScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
