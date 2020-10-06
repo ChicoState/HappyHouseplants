@@ -7,9 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Button, View } from 'react-native';
 
-import CalendarSimpleUsageShowcase from './components/Calendar';
-//import Calend from './components/Calendar';
-import 'react-native-gesture-handler';
+import Calend from './components/Calendar';
 
 const Stack = createStackNavigator();
 
@@ -18,36 +16,57 @@ function HomeScreen(obj) {
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
-      <CalendarSimpleUsageShowcase />
-      <Button
-        title="Go to Details"
-        onPress={() => {
-          /* 1. Navigate to the Details route with params */
-          navigation.navigate('Details', {
-            otherParam: 'List of all of your plants',
-          });
-        }}
-      />
+      <Button title="Go to My Plants" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }} />
+      <Text />
+      <Button title="Go to Calendar" onPress={() => { navigation.navigate('Calendar'); }} />
+      <Text />
+      <Button title="Go to Tips" onPress={() => { navigation.navigate('Tips'); }} />
     </Layout>
   );
 }
 
-function DetailsScreen(obj) {
+function MyPlantsScreen(obj) {
   /* 2. Get the param */
   const { route, navigation } = obj;
   const { otherParam } = route.params;
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Details Screen</Text>
+    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>My Plants</Text>
       <Text />
       <Text>{JSON.stringify(otherParam)}</Text>
-      <Button
-        title="Go to Details... again"
-        onPress={() => navigation.push('Details', {})}
-      />
       <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+      <Text />
       <Button title="Go back" onPress={() => navigation.goBack()} />
-    </View>
+    </Layout>
+  );
+}
+
+function CalendarScreen(obj) {
+  /* 2. Get the param */
+  const { navigation } = obj;
+  return (
+    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Calendar</Text>
+      <Text />
+      <Calend />
+      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+      <Text />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </Layout>
+  );
+}
+
+function TipScreen(obj) {
+  /* 2. Get the param */
+  const { navigation } = obj;
+  return (
+    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Tips</Text>
+      <Text />
+      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+      <Text />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </Layout>
   );
 }
 
@@ -57,7 +76,9 @@ function App() {
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Details" component={DetailsScreen} />
+          <Stack.Screen name="My Plants" component={MyPlantsScreen} />
+          <Stack.Screen name="Calendar" component={CalendarScreen} />
+          <Stack.Screen name="Tips" component={TipScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>
