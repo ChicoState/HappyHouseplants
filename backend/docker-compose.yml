@@ -1,0 +1,10 @@
+version: "3.5"
+services:
+  database:
+    image: mongo
+    container_name: happyplant-db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$DB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$DB_PASSWORD 
+    ports:
+      - "27017:27017"
