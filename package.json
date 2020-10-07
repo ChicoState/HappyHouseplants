@@ -4,8 +4,6 @@
   "description": "An app designed to assist with taking care of house plants.",
   "main": "index.js",
   "dependencies": {
-    "@eva-design/eva": "file:node_modules/@eva-design/eva",
-    "@ui-kitten/components": "file:node_modules/@ui-kitten/components",
     "expo": "^39.0.3",
     "dotenv": "^8.2.0"
   },
