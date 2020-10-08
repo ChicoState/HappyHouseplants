@@ -31,7 +31,6 @@ const tipsQuery = {};
 // https://mongoosejs.com/docs/api.html#model_Model.find
 app.get('/tips/', (req, res) => {
   // res.json(['0', '1', '2', '3', '4', '5']);
-  const docArray = [];
   findDocuments('tips', tipsQuery).then(docs => {
     console.log(docs);
     res.send(docs);
