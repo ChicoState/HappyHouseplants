@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-
+mongoose.pluralize(null);
 const userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
   username: String,
-  userId: String,
+  userId: { type: String, index: true },
   password: String,
   savedTipsByID: Array,
   savedPlantsByID: Array,
