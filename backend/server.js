@@ -18,6 +18,23 @@ databaseConnection.once('open', () => {
   main();
 });
 
+app.get('/random_tips/', (req, res) => {
+  const maxCount = req.query.count ? req.query.count : 10;
+  const tipsQuery = {};
+  findDocuments('tips', tipsQuery).then((docs) => {
+    const shuffledDocs = docs;
+    // Shuffle the documents
+    for (let i = shuffledDocs.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const hold = docs[i];
+      shuffledDocs[i] = docs[j];
+      shuffledDocs[j] = hold;
+    }
+    const endIndex = Math.min(maxCount, shuffledDocs.length);
+    res.json(shuffledDocs.slice(0, endIndex).map((tip) => tip.tipID));
+  });
+});
+
 app.get('/tips/', (req, res) => {
   const tipsQuery = {};
   findDocuments('tips', tipsQuery).then((docs) => {
