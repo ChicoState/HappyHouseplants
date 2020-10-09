@@ -27,26 +27,22 @@ databaseConnection.once('open', () => {
   main();
 });
 
-const tipsQuery = {};
-// https://mongoosejs.com/docs/api.html#model_Model.find
 app.get('/tips/', (req, res) => {
-  // res.json(['0', '1', '2', '3', '4', '5']);
-  findDocuments('tips', tipsQuery).then(docs => {
-    console.log(docs);
+  const tipsQuery = {};
+  findDocuments('tips', tipsQuery).then((docs) => {
     res.send(docs);
   });
 });
 
 app.get('/tips/:tipID', (req, res) => {
-  const tip = {
-    tipID: req.params.tipID,
-    tipSubject: `My tip subject #${req.params.tipID}`,
-    tipMessage: 'This is the server-provided sample tip message.',
-    sourceURL: 'https://www.google.com/',
-    plantType: null,
-  };// TODO: Get this from database
-
-  res.json(tip);
+  const tipQuery = { tipID: req.params.tipID };
+  findDocuments('tips', tipQuery).then((docs) => {
+    if (docs.length < 1) {
+      res.status(404).send('Tip not found');
+    } else {
+      res.send(docs[0]);
+    }
+  });
 });
 
 app.get('/users/:userId', (req, res) => {
