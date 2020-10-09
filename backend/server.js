@@ -17,12 +17,14 @@ function main() {
  */
 databaseConnection.once('open', () => {
   // this is here to serve as an example
-  TIPS.insertMany({
-    tipSubject: 'Test Sub',
-    tipMessage: 'Test msg',
-    tipID: 'TestID',
-    plantType: 'TestPlant',
-    sourceURL: 'testURL',
+  USERS.insertMany({
+    userId: '1',
+    firstName: 'Joe',
+    lastName: 'Planter',
+    username: 'JoeThePlanter',
+    password: 'hashedAndSalted',
+    savedTipsByID: ['1', '2', '5'],
+    savedPlantsByID: ['2', '4', '6'],
   });
   main();
 });
@@ -46,20 +48,46 @@ app.get('/tips/:tipID', (req, res) => {
 });
 
 app.get('/users/:userId', (req, res) => {
-  res.json({
-    firstName: 'Joe',
-    lastName: 'Planter',
-    username: 'JoeThePlanter',
-    userId: req.params.userId,
+  const userQuery = { userId: req.params.userId };
+  findDocuments('Users', userQuery).then((docs) => {
+    if (docs.length < 1) {
+      res.status(404).send('User not found');
+    } else {
+      // Don't send the whole 'user' document, that'll contain sensitive information!
+      const user = docs[0];
+      const publicUserInfo = {
+        userId: user.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+      };
+      res.send(publicUserInfo);
+    }
   });
 });
 
 app.get('/users/:userId/tips', (req, res) => {
-  res.json(['1', '5', '7']);
+  const userQuery = { userId: req.params.userId };
+  findDocuments('Users', userQuery).then((docs) => {
+    if (docs.length < 1) {
+      res.status(404).send('User not found');
+    } else {
+      const user = docs[0];
+      res.send(user.savedTipsByID);
+    }
+  });
 });
 
 app.get('/users/:userId/plants', (req, res) => {
-  res.json(['1', '2', '3', '4']);
+  const userQuery = { userId: req.params.userId };
+  findDocuments('Users', userQuery).then((docs) => {
+    if (docs.length < 1) {
+      res.status(404).send('User not found');
+    } else {
+      const user = docs[0];
+      res.send(user.savedPlantsByID);
+    }
+  });
 });
 
 app.listen(PORT, HOST, () => {
