@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { TIPS } = require('./database/models/tips');
-const { USERS } = require('./database/models/users');
+
 const app = express();
 const HOST = '0.0.0.0';
 const PORT = '8080';
@@ -16,16 +15,6 @@ function main() {
  * TODO: we may want to change how often or when we connect to db
  */
 databaseConnection.once('open', () => {
-  // this is here to serve as an example
-  USERS.insertMany({
-    userId: '1',
-    firstName: 'Joe',
-    lastName: 'Planter',
-    username: 'JoeThePlanter',
-    password: 'hashedAndSalted',
-    savedTipsByID: ['1', '2', '5'],
-    savedPlantsByID: ['2', '4', '6'],
-  });
   main();
 });
 

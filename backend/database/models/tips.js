@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+mongoose.pluralize(null);
 const tipSchema = new mongoose.Schema({
   tipSubject: String,
   tipMessage: String,
@@ -9,6 +10,5 @@ const tipSchema = new mongoose.Schema({
 });
 
 const TIPS = mongoose.model('tips', tipSchema);
-
 
 module.exports = { TIPS };
