@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   password: String,
   savedTipsByID: Array,
   savedPlantsByID: Array,
+  myPlantsByID: Array,
 });
 
 const USERS = mongoose.model('Users', userSchema);
