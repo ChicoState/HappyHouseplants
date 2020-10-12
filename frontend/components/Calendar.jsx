@@ -2,20 +2,11 @@
 import React from 'react';
 import {Calendar} from 'react-native-calendars';
 import {View, Text} from 'react-native';
-//import { Calendar, Text } from '@ui-kitten/components';
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
 
 const datesMarked = {
-  /*   '2020-09-25': {
-      selected: true,
-      marked: true,
-      selectedColor: 'green',
-    },
-    '2020-09-29': {marked: true},
-    '2020-09-30': {marked: true, dotColor: 'red', activeOpacity: 0},
-    '2020-09-28': {disabled: true, disableTouchEvent: true}, */
 };
 
 export default class Calend extends React.Component {
@@ -76,7 +67,7 @@ export default class Calend extends React.Component {
             console.log(datesMarked);
             this.setState(datesMarked);
           }}
-          // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
+          // Month format in calendar title.
           monthFormat="MMMM yyyy"
           // Handler which gets executed when visible month changes in calendar. Default = undefined
           onMonthChange={(month) => {
