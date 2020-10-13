@@ -7,6 +7,7 @@ const PORT = '8080';
 const { databaseConnection } = require('./database/mongooseConnect.js');
 const { findDocuments } = require('./database/findDocuments');
 const { insertTestData } = require('./database/mockData/mockDatabase');
+
 function main() {
   console.log('Server starting...');
 }
