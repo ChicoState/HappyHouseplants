@@ -1,7 +1,7 @@
 /* eslint-disable react/prefer-stateless-function */
 import React from 'react';
 import { Calendar } from 'react-native-calendars';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
@@ -75,7 +75,6 @@ export default class Calend extends React.Component {
             console.log(datesMarked);
             this.setState(datesMarked);
           }}
-
           // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
           monthFormat="MMMM yyyy"
           // Handler which gets executed when visible month changes in calendar. Default = undefined

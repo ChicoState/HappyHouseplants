@@ -4,7 +4,7 @@ import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button, View, TextInput } from 'react-native';
+import { Button, TextInput } from 'react-native';
 import 'react-native-gesture-handler';
 
 import Calend from './components/Calendar';
@@ -70,7 +70,7 @@ function TipScreen(obj) {
 
 function App() {
   return (
-    <ApplicationProvider {...eva} theme={eva.light}>
+    <ApplicationProvider mapping={eva.mapping} theme={eva.light}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeScreen} />
