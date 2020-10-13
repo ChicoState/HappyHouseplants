@@ -1,7 +1,7 @@
 const { TIPS } = require('../models/tips');
-const { USERS } = require('../models/users')
-const tipsJSON = require('./tips.json')
-const usersJSON = require('./users.json')
+const { USERS } = require('../models/users');
+const tipsJSON = require('./tips.json');
+const usersJSON = require('./users.json');
 /**
  * This is used to temporarily add to the database
  * While real data has not been scraped
@@ -12,4 +12,4 @@ function insertTestData() {
   TIPS.insertMany(tipsJSON);
 }
 
-module.exports = { insertTestData }
+module.exports = { insertTestData };
