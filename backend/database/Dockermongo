@@ -1,0 +1,6 @@
+FROM mongo
+
+COPY mockDatabase.js .
+COPY exec.sh .
+EXPOSE 27017
+RUN ./exec.sh
