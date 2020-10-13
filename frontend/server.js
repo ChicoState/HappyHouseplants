@@ -1,4 +1,5 @@
-const HOSTNAME = '192.168.1.21';
+import { HOSTNAME } from '@env';
+
 const PORT = '8080';
 const SERVER_ADDR = `http://${HOSTNAME}:${PORT}`;
 
