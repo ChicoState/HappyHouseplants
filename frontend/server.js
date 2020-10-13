@@ -1,6 +1,4 @@
-import { HOSTNAME } from '@env';
-
 const PORT = '8080';
-const SERVER_ADDR = `http://${HOSTNAME}:${PORT}`;
+const SERVER_ADDR = `http://${process.env.EXPO_HOSTNAME}:${PORT}`;
 
-module.exports = { HOSTNAME, PORT, SERVER_ADDR };
+module.exports = { SERVER_ADDR };
