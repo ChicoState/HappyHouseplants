@@ -1,21 +1,12 @@
-import { Calendar } from 'react-native-calendars';
-import { View /* ,  Dimensions */ } from 'react-native';
+/* eslint-disable react/prefer-stateless-function */
 import React from 'react';
-
-// const windowHeight = Dimensions.get('window').height;
+import { Calendar } from 'react-native-calendars';
+import { View } from 'react-native';
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
 
 const datesMarked = {
-  /*   '2020-09-25': {
-      selected: true,
-      marked: true,
-      selectedColor: 'green',
-    },
-    '2020-09-29': {marked: true},
-    '2020-09-30': {marked: true, dotColor: 'red', activeOpacity: 0},
-    '2020-09-28': {disabled: true, disableTouchEvent: true}, */
 };
 
 export default class Calend extends React.Component {
@@ -34,14 +25,14 @@ export default class Calend extends React.Component {
               },
             },
             backgroundColor: '#ffffff',
-            calendarBackground: '#ffffff',
+            calendarBackground: '#E8FFDA',
             textSectionTitleColor: 'black',
             textSectionTitleDisabledColor: '#d9e1e8',
             selectedDayBackgroundColor: 'blue',
             selectedDayTextColor: '#ffffff',
             todayTextColor: 'purple',
             dayTextColor: '#2d4150',
-            textDisabledColor: 'red',
+            textDisabledColor: 'grey',
             dotColor: '#00adf5',
             selectedDotColor: 'green',
             arrowColor: 'green',
