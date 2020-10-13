@@ -4,6 +4,7 @@
   "description": "An app designed to assist with taking care of house plants.",
   "main": "index.js",
   "dependencies": {
+    "expo": "^39.0.3",
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
