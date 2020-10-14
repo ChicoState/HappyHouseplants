@@ -17,6 +17,8 @@ function HomeScreen(obj) {
       <Button title="Go to Calendar" onPress={() => { navigation.navigate('Calendar'); }} />
       <Text />
       <Button title="Go to Tips" onPress={() => { navigation.navigate('Tips'); }} />
+      <Text />
+      <Button title="Go to Search" onPress={() => { navigation.navigate('Search'); }} />
     </View>
   );
 }
@@ -66,6 +68,20 @@ function TipScreen(obj) {
   );
 }
 
+function SearchScreen(obj) {
+  /* 2. Get the param */
+  const { navigation } = obj;
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Search</Text>
+      <Text />
+      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+      <Text />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </View>
+  );
+}
+
 function App() {
   return (
     <NavigationContainer>
@@ -74,6 +90,7 @@ function App() {
         <Stack.Screen name="My Plants" component={MyPlantsScreen} />
         <Stack.Screen name="Calendar" component={CalendarScreen} />
         <Stack.Screen name="Tips" component={TipScreen} />
+        <Stack.Screen name="Search" component={SearchScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
