@@ -1,0 +1,4 @@
+FROM mongo
+
+COPY ./mockData/mockDatabase.js .
+EXPOSE 27017

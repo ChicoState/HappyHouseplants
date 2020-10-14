@@ -1,12 +1,12 @@
 require('dotenv').config();
 const express = require('express');
-const { TIPS } = require('./database/models/tips');
-const { USERS } = require('./database/models/users');
+
 const app = express();
 const HOST = '0.0.0.0';
 const PORT = '8080';
 const { databaseConnection } = require('./database/mongooseConnect.js');
 const { findDocuments } = require('./database/findDocuments');
+const { insertTestData } = require('./database/mockData/mockDatabase');
 
 function main() {
   console.log('Server starting...');
@@ -16,54 +16,86 @@ function main() {
  * TODO: we may want to change how often or when we connect to db
  */
 databaseConnection.once('open', () => {
-  // this is here to serve as an example
-  TIPS.insertMany({
-    tipSubject: 'Test Sub',
-    tipMessage: 'Test msg',
-    tipID: 'TestID',
-    plantType: 'TestPlant',
-    sourceURL: 'testURL',
-  });
   main();
+  insertTestData();
 });
 
-const tipsQuery = {};
-// https://mongoosejs.com/docs/api.html#model_Model.find
+app.get('/random_tips/', (req, res) => {
+  const maxCount = req.query.count ? req.query.count : 10;
+  const tipsQuery = {};
+  findDocuments('tips', tipsQuery).then((docs) => {
+    const shuffledDocs = docs;
+    // Shuffle the documents
+    for (let i = shuffledDocs.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const hold = docs[i];
+      shuffledDocs[i] = docs[j];
+      shuffledDocs[j] = hold;
+    }
+    const endIndex = Math.min(maxCount, shuffledDocs.length);
+    res.json(shuffledDocs.slice(0, endIndex).map((tip) => tip.tipID));
+  });
+});
+
 app.get('/tips/', (req, res) => {
-  // res.json(['0', '1', '2', '3', '4', '5']);
-  findDocuments('tips', tipsQuery).then(docs => {
-    console.log(docs);
+  const tipsQuery = {};
+  findDocuments('tips', tipsQuery).then((docs) => {
     res.send(docs);
   });
 });
 
 app.get('/tips/:tipID', (req, res) => {
-  const tip = {
-    tipID: req.params.tipID,
-    tipSubject: `My tip subject #${req.params.tipID}`,
-    tipMessage: 'This is the server-provided sample tip message.',
-    sourceURL: 'https://www.google.com/',
-    plantType: null,
-  };// TODO: Get this from database
-
-  res.json(tip);
+  const tipQuery = { tipID: req.params.tipID };
+  findDocuments('tips', tipQuery).then((docs) => {
+    if (docs.length < 1) {
+      res.status(404).send('Tip not found');
+    } else {
+      res.send(docs[0]);
+    }
+  });
 });
 
 app.get('/users/:userId', (req, res) => {
-  res.json({
-    firstName: 'Joe',
-    lastName: 'Planter',
-    username: 'JoeThePlanter',
-    userId: req.params.userId,
+  const userQuery = { userId: req.params.userId };
+  findDocuments('Users', userQuery).then((docs) => {
+    if (docs.length < 1) {
+      res.status(404).send('User not found');
+    } else {
+      // Don't send the whole 'user' document, that'll contain sensitive information!
+      const user = docs[0];
+      const publicUserInfo = {
+        userId: user.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+      };
+      res.send(publicUserInfo);
+    }
   });
 });
 
 app.get('/users/:userId/tips', (req, res) => {
-  res.json(['1', '5', '7']);
+  const userQuery = { userId: req.params.userId };
+  findDocuments('Users', userQuery).then((docs) => {
+    if (docs.length < 1) {
+      res.status(404).send('User not found');
+    } else {
+      const user = docs[0];
+      res.send(user.savedTipsByID);
+    }
+  });
 });
 
 app.get('/users/:userId/plants', (req, res) => {
-  res.json(['1', '2', '3', '4']);
+  const userQuery = { userId: req.params.userId };
+  findDocuments('Users', userQuery).then((docs) => {
+    if (docs.length < 1) {
+      res.status(404).send('User not found');
+    } else {
+      const user = docs[0];
+      res.send(user.savedPlantsByID);
+    }
+  });
 });
 
 app.listen(PORT, HOST, () => {
