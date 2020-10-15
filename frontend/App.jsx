@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider, Layout, Text, Button } from '@ui-kitten/components';
+import {
+  ApplicationProvider, Layout, Text, Button,
+} from '@ui-kitten/components';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -34,7 +36,7 @@ function HomeScreen(obj) {
 }
 
 function MyPlantsScreen(obj) {
-  const { route, navigation } = obj;
+  const { route } = obj;
   const { otherParam } = route.params;
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
