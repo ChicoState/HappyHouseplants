@@ -1,13 +1,14 @@
 import * as React from 'react';
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
+import { ApplicationProvider, Layout, Text, Button } from '@ui-kitten/components';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button, TextInput } from 'react-native';
 import 'react-native-gesture-handler';
 
 import Calend from './components/Calendar';
+import TipList from './components/TipList';
+import UserInput from './components/GetUserInput';
 
 const Stack = createStackNavigator();
 
@@ -17,11 +18,17 @@ function HomeScreen(obj) {
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
       <Text />
-      <Button title="Go to My Plants" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }} />
+      <Button status="success" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }}>
+        Go to My Plants
+      </Button>
       <Text />
-      <Button title="Go to Calendar" onPress={() => { navigation.navigate('Calendar'); }} />
+      <Button status="success" onPress={() => { navigation.navigate('Calendar'); }}>
+        Go to Calendar
+      </Button>
       <Text />
-      <Button title="Go to Tips" onPress={() => { navigation.navigate('Tips'); }} />
+      <Button status="success" onPress={() => { navigation.navigate('Tips'); }}>
+        Go to Tips
+      </Button>
     </Layout>
   );
 }
@@ -34,9 +41,6 @@ function MyPlantsScreen(obj) {
       <Text>My Plants</Text>
       <Text />
       <Text>{JSON.stringify(otherParam)}</Text>
-      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
-      <Text />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
     </Layout>
   );
 }
@@ -45,25 +49,29 @@ function CalendarScreen() {
   return (
     <Layout style={{ flex: 1 }}>
       <Calend />
-      <Layout style={{ flex: 1 }}>
-        <Text />
-        <Text />
-        <Text> Enter Text:</Text>
-        <TextInput />
-      </Layout>
+      <UserInput />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
     </Layout>
   );
 }
 
-function TipScreen(obj) {
-  const { navigation } = obj;
+function TipScreen() {
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Tips</Text>
       <Text />
-      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
-      <Text />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
+      <TipList />
     </Layout>
   );
 }
