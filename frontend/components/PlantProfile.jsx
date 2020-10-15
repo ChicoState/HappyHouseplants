@@ -1,7 +1,9 @@
-import { Text, Divider, Card, Spinner, ListItem, List } from '@ui-kitten/components';
+import {
+  Text, Divider, Card, Spinner, ListItem, List,
+} from '@ui-kitten/components';
 import React, { Component } from 'react';
 import {
-  View, ScrollView, Image,
+  View, Image,
 } from 'react-native';
 
 class PlantProfile extends Component {
@@ -64,7 +66,12 @@ class PlantProfile extends Component {
       <View style={{ flex: 1, width: '90%', marginLeft: '5%' }}>
         <Text category="h1">{plantData.plantName}</Text>
         <View style={{ width: '100%', minHeight: 250 }}>
-          <Image source={{ uri: plantData.imageURL }} style={{width: null, height: null, flex: 1, resizeMode: 'contain' }} />
+          <Image
+            source={{ uri: plantData.imageURL }}
+            style={{
+              width: null, height: null, flex: 1, resizeMode: 'contain',
+            }}
+          />
         </View>
         <Card>
           <Text>{plantData.plantSummary}</Text>
