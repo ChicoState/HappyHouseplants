@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, ScrollView, Text } from 'react-native';
-import MockTips from './MockTips.json';
+import { SERVER_ADDR } from '../server';
 import FloatingTip from './FloatingTip';
 
 class TipList extends Component {
@@ -14,10 +14,20 @@ class TipList extends Component {
   }
 
   componentDidMount() {
-    this.setState({
-      loaded: true,
-      tipIDs: MockTips.map((x) => x.tipID),
-    });
+    const listThis = this;
+    fetch(`${SERVER_ADDR}/random_tips/?t=1`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        listThis.setState({
+          loaded: true,
+          tipIDs: data,
+          error: null,
+        });
+      }, (err) => {
+        console.log(`Failed to load tip list. Reason: ${err}`);
+        listThis.setState({ visible: false, error: err });
+      });
   }
 
   render() {

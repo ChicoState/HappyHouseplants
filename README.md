@@ -21,12 +21,13 @@ The readme for HappyHouseplants
 ## Setup
 - Make a fork of ChicoState/HappyHouseplants
 - Create a new branch for the feature you are working on
-- Create a .env file with the values below
+- Create two .env files with the values below
     - note: 
         - .env files should not be committed to GitHub
         - Secret values have been changed to serve as an example
         - DB_USER is a secret
         - DB_PASSWORD is a secret
+        - EXPO_HOSTNAME is the hostname, or IP address, of the machine that is running the backend
 
 `/backend/.env`
 ```
@@ -36,6 +37,11 @@ DB_NAME=happyplants
 DB_USER=SOMEUSER
 DB_PASSWORD=SOMEPASSWORD
 ```
+`/frontend/.env`
+```
+EXPO_HOSTNAME=SOMEHOSTNAME
+```
+
 ### To run a local instance of the database and API:
 - Change directory to HappyHousePlants repository
 
