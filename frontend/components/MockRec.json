@@ -1,0 +1,102 @@
+[
+  {
+    "plantID": "1",
+    "plantName": "Chinese Evergreen",
+    "plantLevel": 1,
+    "waterFreq":
+    {
+      "freq": "moderate",
+      "comment": "Allow the plant to dry out some between watering."
+    },
+    "fertFreq":
+    {
+      "quantity": 6,
+      "timeFrame": "months"
+    },
+    "environ":
+    {
+      "climate": ["humid", "warm"],
+      "doors": "both"
+    },
+    "lightReq": ["low", "medium"],
+    "tempReq": {
+      "Farenheit": {
+        "min": 55,
+        "max": 72
+      },
+      "Celcius": {
+        "min": 13,
+        "max": 22
+      }
+    },
+    "soucreImage": "./images/chinese_evergreen.Jpg",
+    "sourceURL": "https://www.gardeningknowhow.com/houseplants/chinese-evergreen/chinese-evergreen-plants.htm"
+
+  },
+  {
+    "plantID": "2",
+    "plantName": "Jade Plant",
+    "plantLevel": "Low maintenance",
+    "waterInfo":
+    {
+      "freq": "moderate",
+      "comment": "water your jade plant when the top of soil is just dry to the touch"
+    },
+    "environ":
+    {
+      "climate": ["humid", "warm"],
+      "doors": "both"
+    },
+    "lightReq": ["High"],
+    "fertFreq": {
+      "quantity": 6,
+      "timeFrame": "months"
+    },
+    "tempReq":
+    {
+      "Farenheit": {
+        "min": 65,
+        "max": 75
+      },
+      "Celcius": {
+        "min": 18,
+        "max": 24
+      }
+    },
+    "soucreImage": "./images/JadePlant.jpg",
+    "sourceURL": "https://www.gardeningknowhow.com/houseplants/jade-plant/jade-plant-care.htm"
+  },
+  {
+    "PlantID": "3",
+    "plantName": "Aphelandra Zebra",
+    "plantLevel": "Low maintenance",
+    "waterInfo":
+    {
+      "freq": "moderate",
+      "comment": "setting their pot on a tray filled with pebbles and water or regular misting"
+    },
+    "environ":
+    {
+      "climate": ["humid", "warm"],
+      "doors": "both"
+    },
+    "lightReq": ["NA"],
+    "fertFreq": {
+      "quantity": 0,
+      "timeFrame": "NA"
+    },
+    "tempReq":
+    {
+      "Farenheit": {
+        "min": 60,
+        "max": 70
+      },
+      "Celcius": {
+        "min": 15,
+        "max": 20
+      }
+    },
+    "soucreImage": "./images/ZebraPlant.Jpg",
+    "sourceURL": "https://www.gardeningknowhow.com/houseplants/aphelandra-plants/zebra-houseplant-care.htm"
+  }
+]

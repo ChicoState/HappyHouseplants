@@ -2,9 +2,12 @@ import {
   Text, Divider, Card, Spinner, ListItem, List,
 } from '@ui-kitten/components';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   View, Image,
 } from 'react-native';
+
+const Profiles = require('./MockRec.json');
 
 class PlantProfile extends Component {
   constructor() {
@@ -17,15 +20,76 @@ class PlantProfile extends Component {
   }
 
   componentDidMount() {
+    const { plantID } = this.props;
     this.setState({
       loaded: true,
-      plantData: {
-        plantName: 'Fern Leaf Plumosus Asparagus Fern',
-        plantSummary: 'I haven\'t yet Googled a summary for this plant.',
-        imageURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Houseplants.JPG/1920px-Houseplants.JPG',
-        sourceURL: 'https://www.gardeningknowhow.com/houseplants/chinese-evergreen/chinese-evergreen-plants.htm',
-      },
+      plantData: Profiles.find((x) => x.plantID === plantID),
     });
+  }
+
+  getLightingData() {
+    const { plantData } = this.state;
+    if (plantData.lightReq === ['low']) {
+      return { title: 'Low lighting', message: 'This plant does not need very much lighting.' };
+    }
+    if (plantData.lightReq === ['medium']) {
+      return { title: 'Medium lighting', message: 'This plant needs a medium amount of light, so put it in a bright area but avoid direct sunlight.' };
+    }
+    if (plantData.lightReq === ['high']) {
+      return { title: 'High lighting', message: 'This plant needs a very bright environment, so consider putting it in a window or somewhere in direct sunlight.' };
+    }
+    if (plantData.lightReq === ['low', 'medium']) {
+      return { title: 'Low to medium lighting', message: 'This plant can be placed in low to medium lighting, but avoid direct sunlight.' };
+    }
+    if (plantData.lightReq === ['medium', 'high']) {
+      return { title: 'Medium to high lighting', message: 'This plant needs medium to high lighting, so put it in a bright area or near a window.' };
+    }
+    if (plantData.lightReq === ['low', 'medium', 'high']) {
+      return { title: 'Any lighting', message: 'This plant does not care whether it gets a small amount of sunlight, or whether it is placed in direct sunlight.' };
+    }
+    return undefined;
+  }
+
+  getWaterData() {
+    const { plantData } = this.state;
+    if (plantData.waterFreq.comment) {
+      return { title: 'Watering', message: plantData.waterFreq.comment };
+    }
+    // TODO: Maybe handle case where waterFreq.freq is defined but comment is undefined?
+    return undefined;
+  }
+
+  getEnvironmentData() {
+    const { plantData } = this.state;
+    const climateStr = plantData.environ.climate.join(', ');
+    let doorStr;
+    switch (plantData.environ.doors) {
+      case 'both':
+        doorStr = 'indoor-outdoor';
+        break;
+      case 'in':
+        doorStr = 'indoor';
+        break;
+      case 'out':
+        doorStr = 'outdoor';
+        break;
+      default:
+        return undefined;
+    }
+
+    return { title: 'Environment', message: `This ${doorStr} plant is best suited in a ${climateStr} environment.` };
+  }
+
+  getFertilizerData() {
+    const { plantData } = this.state;
+    const { quantity, timeFrame } = plantData.fertFreq;
+    return { title: 'Fertilizer', message: `Replace the fertilizer every ${quantity} ${timeFrame}.` };
+  }
+
+  getTempData() {
+    const { plantData } = this.state;
+    const { min, max } = plantData.tempReq.Farenheit;// TODO: Allow user to specify desired units?
+    return { title: 'Temperature range', message: `This plant prefers an average temperature between ${min} and ${max} degrees farenheit.` };
   }
 
   render() {
@@ -39,24 +103,15 @@ class PlantProfile extends Component {
       return (<Spinner />);
     }
 
-    const data = [
-      {
-        title: 'Some Lighting',
-        message: 'This plant needs only a small amount of light, so keep it indoors away from direct sunlight.',
-      },
-      {
-        title: 'Low Maintenance',
-        message: 'This plant does not require a lot of maintenance',
-      },
-      {
-        title: 'Climate',
-        message: 'This plant works best in temperatures between 60*F and 85*F, and does not require high humidity.',
-      },
-      {
-        title: 'Watering',
-        message: 'Water this plant approximately once per week, up to twice per week in higher temperatures.',
-      },
+    const dataRaw = [
+      this.getLightingData(),
+      this.getWaterData(),
+      this.getEnvironmentData(),
+      this.getFertilizerData(),
+      this.getTempData(),
     ];
+
+    const data = dataRaw.filter((x) => x !== undefined);
 
     const renderItem = ({ item }) => (
       <ListItem title={item.title} description={item.message} />
@@ -67,7 +122,7 @@ class PlantProfile extends Component {
         <Text category="h1">{plantData.plantName}</Text>
         <View style={{ width: '100%', minHeight: 250 }}>
           <Image
-            source={{ uri: plantData.imageURL }}
+            source={{ uri: plantData.sourceImage }}
             style={{
               width: null, height: null, flex: 1, resizeMode: 'contain',
             }}
@@ -82,5 +137,9 @@ class PlantProfile extends Component {
     );
   }
 }
+
+PlantProfile.propTypes = {
+  plantID: PropTypes.string.isRequired,
+};
 
 export default PlantProfile;
