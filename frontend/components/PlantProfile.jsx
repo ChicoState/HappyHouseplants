@@ -201,9 +201,12 @@ class PlantProfile extends Component {
             }}
           />
         </View>
-        <Card>
-          <Text>{plantData.plantSummary}</Text>
-        </Card>
+        { plantData.plantSummary
+          && (
+            <Card>
+              <Text>{plantData.plantSummary}</Text>
+            </Card>
+          ) }
         <Divider />
         {items}
       </ScrollView>
