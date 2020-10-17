@@ -5,9 +5,10 @@ import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button, View } from 'react-native';
+import { Button } from 'react-native';
 
 import Calend from './components/Calendar';
+import Recommend from './components/RecList';
 
 const Stack = createStackNavigator();
 
@@ -21,6 +22,8 @@ function HomeScreen(obj) {
       <Button title="Go to Calendar" onPress={() => { navigation.navigate('Calendar'); }} />
       <Text />
       <Button title="Go to Tips" onPress={() => { navigation.navigate('Tips'); }} />
+      <Text />
+      <Button title="Go to Recommendations" onPress={() => { navigation.navigate('Recommend'); }} />
     </Layout>
   );
 }
@@ -70,6 +73,21 @@ function TipScreen(obj) {
   );
 }
 
+function RecommendScreen(obj) {
+  /* 2. Get the param */
+  const { navigation } = obj;
+  return (
+    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Recommendation</Text>
+      <Text />
+      <Recommend />
+      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+      <Text />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </Layout>
+  );
+}
+
 function App() {
   return (
     <ApplicationProvider {...eva} theme={eva.light}>
@@ -79,6 +97,7 @@ function App() {
           <Stack.Screen name="My Plants" component={MyPlantsScreen} />
           <Stack.Screen name="Calendar" component={CalendarScreen} />
           <Stack.Screen name="Tips" component={TipScreen} />
+          <Stack.Screen name="Recommend" component={RecommendScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>

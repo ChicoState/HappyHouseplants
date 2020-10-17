@@ -1,7 +1,7 @@
 /* eslint-disable react/prefer-stateless-function */
 import React from 'react';
-import {Calendar} from 'react-native-calendars';
-import {View, Text} from 'react-native';
+import { Calendar } from 'react-native-calendars';
+import { View, Text } from 'react-native';
 //import { Calendar, Text } from '@ui-kitten/components';
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
