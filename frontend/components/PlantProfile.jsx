@@ -7,8 +7,7 @@ import {
   View, Image,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-
-const Profiles = require('./MockPlants.json');
+import { SERVER_ADDR } from '../server';
 
 class PlantProfile extends Component {
   constructor() {
@@ -21,11 +20,20 @@ class PlantProfile extends Component {
   }
 
   componentDidMount() {
+    const profileThis = this;
     const { plantID } = this.props;
-    this.setState({
-      loaded: true,
-      plantData: Profiles.find((x) => x.plantID === plantID),
-    });
+
+    fetch(`${SERVER_ADDR}/plants/${plantID}`)
+      .then((response) => response.json())
+      .then((data) => {
+        profileThis.setState({
+          loaded: true,
+          plantData: data,
+        });
+      }, (error) => {
+        console.log(`Failed to load a tip. Reason: ${error}`);
+        profileThis.setState({ error });
+      });
   }
 
   getHumanReadableData = (dataObj, title, msgFallback) => {
@@ -180,7 +188,7 @@ class PlantProfile extends Component {
     ];
 
     const items = data.map((item) => item
-      && <ListItem title={item.title} description={item.message} />);
+      && <ListItem title={item.title} description={item.message} key={item.title} />);
 
     return (
       <ScrollView style={{ flex: 1, width: '90%', marginLeft: '5%' }}>
