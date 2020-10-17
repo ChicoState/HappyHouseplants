@@ -1,71 +1,91 @@
+import * as React from 'react';
+import * as eva from '@eva-design/eva';
+import {
+  ApplicationProvider, Layout, Text, Button,
+} from '@ui-kitten/components';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button, View, Text } from 'react-native';
 import 'react-native-gesture-handler';
-import * as React from 'react';
+
 import Calend from './components/Calendar';
 import SeachBar from './components/Search';
+import TipList from './components/TipList';
+import UserInput from './components/GetUserInput';
+import PlantProfile from './components/PlantProfile';
 
 const Stack = createStackNavigator();
 
 function HomeScreen(obj) {
   const { navigation } = obj;
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
-      <Button title="Go to My Plants" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }} />
       <Text />
-      <Button title="Go to Calendar" onPress={() => { navigation.navigate('Calendar'); }} />
+      <Button status="success" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }}>
+        Go to My Plants
+      </Button>
       <Text />
-      <Button title="Go to Tips" onPress={() => { navigation.navigate('Tips'); }} />
+      <Button status="success" onPress={() => { navigation.navigate('Calendar'); }}>
+        Go to Calendar
+      </Button>
       <Text />
-      <Button title="Go to Search" onPress={() => { navigation.navigate('Search'); }} />
-    </View>
+      <Button status="success" onPress={() => { navigation.navigate('Tips'); }}>
+        Go to Tips
+      </Button>
+      <Button status="success" onPress={() => { navigation.navigate('Search'); }}>
+        Go to Search
+      </Button>
+    </Layout>
   );
 }
 
 function MyPlantsScreen(obj) {
-  /* 2. Get the param */
-  const { route, navigation } = obj;
+  const { route } = obj;
   const { otherParam } = route.params;
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>My Plants</Text>
       <Text />
       <Text>{JSON.stringify(otherParam)}</Text>
-      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
-      <Text />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
-    </View>
+    </Layout>
   );
 }
 
-function CalendarScreen(obj) {
-  /* 2. Get the param */
-  const { navigation } = obj;
+function PlantProfileScreen(navContext) {
+  const { route } = navContext;
+  const { params } = route;
+  return (<PlantProfile plantID={params.plantID} hideTitle={params.plantName !== undefined} />);
+}
+
+function CalendarScreen() {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Calendar</Text>
-      <Text />
+    <Layout style={{ flex: 1 }}>
       <Calend />
-      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+      <UserInput />
       <Text />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
-    </View>
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+      <Text />
+    </Layout>
   );
 }
 
-function TipScreen(obj) {
-  /* 2. Get the param */
-  const { navigation } = obj;
+function TipScreen() {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Tips</Text>
       <Text />
-      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
-      <Text />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
-    </View>
+      <TipList />
+    </Layout>
   );
 }
 

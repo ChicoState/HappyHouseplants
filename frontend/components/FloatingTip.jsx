@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
-import MockTips from './MockTips.json';
+import { SERVER_ADDR } from '../server';
 
 class FloatingTip extends Component {
   constructor() {
@@ -43,13 +43,21 @@ class FloatingTip extends Component {
   componentDidMount() {
     const floatThis = this;
     const { tipID } = this.props;
-    const data = MockTips.find((x) => x.tipID === tipID);
-    floatThis.setState({
-      visible: true,
-      tipSubject: data.tipSubject,
-      tipMessage: data.tipMessage,
-      sourceURL: data.sourceURL,
-    });
+    fetch(`${SERVER_ADDR}/tips/${tipID}`)
+      .then((response) => response.json())
+      .then((data) => {
+        floatThis.setState({
+          visible: true,
+          tipSubject: data.tipSubject,
+          tipMessage: data.tipMessage,
+          tipID: data.tipID,
+          plantType: data.plantType,
+          sourceURL: data.sourceURL,
+        });
+      }, (error) => {
+        console.log(`Failed to load a tip. Reason: ${error}`);
+        floatThis.setState({ visible: false });
+      });
   }
 
   handlePress() {

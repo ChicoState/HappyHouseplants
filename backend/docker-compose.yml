@@ -1,10 +1,28 @@
 version: "3.5"
 services:
   database:
-    image: mongo
+    image: happyplant-mongo
     container_name: happyplant-db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=$DB_USER
-      - MONGO_INITDB_ROOT_PASSWORD=$DB_PASSWORD 
+    build:
+      context: ./database
+      dockerfile: Dockermongo
+    #environment:
+      #- MONGO_INITDB_ROOT_USERNAME=$DB_USER
+      #- MONGO_INITDB_ROOT_PASSWORD=$DB_PASSWORD 
     ports:
       - "27017:27017"
+  api:
+    image: happyplant-api
+    container_name: happlyplant-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on: 
+      - database
+    env_file:
+      - .env
+    links:
+      - database
+  

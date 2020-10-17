@@ -4,3 +4,7 @@ node_modules
 
 # ignore .expo directories
 */.expo
+
+#ignore .env files
+*/*/.env
+.env
