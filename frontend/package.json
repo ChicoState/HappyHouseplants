@@ -43,7 +43,7 @@
     "web": "expo start --web",
     "start": "expo start",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint . --ext .js"
+    "lint": "eslint . --ext .js,.jsx"
   },
   "repository": {
     "type": "git",

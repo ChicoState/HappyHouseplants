@@ -1,12 +1,10 @@
-
 import * as React from 'react';
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
-
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button } from 'react-native';
-
+import { Button, TextInput } from 'react-native';
+import 'react-native-gesture-handler';
 import Calend from './components/Calendar';
 import Recommend from './components/RecList';
 
@@ -17,6 +15,7 @@ function HomeScreen(obj) {
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
+      <Text />
       <Button title="Go to My Plants" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }} />
       <Text />
       <Button title="Go to Calendar" onPress={() => { navigation.navigate('Calendar'); }} />
@@ -29,7 +28,6 @@ function HomeScreen(obj) {
 }
 
 function MyPlantsScreen(obj) {
-  /* 2. Get the param */
   const { route, navigation } = obj;
   const { otherParam } = route.params;
   return (
@@ -44,23 +42,21 @@ function MyPlantsScreen(obj) {
   );
 }
 
-function CalendarScreen(obj) {
-  /* 2. Get the param */
-  const { navigation } = obj;
+function CalendarScreen() {
   return (
-    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Calendar</Text>
-      <Text />
+    <Layout style={{ flex: 1 }}>
       <Calend />
-      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
-      <Text />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
+      <Layout style={{ flex: 1 }}>
+        <Text />
+        <Text />
+        <Text> Enter Text:</Text>
+        <TextInput />
+      </Layout>
     </Layout>
   );
 }
 
 function TipScreen(obj) {
-  /* 2. Get the param */
   const { navigation } = obj;
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -90,7 +86,7 @@ function RecommendScreen(obj) {
 
 function App() {
   return (
-    <ApplicationProvider {...eva} theme={eva.light}>
+    <ApplicationProvider mapping={eva.mapping} theme={eva.light}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeScreen} />
