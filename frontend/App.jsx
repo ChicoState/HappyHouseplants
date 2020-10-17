@@ -82,7 +82,6 @@ function CalendarScreen() {
 function TipScreen() {
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Tips</Text>
       <Text />
       <TipList />
     </Layout>
@@ -98,9 +97,6 @@ function RecommendScreen(obj) {
         navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
       }}
       />
-      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
-      <Text />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
     </Layout>
   );
 }
