@@ -82,7 +82,6 @@ function CalendarScreen() {
 function TipScreen() {
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Tips</Text>
       <Text />
       <TipList />
     </Layout>
