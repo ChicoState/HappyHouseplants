@@ -78,7 +78,7 @@ class RecList extends Component {
 
     const myCards = recList.map((plant) => (
       <Card
-        key={plant.plantID}
+        key={plant._id}
         style={styles.card}
         status="basic"
         header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
