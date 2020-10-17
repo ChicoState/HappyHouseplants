@@ -1,11 +1,12 @@
 import {
-  Text, Divider, Card, Spinner, ListItem, List,
+  Text, Divider, Card, Spinner, ListItem,
 } from '@ui-kitten/components';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   View, Image,
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const Profiles = require('./MockPlants.json');
 
@@ -170,7 +171,7 @@ class PlantProfile extends Component {
       return (<Spinner />);
     }
 
-    const dataRaw = [
+    const data = [
       this.getMaintenanceData(),
       this.getLightingData(),
       this.getWaterData(),
@@ -178,14 +179,11 @@ class PlantProfile extends Component {
       this.getToxicityData(),
     ];
 
-    const data = dataRaw.filter((x) => x !== undefined);
-
-    const renderItem = ({ item }) => (
-      <ListItem title={item.title} description={item.message} />
-    );
+    const items = data.map((item) => item
+      && <ListItem title={item.title} description={item.message} />);
 
     return (
-      <View style={{ flex: 1, width: '90%', marginLeft: '5%' }}>
+      <ScrollView style={{ flex: 1, width: '90%', marginLeft: '5%' }}>
         <Text category="h1">{plantData.plantName}</Text>
         <View style={{ width: '100%', minHeight: 250 }}>
           <Image
@@ -199,8 +197,8 @@ class PlantProfile extends Component {
           <Text>{plantData.plantSummary}</Text>
         </Card>
         <Divider />
-        <List data={data} ItemSeparatorComponent={Divider} renderItem={renderItem} />
-      </View>
+        {items}
+      </ScrollView>
     );
   }
 }
