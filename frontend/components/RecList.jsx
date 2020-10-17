@@ -30,7 +30,6 @@ const renderItemHeader = (headerProps, info) => (
   </Layout>
 );
 
-//onPress={}
 const renderItemFooter = (footerProps) => (
   <Text {...footerProps}>
     Like
@@ -92,4 +91,3 @@ class RecList extends Component {
 }
 
 export default RecList;
-
