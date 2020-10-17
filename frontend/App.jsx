@@ -32,12 +32,6 @@ function HomeScreen(obj) {
       <Button status="success" onPress={() => { navigation.navigate('Tips'); }}>
         Go to Tips
       </Button>
-      <Button status="success" onPress={() => { navigation.navigate('PlantProfile', { plantID: '1', plantName: 'Chinese Evergreen' }); }}>
-        Go to Chinese Evergreen
-      </Button>
-      <Button status="success" onPress={() => { navigation.navigate('PlantProfile', { plantID: '2' }); }}>
-        Go to Jade Plant
-      </Button>
     </Layout>
   );
 }
