@@ -169,6 +169,7 @@ class PlantProfile extends Component {
   }
 
   render() {
+    const { hideTitle } = this.props;
     const { loaded, error, plantData } = this.state;
     if (error) {
       const errMsg = `Failed to load plant data.\n${error}`;
@@ -192,7 +193,10 @@ class PlantProfile extends Component {
 
     return (
       <ScrollView style={{ flex: 1, width: '90%', marginLeft: '5%' }}>
-        <Text category="h1">{plantData.plantName}</Text>
+        {
+          !hideTitle
+          && (<Text category="h1">{plantData.plantName}</Text>)
+        }
         <View style={{ width: '100%', minHeight: 250 }}>
           <Image
             source={{ uri: plantData.image.sourceURL }}
@@ -216,6 +220,7 @@ class PlantProfile extends Component {
 
 PlantProfile.propTypes = {
   plantID: PropTypes.string.isRequired,
+  hideTitle: PropTypes.bool.isRequired,
 };
 
 export default PlantProfile;

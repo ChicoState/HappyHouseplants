@@ -11,6 +11,7 @@ import 'react-native-gesture-handler';
 import Calend from './components/Calendar';
 import TipList from './components/TipList';
 import UserInput from './components/GetUserInput';
+import PlantProfile from './components/PlantProfile';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,12 @@ function HomeScreen(obj) {
       <Button status="success" onPress={() => { navigation.navigate('Tips'); }}>
         Go to Tips
       </Button>
+      <Button status="success" onPress={() => { navigation.navigate('PlantProfile', { plantID: '1', plantName: 'Chinese Evergreen' }); }}>
+        Go to Chinese Evergreen
+      </Button>
+      <Button status="success" onPress={() => { navigation.navigate('PlantProfile', { plantID: '2' }); }}>
+        Go to Jade Plant
+      </Button>
     </Layout>
   );
 }
@@ -45,6 +52,12 @@ function MyPlantsScreen(obj) {
       <Text>{JSON.stringify(otherParam)}</Text>
     </Layout>
   );
+}
+
+function PlantProfileScreen(navContext) {
+  const { route } = navContext;
+  const { params } = route;
+  return (<PlantProfile plantID={params.plantID} hideTitle={params.plantName !== undefined} />);
 }
 
 function CalendarScreen() {
@@ -85,6 +98,13 @@ function App() {
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="My Plants" component={MyPlantsScreen} />
+          <Stack.Screen
+            name="PlantProfile"
+            component={PlantProfileScreen}
+            options={(navContext) => ({
+              title: navContext.route.params.plantName ?? 'Plant Profile',
+            })}
+          />
           <Stack.Screen name="Calendar" component={CalendarScreen} />
           <Stack.Screen name="Tips" component={TipScreen} />
         </Stack.Navigator>
