@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import {TextInput, TouchableOpacity, View, Text, Dimensions, StyleSheet, LayoutAnimation} from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import mockRec from './MockRec.json'
 import { ScrollView } from 'react-native';
 import { Image } from 'react-native';
 import { Input, Button, Card, Layout } from '@ui-kitten/components';
@@ -10,12 +8,13 @@ import PropTypes from 'prop-types';
 
 const styles = require('./SearchBarStyles');
 
-class SeachBar extends Component {
+class SearchBar extends Component {
   constructor() {
     super();
     this.state = {
       loaded: false,
-      searchString: "",
+      error: null,
+      searchString: '',
       Results: [],
       Alldata: [],
     };
@@ -57,10 +56,9 @@ class SeachBar extends Component {
           loaded: true,
           error: null,
           Alldata: data,
-          error: null,
         });
       }, (error) => {
-        console.log(`Failed to load plant recommendations. Reason: ${error}`);
+        console.log(`Failed to load plant search. Reason: ${error}`);
         listThis.setState({ visible: false, error });
       });
 
@@ -68,7 +66,7 @@ class SeachBar extends Component {
 
   searchPress() {
       this.setState({
-        Results: Alldata.filter((x) => x.plantName === this.state.searchString),
+        Results: this.state.Alldata.filter((x) => x.plantName.toLowerCase().includes(this.state.searchString.toLowerCase())),
       });
     }
 
