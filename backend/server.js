@@ -98,6 +98,13 @@ app.get('/users/:userId/plants', (req, res) => {
   });
 });
 
+app.get('/plants/', (req, res) => {
+  const plantsQuery = {};
+  findDocuments('Plants', plantsQuery).then((docs) => {
+    res.send(docs);
+  });
+});
+
 app.get('/plants/:plantID', (req, res) => {
   const userQuery = { plantID: req.params.plantID };
   findDocuments('Plants', userQuery).then((docs) => {
