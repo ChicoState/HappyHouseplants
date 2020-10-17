@@ -7,7 +7,7 @@ import {
   View, Image,
 } from 'react-native';
 
-const Profiles = require('./MockRec.json');
+const Profiles = require('./MockPlants.json');
 
 class PlantProfile extends Component {
   constructor() {
@@ -27,69 +27,136 @@ class PlantProfile extends Component {
     });
   }
 
+  getHumanReadableData = (dataObj, title, msgFallback) => {
+    if (dataObj) {
+      let message;
+      if (dataObj.comment) {
+        message = dataObj.comment;
+      } else if (msgFallback) {
+        message = msgFallback(dataObj);
+      }
+
+      if (message) {
+        return { title, message };
+      }
+    }
+
+    return undefined;
+  }
+
+  getMaintenanceData() {
+    const { plantData } = this.state;
+    return this.getHumanReadableData(plantData.maintenance, 'Maintenance', (data) => {
+      switch (data.level) {
+        case 0:
+          return 'This plant requires very little maintenance.';
+        case 1:
+          return 'This plant requires some frequent maintenance.';
+        case 2:
+          return 'This plant requires a lot of maintenance.';
+        default:
+          return undefined;
+      }
+    });
+  }
+
   getLightingData() {
     const { plantData } = this.state;
-    if (plantData.lightReq === ['low']) {
-      return { title: 'Low lighting', message: 'This plant does not need very much lighting.' };
-    }
-    if (plantData.lightReq === ['medium']) {
-      return { title: 'Medium lighting', message: 'This plant needs a medium amount of light, so put it in a bright area but avoid direct sunlight.' };
-    }
-    if (plantData.lightReq === ['high']) {
-      return { title: 'High lighting', message: 'This plant needs a very bright environment, so consider putting it in a window or somewhere in direct sunlight.' };
-    }
-    if (plantData.lightReq === ['low', 'medium']) {
-      return { title: 'Low to medium lighting', message: 'This plant can be placed in low to medium lighting, but avoid direct sunlight.' };
-    }
-    if (plantData.lightReq === ['medium', 'high']) {
-      return { title: 'Medium to high lighting', message: 'This plant needs medium to high lighting, so put it in a bright area or near a window.' };
-    }
-    if (plantData.lightReq === ['low', 'medium', 'high']) {
-      return { title: 'Any lighting', message: 'This plant does not care whether it gets a small amount of sunlight, or whether it is placed in direct sunlight.' };
-    }
-    return undefined;
+    return this.getHumanReadableData(plantData.lighting, 'Lighting', (data) => {
+      let amountStr;
+      switch (data.level) {
+        case 0:
+          amountStr = 'This plant only needs a small amount of lighting.';
+          break;
+        case 1:
+          amountStr = 'This plant needs a moderate amount of lighting.';
+          break;
+        case 2:
+          amountStr = 'This plant needs a lot of lighting.';
+          break;
+        default:
+          return undefined;
+      }
+      const directSunStr = plantData.lighting.directSunlight ? 'Direct sunlight is acceptable.' : 'Avoid direct sunlight.';
+      return `${amountStr} ${directSunStr}`;
+    });
   }
 
   getWaterData() {
     const { plantData } = this.state;
-    if (plantData.waterFreq.comment) {
-      return { title: 'Watering', message: plantData.waterFreq.comment };
-    }
-    // TODO: Maybe handle case where waterFreq.freq is defined but comment is undefined?
-    return undefined;
+    return this.getHumanReadableData(plantData.watering, 'Watering', (data) => {
+      if (data.frequency) {
+        return `Water this plant every ${data.frequency.quantity} ${data.frequency.timeFrame}.`;
+      }
+
+      return undefined;
+    });
   }
 
   getEnvironmentData() {
     const { plantData } = this.state;
-    const climateStr = plantData.environ.climate.join(', ');
-    let doorStr;
-    switch (plantData.environ.doors) {
-      case 'both':
-        doorStr = 'indoor-outdoor';
-        break;
-      case 'in':
-        doorStr = 'indoor';
-        break;
-      case 'out':
-        doorStr = 'outdoor';
-        break;
-      default:
-        return undefined;
-    }
-
-    return { title: 'Environment', message: `This ${doorStr} plant is best suited in a ${climateStr} environment.` };
+    return this.getHumanReadableData(plantData.environment, 'Environment', (data) => {
+      let humidWord;
+      switch (data.humidity) {
+        case 0:
+          humidWord = 'low';
+          break;
+        case 1:
+          humidWord = 'medium';
+          break;
+        case 2:
+          humidWord = 'high';
+          break;
+        default:
+          humidWord = undefined;
+          break;
+      }
+      const humidStr = humidWord ? `Keep this plant in a ${humidWord} humidity environment.` : '';
+      let temp = { min: data.temperature.min, max: data.temperature.max };
+      const unit = 'Farenheit';// TODO: Let the user decide (or determine by system culture info/locale?)
+      switch (unit) {
+        case 'Farenheit':
+          temp.min = Math.round((temp.min * 9) / 5 + 32);
+          temp.max = Math.round((temp.max * 9) / 5 + 32);
+          break;
+        case 'Celcuis':
+          // Data is originally in celcius, no need to convert
+          break;
+        default:
+          // Unknown unit
+          temp = undefined;
+          break;
+      }
+      const tempStr = temp ? `The ideal temperature is between ${temp.min} and ${temp.max} degrees ${unit}.` : '';
+      if (humidStr || tempStr) {
+        return `${humidStr} ${tempStr}`;
+      }
+      return undefined;
+    });
   }
 
-  getFertilizerData() {
+  getToxicityData() {
     const { plantData } = this.state;
-    const { quantity, timeFrame } = plantData.fertFreq;
-    return { title: 'Fertilizer', message: `Replace the fertilizer every ${quantity} ${timeFrame}.` };
-  }
+    return this.getHumanReadableData(plantData.toxicity, 'Toxicity', (data) => {
+      const { harmfulTo } = data;
+      if (harmfulTo) {
+        if (harmfulTo.length === 0) {
+          return 'This plant is not known to be harmful to any pets.';
+        }
+        if (harmfulTo.length === 1) {
+          return `This plant is toxic to ${harmfulTo[0]}.`;
+        }
+        if (harmfulTo.length === 2) {
+          return `This plant is toxic to ${harmfulTo[0]} and ${harmfulTo[1]}.`;
+        }
 
-  getTempData() {
-    const { plantData } = this.state;
-    const { min, max } = plantData.tempReq.Farenheit;// TODO: Allow user to specify desired units?
-    return { title: 'Temperature range', message: `This plant prefers an average temperature between ${min} and ${max} degrees farenheit.` };
+        const mutableHarmfulClone = harmfulTo.slice();
+        const last = mutableHarmfulClone.pop();
+        const commaStr = mutableHarmfulClone.join(', ');
+        return `This plant is toxic to ${commaStr}, and ${last}.`;
+      }
+      return undefined;
+    });
   }
 
   render() {
@@ -104,11 +171,11 @@ class PlantProfile extends Component {
     }
 
     const dataRaw = [
+      this.getMaintenanceData(),
       this.getLightingData(),
       this.getWaterData(),
       this.getEnvironmentData(),
-      this.getFertilizerData(),
-      this.getTempData(),
+      this.getToxicityData(),
     ];
 
     const data = dataRaw.filter((x) => x !== undefined);
@@ -122,7 +189,7 @@ class PlantProfile extends Component {
         <Text category="h1">{plantData.plantName}</Text>
         <View style={{ width: '100%', minHeight: 250 }}>
           <Image
-            source={{ uri: plantData.sourceImage }}
+            source={{ uri: plantData.image.sourceURL }}
             style={{
               width: null, height: null, flex: 1, resizeMode: 'contain',
             }}
