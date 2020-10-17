@@ -94,8 +94,6 @@ function RecommendScreen(obj) {
   const { navigation } = obj;
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Recommendation</Text>
-      <Text />
       <Recommend />
       <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
       <Text />
