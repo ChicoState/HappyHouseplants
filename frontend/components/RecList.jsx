@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, ScrollView, Image } from 'react-native';
 import { Card, Layout, Text } from '@ui-kitten/components';
-import MockRec from './MockRec.json';
+import { SERVER_ADDR } from '../server';
 
 const styles = StyleSheet.create({
   container: {
@@ -42,19 +42,39 @@ class RecList extends Component {
     this.state = {
       loaded: false,
       error: null,
+      recList: [],
     };
   }
 
   componentDidMount() {
-    // setState: changes the state/personal data storage
-    this.setState({
-      loaded: true,
-      // plantIDs: MockRec.map((x) => x.plantID), returns anarrray of plant Ids
-    });
+    const listThis = this;
+    fetch(`${SERVER_ADDR}/plants/`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        listThis.setState({
+          loaded: true,
+          recList: data,
+          error: null,
+        });
+      }, (error) => {
+        console.log(`Failed to load plant recommendations. Reason: ${error}`);
+        listThis.setState({ visible: false, error });
+      });
   }
 
   render() {
-    const myCards = MockRec.map((plant) => (
+    const { loaded, error, recList } = this.state;
+    if (error) {
+      const errMsg = `Failed to load recommendations.\n${error}`;
+      return (<Text>{errMsg}</Text>);
+    }
+
+    if (!loaded) {
+      return (<Text>Loading Recommendations...</Text>);
+    }
+
+    const myCards = recList.map((plant) => (
       <Card
         key={plant.plantID}
         style={styles.card}
@@ -64,19 +84,10 @@ class RecList extends Component {
       >
         <Image
           source={{ uri: plant.image.sourceURL }}
-          style={{ width: 300, height: 300 }}
+          style={{ width: 150, height: 150 }}
         />
       </Card>
     ));
-    const { loaded, error } = this.state;
-    if (error) {
-      const errMsg = `Failed to load recommendations.\n${error}`;
-      return (<Text>{errMsg}</Text>);
-    }
-
-    if (!loaded) {
-      return (<Text>Loading Recommendations...</Text>);
-    }
 
     return (
       <Layout
