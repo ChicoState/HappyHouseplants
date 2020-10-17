@@ -98,6 +98,17 @@ app.get('/users/:userId/plants', (req, res) => {
   });
 });
 
+app.get('/plants/:plantID', (req, res) => {
+  const userQuery = { plantID: req.params.plantID };
+  findDocuments('Plants', userQuery).then((docs) => {
+    if (docs.length < 1) {
+      res.status(404).send('Plant not found');
+    } else {
+      res.send(docs[0]);
+    }
+  });
+});
+
 app.listen(PORT, HOST, () => {
   console.log('Listening...');
 });

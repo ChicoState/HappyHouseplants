@@ -1,0 +1,37 @@
+[
+    {
+        "plantID":"1",
+        "plantName": "Chinese Evergreen",
+        "plantSummary": "Chinese evergreens are popular indoor ornamental plants because they are easy to maintain.",
+        "maintenance": {
+            "level": 1,
+            "comment": "These plants don't need much maintenance, just re-pot every two to three years."
+        },
+        "watering": {
+            "frequency": null,
+            "comment": "Ensure that the soil is always moist, but use slightly less water in the winter."
+        },
+        "lighting": {
+            "level": 2,
+            "comment": "Give this plant a good amount of indoor light, but avoid direct sunlight.",
+            "directSunlight": false
+        },
+        "environment": {
+            "humidity": 2,
+            "comment": "The temperature should be between 65 and 80 degrees farenheit. Keep the himidity medium or high, otherwise the leaves will become dry.",
+            "temperature": {
+                "min": 18,
+                "max": 27
+            }
+        },
+        "toxicity": {
+            "harmfulTo": ["cats", "dogs", "horses"],
+            "comment": null
+        },
+        "sourceURL": "https://www.houseplantsexpert.com/chinese-evergreen.html",
+        "image": {
+            "sourceURL": "https://www.houseplantsexpert.com/image-files/chinese_evergreen1.png",
+            "credit": "Forest and Kim Starr - Plants of Hawaii"
+        }
+    }
+]
