@@ -26,7 +26,7 @@ const plantSchema = new mongoose.Schema({
     comment: String,
     temperature: {
       min: Number, // Celcius
-      max: Number, // Celcuis
+      max: Number, // Celcius
     },
   },
   toxicity: {
