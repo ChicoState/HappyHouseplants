@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, ScrollView, Image } from 'react-native';
 import { Card, Layout, Text } from '@ui-kitten/components';
+import PropTypes from 'prop-types';
 import { SERVER_ADDR } from '../server';
 
 const styles = StyleSheet.create({
@@ -65,6 +66,7 @@ class RecList extends Component {
 
   render() {
     const { loaded, error, recList } = this.state;
+    const { onPressItem } = this.props;
     if (error) {
       const errMsg = `Failed to load recommendations.\n${error}`;
       return (<Text>{errMsg}</Text>);
@@ -81,6 +83,7 @@ class RecList extends Component {
         status="basic"
         header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
         footer={renderItemFooter}
+        onPress={() => { onPressItem(plant); }}
       >
         <Image
           source={{ uri: plant.image.sourceURL }}
@@ -100,5 +103,9 @@ class RecList extends Component {
     );
   }
 }
+
+RecList.propTypes = {
+  onPressItem: PropTypes.func.isRequired,
+};
 
 export default RecList;
