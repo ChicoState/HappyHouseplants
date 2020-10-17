@@ -47,10 +47,10 @@ class RecList extends Component {
   }
 
   componentDidMount() {
-    //setState: changes the state/personal data storage
+    // setState: changes the state/personal data storage
     this.setState({
       loaded: true,
-      //plantIDs: MockRec.map((x) => x.plantID), returns anarrray of plant Ids
+      // plantIDs: MockRec.map((x) => x.plantID), returns anarrray of plant Ids
     });
   }
 
@@ -93,51 +93,3 @@ class RecList extends Component {
 
 export default RecList;
 
-/*
-const renderItem = (plant) => (
-      <Text>
-        {plant.plantName}
-      </Text>
-      <Card
-        key={plant.plantID}
-        style={styles.card}
-        status="basic"
-        header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
-        footer={renderItemFooter}
-      >
-
-        <Image
-          source={{ uri: plant.image.sourceURL }}
-          style={{ width: 300, height: 300 }}
-        />
-      </Card>
-    );
-  return (
-      <List
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-        data={plantList}
-        renderItem={renderItem}
-      />
-    );
-    */
-
-/*
-componentDidMount() {
-  const floatThis = this;
-  const { recID } = this.props;
-  const data = MockRec.find((x) => x.recID === recID);
-  floatThis.setState({
-    visible: true,
-    plantName: data.plantName,
-    plantLevel: data.plantLevel,
-    waterFreq: data.waterFreq,
-    fertFreq: data.fertFreq,
-    enviorn: data.enviorn,
-    lightReq: data.lightReq,
-    tempReq: data.tempReq,
-    soucreImage: data.soucreImage,
-    sourceURL: data.sourceURL,
-  });
-}
-*/
