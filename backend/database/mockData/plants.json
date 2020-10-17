@@ -1,0 +1,72 @@
+[
+  {
+    "plantID": "1",
+    "plantName": "Chinese Evergreen",
+    "plantSummary": "Chinese evergreens are popular indoor ornamental plants because they are easy to maintain.",
+    "maintenance": {
+      "level": 1,
+      "comment": "These plants don't need much maintenance, just re-pot every two to three years."
+    },
+    "watering": {
+      "frequency": null,
+      "comment": "Ensure that the soil is always moist, but use slightly less water in the winter."
+    },
+    "lighting": {
+      "level": 2,
+      "comment": "Give this plant a good amount of indoor light, but avoid direct sunlight.",
+      "directSunlight": false
+    },
+    "environment": {
+      "humidity": 2,
+      "comment": "The temperature should be between 65 and 80 degrees farenheit. Keep the himidity medium or high, otherwise the leaves will become dry.",
+      "temperature": {
+        "min": 18,
+        "max": 27
+      }
+    },
+    "toxicity": {
+      "harmfulTo": ["cats", "dogs", "horses"],
+      "comment": null
+    },
+    "sourceURL": "https://www.houseplantsexpert.com/chinese-evergreen.html",
+    "image": {
+      "sourceURL": "https://www.houseplantsexpert.com/image-files/chinese_evergreen1.png",
+      "credit": "Forest and Kim Starr - Plants of Hawaii"
+    }
+  },
+  {
+    "plantID": "2",
+    "plantName": "Jade Plant",
+    "plantSummary": null,
+    "maintenance": {
+      "level": 1,
+      "comment": null
+    },
+    "watering": {
+      "frequency": null,
+      "comment": "The Jade plant does not need to be watered on a schedule. Only water it when the top of the soil is dry to the touch."
+    },
+    "lighting": {
+      "level": 3,
+      "comment": "Jade plants need direct sunlight to grow properly.",
+      "directSunlight": true
+    },
+    "environment": {
+      "humidity": null,
+      "comment": null,
+      "temperature": {
+          "min": 18,
+          "max": 24
+      }
+    },
+    "toxicity": {
+      "harmfulTo": ["dogs", "cats", "horses"],
+      "comment": null
+    },
+    "sourceURL": "https://www.gardeningknowhow.com/houseplants/jade-plant/jade-plant-care.htm",
+    "image": {
+      "sourceURL": "https://www.gardeningknowhow.com/wp-content/uploads/2010/01/jade-plant-1-400x300.jpg",
+      "credit": "Gardening Know How"
+    }
+  }
+]

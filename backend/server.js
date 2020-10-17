@@ -6,6 +6,7 @@ const HOST = '0.0.0.0';
 const PORT = '8080';
 const { databaseConnection } = require('./database/mongooseConnect.js');
 const { findDocuments } = require('./database/findDocuments');
+const { insertTestData } = require('./database/mockData/mockDatabase');
 
 function main() {
   console.log('Server starting...');
@@ -16,6 +17,7 @@ function main() {
  */
 databaseConnection.once('open', () => {
   main();
+  insertTestData();
 });
 
 app.get('/random_tips/', (req, res) => {
@@ -92,6 +94,24 @@ app.get('/users/:userId/plants', (req, res) => {
     } else {
       const user = docs[0];
       res.send(user.savedPlantsByID);
+    }
+  });
+});
+
+app.get('/plants/', (req, res) => {
+  const plantsQuery = {};
+  findDocuments('Plants', plantsQuery).then((docs) => {
+    res.send(docs);
+  });
+});
+
+app.get('/plants/:plantID', (req, res) => {
+  const userQuery = { plantID: req.params.plantID };
+  findDocuments('Plants', userQuery).then((docs) => {
+    if (docs.length < 1) {
+      res.status(404).send('Plant not found');
+    } else {
+      res.send(docs[0]);
     }
   });
 });
