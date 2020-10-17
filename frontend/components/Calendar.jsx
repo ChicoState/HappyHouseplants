@@ -30,7 +30,7 @@ export default class Calend extends React.Component {
             textSectionTitleDisabledColor: '#d9e1e8',
             selectedDayBackgroundColor: 'blue',
             selectedDayTextColor: '#ffffff',
-            todayTextColor: 'purple',
+            todayTextColor: 'blue',
             dayTextColor: '#2d4150',
             textDisabledColor: 'grey',
             dotColor: '#00adf5',
