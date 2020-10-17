@@ -7,9 +7,9 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
-
 import Calend from './components/Calendar';
-import SeachBar from './components/Search';
+import SearchBar from './components/Search';
+import Recommend from './components/RecList';
 import TipList from './components/TipList';
 import UserInput from './components/GetUserInput';
 import PlantProfile from './components/PlantProfile';
@@ -32,6 +32,10 @@ function HomeScreen(obj) {
       <Text />
       <Button status="success" onPress={() => { navigation.navigate('Tips'); }}>
         Go to Tips
+      </Button>
+      <Text />
+      <Button status="success" onPress={() => { navigation.navigate('Recommend'); }}>
+        Go to Recommendations
       </Button>
       <Text />
       <Button status="success" onPress={() => { navigation.navigate('Search'); }}>
@@ -83,9 +87,21 @@ function CalendarScreen() {
 function TipScreen() {
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Tips</Text>
       <Text />
       <TipList />
+    </Layout>
+  );
+}
+
+function RecommendScreen(obj) {
+  /* 2. Get the param */
+  const { navigation } = obj;
+  return (
+    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Recommend onPressItem={(plant) => {
+        navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
+      }}
+      />
     </Layout>
   );
 }
@@ -95,9 +111,10 @@ function SearchScreen(obj) {
   const { navigation } = obj;
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Search</Text>
-      <Text />
-      <SeachBar />
+      <SearchBar onPressItem={(plant) => {
+        navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
+      }}
+      />
     </Layout>
   );
 }
@@ -118,6 +135,7 @@ function App() {
           />
           <Stack.Screen name="Calendar" component={CalendarScreen} />
           <Stack.Screen name="Tips" component={TipScreen} />
+          <Stack.Screen name="Recommend" component={RecommendScreen} />
           <Stack.Screen name="Search" component={SearchScreen} />
         </Stack.Navigator>
       </NavigationContainer>
