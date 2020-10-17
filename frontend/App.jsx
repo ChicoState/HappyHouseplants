@@ -33,6 +33,7 @@ function HomeScreen(obj) {
       <Button status="success" onPress={() => { navigation.navigate('Tips'); }}>
         Go to Tips
       </Button>
+      <Text />
       <Button status="success" onPress={() => { navigation.navigate('Search'); }}>
         Go to Search
       </Button>
@@ -93,28 +94,34 @@ function SearchScreen(obj) {
   /* 2. Get the param */
   const { navigation } = obj;
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Search</Text>
       <Text />
       <SeachBar />
-      <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
-      <Text />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
-    </View>
+    </Layout>
   );
 }
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="My Plants" component={MyPlantsScreen} />
-        <Stack.Screen name="Calendar" component={CalendarScreen} />
-        <Stack.Screen name="Tips" component={TipScreen} />
-        <Stack.Screen name="Search" component={SearchScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ApplicationProvider mapping={eva.mapping} theme={eva.light}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="My Plants" component={MyPlantsScreen} />
+          <Stack.Screen
+            name="PlantProfile"
+            component={PlantProfileScreen}
+            options={(navContext) => ({
+              title: navContext.route.params.plantName ?? 'Plant Profile',
+            })}
+          />
+          <Stack.Screen name="Calendar" component={CalendarScreen} />
+          <Stack.Screen name="Tips" component={TipScreen} />
+          <Stack.Screen name="Search" component={SearchScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ApplicationProvider>
   );
 }
 
