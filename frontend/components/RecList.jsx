@@ -75,10 +75,10 @@ class RecList extends Component {
     if (!loaded) {
       return (<Text>Loading Recommendations...</Text>);
     }
-
+    const id = '_id'; // to prevent linter issues
     const myCards = recList.map((plant) => (
       <Card
-        key={plant.plantID}
+        key={plant[id]}
         style={styles.card}
         status="basic"
         header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
