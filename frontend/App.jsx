@@ -8,6 +8,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
 import Calend from './components/Calendar';
+import SearchBar from './components/Search';
 import Recommend from './components/RecList';
 import TipList from './components/TipList';
 import UserInput from './components/GetUserInput';
@@ -35,6 +36,10 @@ function HomeScreen(obj) {
       <Text />
       <Button status="success" onPress={() => { navigation.navigate('Recommend'); }}>
         Go to Recommendations
+      </Button>
+      <Text />
+      <Button status="success" onPress={() => { navigation.navigate('Search'); }}>
+        Go to Search
       </Button>
     </Layout>
   );
@@ -101,6 +106,19 @@ function RecommendScreen(obj) {
   );
 }
 
+function SearchScreen(obj) {
+  /* 2. Get the param */
+  const { navigation } = obj;
+  return (
+    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <SearchBar onPressItem={(plant) => {
+        navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
+      }}
+      />
+    </Layout>
+  );
+}
+
 function App() {
   return (
     <ApplicationProvider mapping={eva.mapping} theme={eva.light}>
@@ -118,6 +136,7 @@ function App() {
           <Stack.Screen name="Calendar" component={CalendarScreen} />
           <Stack.Screen name="Tips" component={TipScreen} />
           <Stack.Screen name="Recommend" component={RecommendScreen} />
+          <Stack.Screen name="Search" component={SearchScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>
