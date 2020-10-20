@@ -18,6 +18,8 @@
     },
     "environment": {
       "humidity": 2,
+      "indoor": null,
+      "outdoor": null,
       "comment": "The temperature should be between 65 and 80 degrees farenheit. Keep the himidity medium or high, otherwise the leaves will become dry.",
       "temperature": {
         "min": 18,
@@ -53,6 +55,8 @@
     },
     "environment": {
       "humidity": null,
+      "indoor": null,
+      "outdoor": null,
       "comment": null,
       "temperature": {
           "min": 18,
