@@ -5,7 +5,7 @@ import { Calendar } from 'react-native-calendars';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import {
-  Layout, Text,
+  Layout, Text, Button,
 } from '@ui-kitten/components';
 import UserInput from './GetUserInput';
 
@@ -119,12 +119,18 @@ Calend.propTypes = {
 };
 
 class InputView extends React.Component {
+  // eslint-disable-next-line class-methods-use-this
+  saveToCalendar() {
+    console.log('Saved');
+  }
+
   render() {
     return (
       <Layout style={{ flex: 1 }}>
         <Text>
           Enter Text:
           <UserInput />
+          <Button onPress={this.saveToCalendar} />
         </Text>
       </Layout>
     );
@@ -132,7 +138,9 @@ class InputView extends React.Component {
 }
 
 export default function CalendarView() {
-  const [ showInputView, setShowInputView ] = React.useState(false);
+  // const datesMarked = {};
+  const [showInputView, setShowInputView] = React.useState(false);
+  // const [showSavedNotes, setSavedNotes] = React.useState(datesMarked);
   return (
     showInputView ? <InputView view={setShowInputView} />
       : <Calend view={setShowInputView} />
