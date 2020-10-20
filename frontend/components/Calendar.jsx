@@ -1,7 +1,14 @@
+/* eslint-disable max-classes-per-file */
 /* eslint-disable react/prefer-stateless-function */
 import React from 'react';
 import { Calendar } from 'react-native-calendars';
 import { View } from 'react-native';
+import PropTypes from 'prop-types';
+import {
+  Layout, Text,
+} from '@ui-kitten/components';
+import UserInput from './GetUserInput';
+
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
 
@@ -10,14 +17,7 @@ const datesMarked = {
 
 let selectedDate = {};
 
-export default class Calend extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { tipsView: false };
-  }
-  getTipsView() {
-    return this.tipsView;
-  }
+class Calend extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
@@ -79,21 +79,21 @@ export default class Calend extends React.Component {
               selectedDate[day.dateString] = {
                 selected: true,
                 marked: true,
-                selectedColor: 'green',              };
+                selectedColor: 'green',
+              };
             }
             console.log(datesMarked);
             this.setState(datesMarked);
           }}
-
-          onDayLongPress={(day) => {
-            this.state.tipsView = true;
-            console.log(this.state.tipsView);
+          onDayLongPress={() => {
             console.log('LONG PRESS');
-            //this.setState(true)
+            const { view } = this.props;
+            view(true);
           }}
           // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
           monthFormat="MMMM yyyy"
-          // Handler which gets executed when visible month changes in calendar. Default = undefined
+          // Handler which gets executed when visible month changes in calendar. 
+          // Default = undefined
           onMonthChange={(month) => {
             console.log('month changed', month);
           }}
@@ -112,4 +112,29 @@ export default class Calend extends React.Component {
       </View>
     );
   }
+}
+
+Calend.propTypes = {
+  view: PropTypes.func.isRequired,
+};
+
+class InputView extends React.Component {
+  render() {
+    return (
+      <Layout style={{ flex: 1 }}>
+        <Text>
+          Enter Text:
+          <UserInput />
+        </Text>
+      </Layout>
+    );
+  }
+}
+
+export default function CalendarView() {
+  const [ showInputView, setShowInputView ] = React.useState(false);
+  return (
+    showInputView ? <InputView view={setShowInputView} />
+      : <Calend view={setShowInputView} />
+  );
 }

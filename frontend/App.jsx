@@ -7,7 +7,7 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
-import Calend from './components/Calendar';
+import CalendarView from './components/Calendar';
 import SearchBar from './components/Search';
 import Recommend from './components/RecList';
 import TipList from './components/TipList';
@@ -82,25 +82,12 @@ function PlantProfileScreen(navContext) {
 //       <Text />
 //     </Layout>
 
-const calendarView = 
-  <Layout style={{ flex: 1 }}>
-      <Calend />
-      <Layout style={{ flex: 1 }}>
-      </Layout>
-    </Layout>;
-
-const textView =
-<Layout style={{ flex: 1}}>
-  <Text> Enter Text:
-  <UserInput />
-  </Text>
-</Layout>
-
 function CalendarScreen() {
-  const calendar = new Calend();
-  console.log(calendar.getTipsView());
   return (
-    calendar.getTipsView ? calendarView : textView
+    <Layout style={{ flex: 1 }}>
+      <CalendarView inputView={false} />
+    </Layout>
+    // calendar.getTipsView ? calendarView : textView
   );
 }
 
