@@ -63,24 +63,44 @@ function PlantProfileScreen(navContext) {
   return (<PlantProfile plantID={params.plantID} hideTitle={params.plantName !== undefined} />);
 }
 
-function CalendarScreen() {
-  return (
-    <Layout style={{ flex: 1 }}>
+// function CalendarScreen() {
+//   return (
+//     <Layout style={{ flex: 1 }}>
+//       <Calend />
+//       <UserInput />
+//       <Text />
+//       <Text />
+//       <Text />
+//       <Text />
+//       <Text />
+//       <Text />
+//       <Text />
+//       <Text />
+//       <Text />
+//       <Text />
+//       <Text />
+//       <Text />
+//     </Layout>
+
+const calendarView = 
+  <Layout style={{ flex: 1 }}>
       <Calend />
-      <UserInput />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-    </Layout>
+      <Layout style={{ flex: 1 }}>
+      </Layout>
+    </Layout>;
+
+const textView =
+<Layout style={{ flex: 1}}>
+  <Text> Enter Text:
+  <UserInput />
+  </Text>
+</Layout>
+
+function CalendarScreen() {
+  const calendar = new Calend();
+  console.log(calendar.getTipsView());
+  return (
+    calendar.getTipsView ? calendarView : textView
   );
 }
 

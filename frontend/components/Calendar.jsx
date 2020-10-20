@@ -2,14 +2,22 @@
 import React from 'react';
 import { Calendar } from 'react-native-calendars';
 import { View } from 'react-native';
-
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
 
 const datesMarked = {
 };
 
+let selectedDate = {};
+
 export default class Calend extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { tipsView: false };
+  }
+  getTipsView() {
+    return this.tipsView;
+  }
   render() {
     return (
       <View style={{ flex: 1 }}>
@@ -52,6 +60,7 @@ export default class Calend extends React.Component {
           // Collection of dates that have to be marked. Default = {}
           markedDates={{
             ...datesMarked,
+            ...selectedDate,
           }}
           // Initially visible month. Default = Date()
           current={new Date()}
@@ -63,17 +72,24 @@ export default class Calend extends React.Component {
           onDayPress={(day) => {
             console.log('selected day', day);
             console.log(day.dateString);
+            selectedDate = {};
             if (datesMarked[day.dateString]) {
               delete datesMarked[day.dateString];
             } else {
-              datesMarked[day.dateString] = {
+              selectedDate[day.dateString] = {
                 selected: true,
                 marked: true,
-                selectedColor: 'green',
-              };
+                selectedColor: 'green',              };
             }
             console.log(datesMarked);
             this.setState(datesMarked);
+          }}
+
+          onDayLongPress={(day) => {
+            this.state.tipsView = true;
+            console.log(this.state.tipsView);
+            console.log('LONG PRESS');
+            //this.setState(true)
           }}
           // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
           monthFormat="MMMM yyyy"
