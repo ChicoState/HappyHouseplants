@@ -170,7 +170,7 @@ export default function CalendarView() {
   const savedDates = {};
   const day = '01-01-01';
   const [showInputView, setShowInputView] = React.useState(false);
-  const [showSavedNotes, setSavedNotes] = React.useState(savedDates);
+  // const [showSavedNotes, setSavedNotes] = React.useState(savedDates);
   const [dayPicked, setDayPicked] = React.useState(day);
   const [savedDays, setSavedDays] = React.useState(savedDates);
   
@@ -179,7 +179,7 @@ export default function CalendarView() {
       ? (
         <InputView
           view={setShowInputView}
-          notes={setSavedNotes}
+          // notes={setSavedNotes}
           selectDay={setDayPicked}
           datePicked={dayPicked}
           savedDates={savedDays}
@@ -189,8 +189,8 @@ export default function CalendarView() {
       : (
         <Calend
           view={setShowInputView}
-          notes={setSavedNotes}
-          showNotes={showSavedNotes}
+          // notes={setSavedNotes}
+          // showNotes={showSavedNotes}
           datePicked={dayPicked}
           selectDay={setDayPicked}
           savedDates={savedDays}
