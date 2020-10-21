@@ -63,31 +63,11 @@ function PlantProfileScreen(navContext) {
   return (<PlantProfile plantID={params.plantID} hideTitle={params.plantName !== undefined} />);
 }
 
-// function CalendarScreen() {
-//   return (
-//     <Layout style={{ flex: 1 }}>
-//       <Calend />
-//       <UserInput />
-//       <Text />
-//       <Text />
-//       <Text />
-//       <Text />
-//       <Text />
-//       <Text />
-//       <Text />
-//       <Text />
-//       <Text />
-//       <Text />
-//       <Text />
-//       <Text />
-//     </Layout>
-
 function CalendarScreen() {
   return (
     <Layout style={{ flex: 1 }}>
-      <CalendarView inputView={false} />
+      <CalendarView />
     </Layout>
-    // calendar.getTipsView ? calendarView : textView
   );
 }
 
