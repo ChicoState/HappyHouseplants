@@ -95,7 +95,7 @@ class Calend extends React.Component {
           }}
           // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
           monthFormat="MMMM yyyy"
-          // Handler which gets executed when visible month changes in calendar. 
+          // Handler which gets executed when visible month changes in calendar.
           // Default = undefined
           onMonthChange={(month) => {
             console.log('month changed', month);
@@ -119,17 +119,17 @@ class Calend extends React.Component {
 
 Calend.propTypes = {
   view: PropTypes.func.isRequired,
-  notes: PropTypes.func,
-  showNotes: PropTypes.object,
+  // notes: PropTypes.func,
+  showNotes: PropTypes.objectOf(PropTypes.object()),
   datePicked: PropTypes.string,
   selectDay: PropTypes.func,
   savedDates: PropTypes.object,
-  setSavedDates: PropTypes.func
+  setSavedDates: PropTypes.func,
 };
 
 class InputView extends React.Component {
   // eslint-disable-next-line class-methods-use-this
-  //TODO: change selectedColor to variable that is defined by user selection
+  // TODO: change selectedColor to variable that is defined by user selection
   saveToCalendar() {
     console.log('Saved');
     const { setSavedDates, savedDates, datePicked, view } = this.props;
