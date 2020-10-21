@@ -2,26 +2,47 @@
 /* eslint-disable import/prefer-default-export */
 import React, { Component } from 'react';
 import { StyleSheet, ScrollView, Image } from 'react-native';
-import { Card, Layout, Text } from '@ui-kitten/components';
+import { Button, Card, Icon, Layout, Text } from '@ui-kitten/components';
 import PropTypes from 'prop-types';
 import { SERVER_ADDR } from '../server';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  contentContainer: {
-    paddingHorizontal: 70,
-    paddingVertical: 80,
+    width: '90%' 
   },
   card: {
-    marginVertical: 5,
-    maxWidth: 900,
+    marginVertical: 10,
+    
+  },
+  cardFooter:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   button: {
-    margin: 2,
+    margin: 3,
+    width: 1,
+    height:3,
+    flex: .5,
   },
+  image: {
+    width: '80%', 
+    height: 300
+  }
 });
+
+const saveIcon = (props) => (
+  <Icon {...props} name='heart'/>
+  //<TouchableWithoutFeedback onPress={toggleSaveEntry}>
+  //  <Icon {...props} name={!saveEntry ? 'heart' : 'heart-outline'}/>
+  //</TouchableWithoutFeedback>
+);
+
+const collectionIcon = (props) => (
+  <Icon {...props} name='plus-outline'/>
+
+);
 
 const renderItemHeader = (headerProps, info) => (
   <Layout {...headerProps}>
@@ -31,10 +52,23 @@ const renderItemHeader = (headerProps, info) => (
   </Layout>
 );
 
+//onPress={() => { onPressItem(plant); }}
 const renderItemFooter = (footerProps) => (
-  <Text {...footerProps}>
-    Like
-  </Text>
+  <Layout {...footerProps} style = {styles.cardFooter}>
+
+      <Button
+            style={styles.button}
+            status='basic'
+            appearance='ghost'
+            accessoryLeft={saveIcon}
+      />
+      <Button
+            style={styles.button}
+            status='basic'
+            appearance='ghost'
+            accessoryLeft={collectionIcon}
+      />
+  </Layout>
 );
 
 class RecList extends Component {
@@ -75,28 +109,32 @@ class RecList extends Component {
     if (!loaded) {
       return (<Text>Loading Recommendations...</Text>);
     }
+
+
+
     const id = '_id'; // to prevent linter issues
     const myCards = recList.map((plant) => (
+      
+      //<cardItem plant={plant} styles={styles} onPressItem={onPressItem} />
+
       <Card
         key={plant[id]}
         style={styles.card}
-        status="basic"
+        status="primary"
         header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
         footer={renderItemFooter}
         onPress={() => { onPressItem(plant); }}
       >
         <Image
           source={{ uri: plant.image.sourceURL }}
-          style={{ width: 150, height: 150 }}
+          style={ styles.image }
         />
       </Card>
     ));
 
     return (
-      <Layout
-        style={styles.container}
-      >
-        <ScrollView style={{ flex: 1 }}>
+      <Layout style={styles.container}>
+        <ScrollView >
           {myCards}
         </ScrollView>
       </Layout>

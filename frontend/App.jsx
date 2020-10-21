@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as eva from '@eva-design/eva';
 import {
-  ApplicationProvider, Layout, Text, Button,
+  ApplicationProvider, Button, IconRegistry, Layout, Text,
 } from '@ui-kitten/components';
-
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
@@ -94,15 +94,18 @@ function TipScreen() {
 }
 
 function RecommendScreen(obj) {
-  /* 2. Get the param */
+  
   const { navigation } = obj;
   return (
+    <>
+    <IconRegistry icons={EvaIconsPack} />
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Recommend onPressItem={(plant) => {
         navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
       }}
       />
     </Layout>
+    </>
   );
 }
 
@@ -121,6 +124,8 @@ function SearchScreen(obj) {
 
 function App() {
   return (
+    <>
+    <IconRegistry icons={EvaIconsPack} />
     <ApplicationProvider mapping={eva.mapping} theme={eva.light}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
@@ -140,6 +145,7 @@ function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </ApplicationProvider>
+    </>
   );
 }
 
