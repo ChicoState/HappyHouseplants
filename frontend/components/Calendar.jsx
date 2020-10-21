@@ -139,6 +139,8 @@ Calend.defaultProps = {
 class InputView extends React.Component {
   // eslint-disable-next-line class-methods-use-this
   // TODO: change selectedColor to variable that is defined by user selection
+  saveToCalendar = this.saveToCalendar.bind(this);
+
   saveToCalendar() {
     console.log('Saved');
     const {
@@ -151,10 +153,9 @@ class InputView extends React.Component {
       selectedDotColor: 'red',
     };
     setSavedDates(noteDateSaved);
+    console.log(savedDates);
     view(false);
   }
-
-  saveToCalendar = this.saveToCalendar.bind(this);
 
   render() {
     return (
