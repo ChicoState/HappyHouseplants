@@ -120,11 +120,20 @@ class Calend extends React.Component {
 Calend.propTypes = {
   view: PropTypes.func.isRequired,
   // notes: PropTypes.func,
-  showNotes: PropTypes.objectOf(PropTypes.object()),
-  datePicked: PropTypes.string,
+  // showNotes: PropTypes.objectOf(PropTypes.object()),
+  // datePicked: PropTypes.string,
   selectDay: PropTypes.func,
-  savedDates: PropTypes.object,
-  setSavedDates: PropTypes.func,
+  savedDates: PropTypes.objectOf(PropTypes.object()),
+  // setSavedDates: PropTypes.func,
+};
+
+Calend.defaultProps = {
+  // notes: null,
+  // showNotes: null,
+  // datePicked: null,
+  selectDay: null,
+  savedDates: null,
+  // setSavedDates: null,
 };
 
 class InputView extends React.Component {
@@ -132,7 +141,9 @@ class InputView extends React.Component {
   // TODO: change selectedColor to variable that is defined by user selection
   saveToCalendar() {
     console.log('Saved');
-    const { setSavedDates, savedDates, datePicked, view } = this.props;
+    const {
+      setSavedDates, savedDates, datePicked, view,
+    } = this.props;
     noteDateSaved[datePicked] = {
       selected: true,
       marked: true,
@@ -160,12 +171,21 @@ class InputView extends React.Component {
 
 InputView.propTypes = {
   view: PropTypes.func.isRequired,
-  notes: PropTypes.func,
-  selectDay: PropTypes.func,
+  // notes: PropTypes.func,
+  // selectDay: PropTypes.func,
   datePicked: PropTypes.string,
-  savedDates: PropTypes.object,
-  setSavedDates: PropTypes.func
-}
+  savedDates: PropTypes.objectOf(PropTypes.object()),
+  setSavedDates: PropTypes.func,
+};
+
+InputView.defaultProps = {
+  // notes: null,
+  // selectDay: null,
+  datePicked: null,
+  savedDates: null,
+  setSavedDates: null,
+};
+
 export default function CalendarView() {
   const savedDates = {};
   const day = '01-01-01';
@@ -173,7 +193,6 @@ export default function CalendarView() {
   // const [showSavedNotes, setSavedNotes] = React.useState(savedDates);
   const [dayPicked, setDayPicked] = React.useState(day);
   const [savedDays, setSavedDays] = React.useState(savedDates);
-  
   return (
     showInputView
       ? (
