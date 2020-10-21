@@ -120,6 +120,12 @@ class Calend extends React.Component {
 
 Calend.propTypes = {
   view: PropTypes.func.isRequired,
+  notes: PropTypes.func,
+  showNotes: PropTypes.string,
+  datePicked: PropTypes.string,
+  selectDay: PropTypes.func,
+  savedDates: PropTypes.string,
+  setSavedDates: PropTypes.func
 };
 
 class InputView extends React.Component {
@@ -156,6 +162,14 @@ class InputView extends React.Component {
   }
 }
 
+InputView.propTypes = {
+  view: PropTypes.func.isRequired,
+  notes: PropTypes.func,
+  selectDay: PropTypes.func,
+  datePicked: PropTypes.string,
+  savedDates: PropTypes.string,
+  setSavedDates: PropTypes.func
+}
 export default function CalendarView() {
   const savedDates = {};
   const day = '01-01-01';
