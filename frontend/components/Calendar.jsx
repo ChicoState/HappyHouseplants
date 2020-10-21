@@ -12,7 +12,7 @@ import UserInput from './GetUserInput';
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
 
-let datesMarked = {
+const datesMarked = {
 };
 const noteDateSaved = {};
 let selectedDate = {};
@@ -140,6 +140,7 @@ class InputView extends React.Component {
     console.log(savedDates);
     view(false);
   }
+
   saveToCalendar = this.saveToCalendar.bind(this);
 
   render() {
@@ -180,6 +181,7 @@ export default function CalendarView() {
         <Calend
           view={setShowInputView}
           notes={setSavedNotes}
+          showNotes={showSavedNotes}
           datePicked={dayPicked}
           selectDay={setDayPicked}
           savedDates={savedDays}

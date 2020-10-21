@@ -11,7 +11,6 @@ import CalendarView from './components/Calendar';
 import SearchBar from './components/Search';
 import Recommend from './components/RecList';
 import TipList from './components/TipList';
-import UserInput from './components/GetUserInput';
 import PlantProfile from './components/PlantProfile';
 
 const Stack = createStackNavigator();
