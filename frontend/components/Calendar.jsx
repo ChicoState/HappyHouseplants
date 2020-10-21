@@ -12,8 +12,7 @@ import UserInput from './GetUserInput';
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
 
-const datesMarked = {
-};
+const datesMarked = {};
 const noteDateSaved = {};
 let selectedDate = {};
 
@@ -121,29 +120,26 @@ class Calend extends React.Component {
 Calend.propTypes = {
   view: PropTypes.func.isRequired,
   notes: PropTypes.func,
-  showNotes: PropTypes.string,
+  showNotes: PropTypes.object,
   datePicked: PropTypes.string,
   selectDay: PropTypes.func,
-  savedDates: PropTypes.string,
+  savedDates: PropTypes.object,
   setSavedDates: PropTypes.func
 };
 
 class InputView extends React.Component {
   // eslint-disable-next-line class-methods-use-this
+  //TODO: change selectedColor to variable that is defined by user selection
   saveToCalendar() {
     console.log('Saved');
-    const { setSavedDates } = this.props;
-    const { savedDates } = this.props;
-    const { datePicked } = this.props;
-    const { view } = this.props;
-    console.log(datePicked);
+    const { setSavedDates, savedDates, datePicked, view } = this.props;
     noteDateSaved[datePicked] = {
       selected: true,
       marked: true,
-      selectedColor: 'red',
+      selectedColor: 'black',
+      selectedDotColor: 'red',
     };
     setSavedDates(noteDateSaved);
-    console.log(savedDates);
     view(false);
   }
 
@@ -167,13 +163,12 @@ InputView.propTypes = {
   notes: PropTypes.func,
   selectDay: PropTypes.func,
   datePicked: PropTypes.string,
-  savedDates: PropTypes.string,
+  savedDates: PropTypes.object,
   setSavedDates: PropTypes.func
 }
 export default function CalendarView() {
   const savedDates = {};
   const day = '01-01-01';
-  // const { navigate } = this.props; 
   const [showInputView, setShowInputView] = React.useState(false);
   const [showSavedNotes, setSavedNotes] = React.useState(savedDates);
   const [dayPicked, setDayPicked] = React.useState(day);
