@@ -14,11 +14,12 @@ const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
 
 const datesMarked = {
 };
-
+const noteDateSaved = {};
 let selectedDate = {};
 
 class Calend extends React.Component {
   render() {
+    const { savedDays } = this.props;
     return (
       <View style={{ flex: 1 }}>
         <Calendar
@@ -58,6 +59,7 @@ class Calend extends React.Component {
             textDayHeaderFontSize: 17,
           }}
           // Collection of dates that have to be marked. Default = {}
+          datesMarked={savedDays}
           markedDates={{
             ...datesMarked,
             ...selectedDate,
@@ -85,10 +87,14 @@ class Calend extends React.Component {
             console.log(datesMarked);
             this.setState(datesMarked);
           }}
-          onDayLongPress={() => {
+          onDayLongPress={(day) => {
             console.log('LONG PRESS');
             const { view } = this.props;
+            const { selectDay } = this.props;
             view(true);
+            console.log(day.dateString);
+            selectDay(day.dateString);
+            console.log(this.props.datePicked);
           }}
           // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
           monthFormat="MMMM yyyy"
@@ -122,6 +128,15 @@ class InputView extends React.Component {
   // eslint-disable-next-line class-methods-use-this
   saveToCalendar() {
     console.log('Saved');
+    // const { setSavedDates } = this.props;
+    const { datePicked } = this.props;
+    console.log(datePicked);
+    /* noteDateSaved[datePicked] = {
+      selected: true,
+      marked: true,
+      selectedColor: 'red',
+    }; */
+    // setSavedDates(noteDateSaved);
   }
 
   render() {
@@ -138,11 +153,33 @@ class InputView extends React.Component {
 }
 
 export default function CalendarView() {
-  // const datesMarked = {};
+  const savedDates = {};
+  const day = '';
   const [showInputView, setShowInputView] = React.useState(false);
-  // const [showSavedNotes, setSavedNotes] = React.useState(datesMarked);
+  const [showSavedNotes, setSavedNotes] = React.useState(savedDates);
+  const [dayPicked, setDayPicked] = React.useState(day);
+  const [savedDays, setSavedDays] = React.useState(savedDates);
   return (
-    showInputView ? <InputView view={setShowInputView} />
-      : <Calend view={setShowInputView} />
+    showInputView
+      ? (
+        <InputView
+          view={setShowInputView}
+          notes={setSavedNotes}
+          selectDay={setDayPicked}
+          datePicked={dayPicked}
+          savedDates={savedDays}
+          setSavedDates={setSavedDays}
+        />
+      )
+      : (
+        <Calend
+          view={setShowInputView}
+          notes={setSavedNotes}
+          datePicked={dayPicked}
+          selectDay={setDayPicked}
+          savedDates={savedDays}
+          setSavedDates={setSavedDays}
+        />
+      )
   );
 }
