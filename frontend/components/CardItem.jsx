@@ -24,12 +24,12 @@ function CardItem(props) {
     // need to remove or or add to from database
   };
 
-  const saveIcon = () => (
-    <Icon {...props} name={!saveEntry ? 'heart' : 'heart-outline'} />
+  const saveIcon = (info) => (
+    <Icon {...info} name={!saveEntry ? 'heart' : 'heart-outline'} />
   );
 
-  const collectionIcon = () => (
-    <Icon {...props} name="plus-outline" />
+  const collectionIcon = (info) => (
+    <Icon {...info} name="plus-outline" />
   );
 
   const renderItemHeader = (headerProps, info) => (
@@ -66,7 +66,7 @@ function CardItem(props) {
       status="basic"
       header={(headerProps) => renderItemHeader(headerProps, itemInfo.plant.plantName)}
       footer={renderItemFooter}
-      onPress={() => { itemInfo.onPressItem(itemInfo.plant); console.log('onpress item called here')}}
+      onPress={() => { itemInfo.onPressItem(itemInfo.plant); console.log('onpress item called here'); }}
     >
       <Image
         source={{ uri: itemInfo.plant.image.sourceURL }}
