@@ -94,17 +94,16 @@ function TipScreen() {
 }
 
 function RecommendScreen(obj) {
-  
   const { navigation } = obj;
   return (
     <>
-    <IconRegistry icons={EvaIconsPack} />
-    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Recommend onPressItem={(plant) => {
-        navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
-      }}
-      />
-    </Layout>
+      <IconRegistry icons={EvaIconsPack} />
+      <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Recommend onPressItem={(plant) => {
+          navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
+        }}
+        />
+      </Layout>
     </>
   );
 }
@@ -125,26 +124,26 @@ function SearchScreen(obj) {
 function App() {
   return (
     <>
-    <IconRegistry icons={EvaIconsPack} />
-    <ApplicationProvider mapping={eva.mapping} theme={eva.light}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="My Plants" component={MyPlantsScreen} />
-          <Stack.Screen
-            name="PlantProfile"
-            component={PlantProfileScreen}
-            options={(navContext) => ({
-              title: navContext.route.params.plantName ?? 'Plant Profile',
-            })}
-          />
-          <Stack.Screen name="Calendar" component={CalendarScreen} />
-          <Stack.Screen name="Tips" component={TipScreen} />
-          <Stack.Screen name="Recommend" component={RecommendScreen} />
-          <Stack.Screen name="Search" component={SearchScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </ApplicationProvider>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider mapping={eva.mapping} theme={eva.light}>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="My Plants" component={MyPlantsScreen} />
+            <Stack.Screen
+              name="PlantProfile"
+              component={PlantProfileScreen}
+              options={(navContext) => ({
+                title: navContext.route.params.plantName ?? 'Plant Profile',
+              })}
+            />
+            <Stack.Screen name="Calendar" component={CalendarScreen} />
+            <Stack.Screen name="Tips" component={TipScreen} />
+            <Stack.Screen name="Recommend" component={RecommendScreen} />
+            <Stack.Screen name="Search" component={SearchScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ApplicationProvider>
     </>
   );
 }
