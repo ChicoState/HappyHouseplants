@@ -13,7 +13,7 @@ services:
       - "27017:27017"
   api:
     image: happyplant-api
-    container_name: happlyplant-api
+    container_name: happyplant-api
     build:
       context: .
       dockerfile: Dockerfile

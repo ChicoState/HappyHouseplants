@@ -1,41 +1,37 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable import/prefer-default-export */
 import React, { Component } from 'react';
-import { StyleSheet, ScrollView, Image } from 'react-native';
-import { Card, Layout, Text } from '@ui-kitten/components';
+import { StyleSheet, ScrollView } from 'react-native';
+import { Layout, Text } from '@ui-kitten/components';
 import PropTypes from 'prop-types';
 import { SERVER_ADDR } from '../server';
+import CardItem from './CardItem';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  contentContainer: {
-    paddingHorizontal: 70,
-    paddingVertical: 80,
+    width: '90%',
   },
   card: {
-    marginVertical: 5,
-    maxWidth: 900,
+    marginVertical: 10,
+
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   button: {
-    margin: 2,
+    margin: 3,
+    width: 1,
+    height: 3,
+    flex: 0.5,
+  },
+  image: {
+    width: '80%',
+    height: 300,
   },
 });
-
-const renderItemHeader = (headerProps, info) => (
-  <Layout {...headerProps}>
-    <Text category="h6">
-      {info}
-    </Text>
-  </Layout>
-);
-
-const renderItemFooter = (footerProps) => (
-  <Text {...footerProps}>
-    Like
-  </Text>
-);
 
 class RecList extends Component {
   constructor() {
@@ -76,27 +72,16 @@ class RecList extends Component {
       return (<Text>Loading Recommendations...</Text>);
     }
 
+    const id = '_id'; // to prevent linter issues
     const myCards = recList.map((plant) => (
-      <Card
-        key={plant.plantID}
-        style={styles.card}
-        status="basic"
-        header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
-        footer={renderItemFooter}
-        onPress={() => { onPressItem(plant); }}
-      >
-        <Image
-          source={{ uri: plant.image.sourceURL }}
-          style={{ width: 150, height: 150 }}
-        />
-      </Card>
+
+      <CardItem key={plant[id]} plant={plant} styles={styles} onPressItem={onPressItem} />
+
     ));
 
     return (
-      <Layout
-        style={styles.container}
-      >
-        <ScrollView style={{ flex: 1 }}>
+      <Layout style={styles.container}>
+        <ScrollView>
           {myCards}
         </ScrollView>
       </Layout>

@@ -1,16 +1,25 @@
+/* eslint-disable max-classes-per-file */
 /* eslint-disable react/prefer-stateless-function */
 import React from 'react';
 import { Calendar } from 'react-native-calendars';
 import { View } from 'react-native';
+import PropTypes from 'prop-types';
+import {
+  Layout, Text, Button,
+} from '@ui-kitten/components';
+import UserInput from './GetUserInput';
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
 
-const datesMarked = {
-};
+const datesMarked = {};
+const noteDateSaved = {};
+let selectedDate = {};
 
-export default class Calend extends React.Component {
+class Calend extends React.Component {
   render() {
+    const { savedDates } = this.props;
+    console.log(`saved: ${JSON.stringify(savedDates)}`);
     return (
       <View style={{ flex: 1 }}>
         <Calendar
@@ -51,7 +60,8 @@ export default class Calend extends React.Component {
           }}
           // Collection of dates that have to be marked. Default = {}
           markedDates={{
-            ...datesMarked,
+            ...savedDates,
+            ...selectedDate,
           }}
           // Initially visible month. Default = Date()
           current={new Date()}
@@ -63,10 +73,11 @@ export default class Calend extends React.Component {
           onDayPress={(day) => {
             console.log('selected day', day);
             console.log(day.dateString);
+            selectedDate = {};
             if (datesMarked[day.dateString]) {
               delete datesMarked[day.dateString];
             } else {
-              datesMarked[day.dateString] = {
+              selectedDate[day.dateString] = {
                 selected: true,
                 marked: true,
                 selectedColor: 'green',
@@ -75,9 +86,17 @@ export default class Calend extends React.Component {
             console.log(datesMarked);
             this.setState(datesMarked);
           }}
+          onDayLongPress={(day) => {
+            console.log('LONG PRESS');
+            const { view } = this.props;
+            const { selectDay } = this.props;
+            view(true);
+            selectDay(day.dateString);
+          }}
           // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
           monthFormat="MMMM yyyy"
-          // Handler which gets executed when visible month changes in calendar. Default = undefined
+          // Handler which gets executed when visible month changes in calendar.
+          // Default = undefined
           onMonthChange={(month) => {
             console.log('month changed', month);
           }}
@@ -96,4 +115,107 @@ export default class Calend extends React.Component {
       </View>
     );
   }
+}
+
+Calend.propTypes = {
+  view: PropTypes.func.isRequired,
+  // notes: PropTypes.func,
+  // showNotes: PropTypes.objectOf(PropTypes.object()),
+  // datePicked: PropTypes.string,
+  selectDay: PropTypes.func,
+  savedDates: PropTypes.objectOf(PropTypes.object()),
+  // setSavedDates: PropTypes.func,
+};
+
+Calend.defaultProps = {
+  // notes: null,
+  // showNotes: null,
+  // datePicked: null,
+  selectDay: null,
+  savedDates: null,
+  // setSavedDates: null,
+};
+
+class InputView extends React.Component {
+  // eslint-disable-next-line class-methods-use-this
+  // TODO: change selectedColor to variable that is defined by user selection
+  saveToCalendar = this.saveToCalendar.bind(this);
+
+  saveToCalendar() {
+    console.log('Saved');
+    const {
+      setSavedDates, savedDates, datePicked, view,
+    } = this.props;
+    noteDateSaved[datePicked] = {
+      selected: true,
+      marked: true,
+      selectedColor: 'black',
+      selectedDotColor: 'red',
+    };
+    setSavedDates(noteDateSaved);
+    console.log(savedDates);
+    view(false);
+  }
+
+  render() {
+    return (
+      <Layout style={{ flex: 1 }}>
+        <Text>
+          Enter Text:
+          <UserInput />
+          <Button onPress={this.saveToCalendar} />
+        </Text>
+      </Layout>
+    );
+  }
+}
+
+InputView.propTypes = {
+  view: PropTypes.func.isRequired,
+  // notes: PropTypes.func,
+  // selectDay: PropTypes.func,
+  datePicked: PropTypes.string,
+  savedDates: PropTypes.objectOf(PropTypes.object()),
+  setSavedDates: PropTypes.func,
+};
+
+InputView.defaultProps = {
+  // notes: null,
+  // selectDay: null,
+  datePicked: null,
+  savedDates: null,
+  setSavedDates: null,
+};
+
+export default function CalendarView() {
+  const savedDates = {};
+  const day = '01-01-01';
+  const [showInputView, setShowInputView] = React.useState(false);
+  // const [showSavedNotes, setSavedNotes] = React.useState(savedDates);
+  const [dayPicked, setDayPicked] = React.useState(day);
+  const [savedDays, setSavedDays] = React.useState(savedDates);
+  return (
+    showInputView
+      ? (
+        <InputView
+          view={setShowInputView}
+          // notes={setSavedNotes}
+          selectDay={setDayPicked}
+          datePicked={dayPicked}
+          savedDates={savedDays}
+          setSavedDates={setSavedDays}
+        />
+      )
+      : (
+        <Calend
+          view={setShowInputView}
+          // notes={setSavedNotes}
+          // showNotes={showSavedNotes}
+          datePicked={dayPicked}
+          selectDay={setDayPicked}
+          savedDates={savedDays}
+          setSavedDates={setSavedDays}
+        />
+      )
+  );
 }

@@ -9,6 +9,7 @@
     "@react-navigation/native": "^5.7.5",
     "@react-navigation/stack": "^5.9.2",
     "@ui-kitten/components": "^5.0.0",
+    "@ui-kitten/eva-icons": "^5.0.0",
     "@ui-kitten/metro-config": "^5.0.0",
     "babel-plugin-inline-dotenv": "^1.6.0",
     "babel-preset-expo": "^8.3.0",
