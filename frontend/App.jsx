@@ -1,17 +1,16 @@
 import * as React from 'react';
 import * as eva from '@eva-design/eva';
 import {
-  ApplicationProvider, Layout, Text, Button,
+  ApplicationProvider, Button, IconRegistry, Layout, Text,
 } from '@ui-kitten/components';
-
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
-import Calend from './components/Calendar';
+import CalendarView from './components/Calendar';
 import SearchBar from './components/Search';
 import Recommend from './components/RecList';
 import TipList from './components/TipList';
-import UserInput from './components/GetUserInput';
 import PlantProfile from './components/PlantProfile';
 
 const Stack = createStackNavigator();
@@ -66,20 +65,7 @@ function PlantProfileScreen(navContext) {
 function CalendarScreen() {
   return (
     <Layout style={{ flex: 1 }}>
-      <Calend />
-      <UserInput />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
+      <CalendarView />
     </Layout>
   );
 }
@@ -94,15 +80,17 @@ function TipScreen() {
 }
 
 function RecommendScreen(obj) {
-  /* 2. Get the param */
   const { navigation } = obj;
   return (
-    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Recommend onPressItem={(plant) => {
-        navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
-      }}
-      />
-    </Layout>
+    <>
+      <IconRegistry icons={EvaIconsPack} />
+      <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Recommend onPressItem={(plant) => {
+          navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
+        }}
+        />
+      </Layout>
+    </>
   );
 }
 
@@ -121,25 +109,28 @@ function SearchScreen(obj) {
 
 function App() {
   return (
-    <ApplicationProvider mapping={eva.mapping} theme={eva.light}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="My Plants" component={MyPlantsScreen} />
-          <Stack.Screen
-            name="PlantProfile"
-            component={PlantProfileScreen}
-            options={(navContext) => ({
-              title: navContext.route.params.plantName ?? 'Plant Profile',
-            })}
-          />
-          <Stack.Screen name="Calendar" component={CalendarScreen} />
-          <Stack.Screen name="Tips" component={TipScreen} />
-          <Stack.Screen name="Recommend" component={RecommendScreen} />
-          <Stack.Screen name="Search" component={SearchScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </ApplicationProvider>
+    <>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider mapping={eva.mapping} theme={eva.light}>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="My Plants" component={MyPlantsScreen} />
+            <Stack.Screen
+              name="PlantProfile"
+              component={PlantProfileScreen}
+              options={(navContext) => ({
+                title: navContext.route.params.plantName ?? 'Plant Profile',
+              })}
+            />
+            <Stack.Screen name="Calendar" component={CalendarScreen} />
+            <Stack.Screen name="Tips" component={TipScreen} />
+            <Stack.Screen name="Recommend" component={RecommendScreen} />
+            <Stack.Screen name="Search" component={SearchScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ApplicationProvider>
+    </>
   );
 }
 
