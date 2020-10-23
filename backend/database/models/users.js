@@ -6,7 +6,8 @@ const userSchema = new mongoose.Schema({
   lastName: String,
   username: String,
   userId: { type: String, index: true },
-  password: String,
+  password: String, // Salted+Hashed
+  passwordSalt: String,
   savedTipsByID: Array,
   savedPlantsByID: Array,
   myPlantsByID: Array,

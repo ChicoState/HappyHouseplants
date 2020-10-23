@@ -116,6 +116,52 @@ app.get('/plants/:plantID', (req, res) => {
   });
 });
 
+function createSession(userId) {
+  SESSIONS.insertMany({
+    authToken, userId, 
+
+    authToken: String,
+  userId: String,
+  creationDate: Date,
+  lastLoginDate: Date,
+  expireDate: Date,
+  })
+}
+
+app.post('/login/', (req, res) => {
+  const { username, password } = req.body;
+  const userQuery = { username };
+  findDocuments('Users', userQuery).then((docs) => {
+    if (docs.length === 0) {
+      res.send({ success: false, message: 'The username you specified is not recognized.' });
+    } else if (docs.length === 1) {
+      const user = docs[0];
+      bcrypt.compare(password, user.password/* Hash */, (passErr, passResult) => {
+        if (!passErr) {
+          if (passResult) {
+            const authToken = createSession(user.userId);
+            res.send({ success: true, authToken });
+          } else {
+            res.send({ success: false, message: 'The password you entered is invalid.' });
+          }
+        } else {
+          console.error('Failed to compare password hashes for a login.');
+          res.send({ success: false, message: 'Failed to login due to a server error.' });
+        }
+      });
+      // TODO: Verify password is correct, then send session token in response.
+      res.send({ success: true });
+    } else {
+      // There are multiple documents with the same username. This should not be possible.
+      res.send({ success: false, message: 'Failed to login due to a server error.' });
+      console.error(`Found more than 1 (${docs.length} Users with the username '${username}'.`);
+    }
+  }).catch((reason) => {
+    console.error(`A user tried to login, but the database lookup failed due to: ${reason}.`);
+    res.send({ success: false, message: 'Failed to login due to a server error.' });
+  });
+});
+
 app.listen(PORT, HOST, () => {
   console.log('Listening...');
 });

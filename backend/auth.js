@@ -1,0 +1,142 @@
+const bcrypt = require('bcrypt');
+const { SESSIONS } = require('./database/models/sessions');
+const { databaseConnection } = require('./database/mongooseConnect.js');
+const { findDocuments } = require('./database/findDocuments');
+
+const SESSION_TIMEOUT_DAYS = 60; // Number of days of inactivity before a session is destroyed
+
+/* Updates a session to expire in SESSION_TIMEOUT_DAYS from
+ * the moment this function is called.
+ * @param { session } The session to update.
+ * @return { Promise } A Promise that resolves to the updated session. */
+function extendSession(session) {
+  return new Promise((complete, error) => {
+    const now = new Date();
+    const { authToken } = session;
+    session.expireDate.setDate(now.getDate() + SESSION_TIMEOUT_DAYS);
+    SESSIONS.updateOne({ authToken }, {
+      expireDate: session.expireDate, lastLoginDate: now,
+    }).then(() => {
+      console.log(`Extended session for user ID ${session.userId}, now expires ${session.expireDate}.`);
+      complete(session);
+    }).catch((reason) => {
+      console.error(`Failed to extend session with authentication token ${authToken} (for user ID ${session.userId}) due to an error: ${reason}`);
+      error(reason);
+    });
+  });
+}
+
+/* Creates a session for an existing user account.
+ * @param { userId } The ID of the user account for which to create the session.
+ * @return { Promise } A Promise that resolves to the session's authentication token,
+ * which the user will need for future session logins. */
+function createSession(userId) {
+  return new Promise((complete, error) => {
+    const now = new Date();
+    const expireDate = now;
+    expireDate.setDate(expireDate.getDate() + SESSION_TIMEOUT_DAYS);
+    const crngToken = `Session_${now}_${userId}`; // TODO: DO NOT USE THIS! Use CRNG
+    console.error('Important note to devs: Right now, we are using non-CRNG session tokens. DO NOT LET THIS REACH PRODUCTION!');
+    const session = {
+      authToken: crngToken,
+      userId,
+      creationDate: now,
+      lastLoginDate: now,
+      expireDate,
+    };
+    SESSIONS.insertMany(session).then(() => {
+      complete(session.authToken);
+    }).catch((reason) => {
+      error(reason);
+    });
+  });
+}
+
+/* Attempts to login to an existing user account, and creates a session if
+ * the login was successful.
+ * @param { username } The username of the account.
+ * @param { password } The plaintext password.
+ * @return { Promise } A Promise that resolves to an object with the following properties:
+ * {
+ *   success - True if login was successful
+ *   userMessage - A user prompt that explains why login failed (or null upon success)
+ *   sessionAuthToken - The auth token of the newly created session, or undefined upon failure
+ * }
+ * The Promise will resolve even if an incorrect password was supplied, so check the resolved
+ * object's 'success' property to verify that login was successful.
+ * The Promise will only be rejected due to server errors. */
+function login(username, password) {
+  return new Promise((complete, serverError) => {
+    findDocuments('Users', username).then((docs) => {
+      if (docs.length === 0) {
+        complete({ success: false, userMessage: 'The username is not recognized.' });
+      } else if (docs.length === 1) {
+        const user = docs[0];
+        bcrypt.compare(password, user.password/* hashed+salted */).then((passResult) => {
+          if (passResult) {
+            // The password was correct, so create a session
+            createSession(user.userId).then((sessionAuthToken) => {
+              // Login successful
+              console.log(`User ID ${user.userId} has logged in.`);
+              complete({ success: true, userMessage: null, sessionAuthToken });
+            }).catch((reason) => {
+              // Failed to create a session due to server error
+              console.error(`User ID ${user.userId} has successfully logged in, but the session could not be created due to an error: ${reason}`);
+              serverError(reason);
+            });
+          } else {
+            // The password was incorrect
+            console.log(`User ID ${user.userId} entered the wrong password.`);
+            complete({ success: false, userMessage: 'Invalid password' });
+          }
+        });
+      } else {
+        serverError(new Error(`Found multiple user profiles with the same username: ${username}`));
+      }
+    });
+  });
+}
+
+/* Authenticates a HTTP request to determine the user ID who is logged in.
+ * @param {req} The HTTP request object.
+ * @return { Promise } A Promise that resolves to the user ID who sent the
+ * request, or null if the request's authentication failed. The Promise
+ * will only be rejected due to server errors, NOT due to authentication failure. */
+function authenticateUserRequest(req) {
+  return new Promise((authComplete, authError) => {
+    const authToken = req.headers.Auth;
+    if (!authToken) {
+      // No Auth header provided
+      authComplete(null);
+    } else {
+      const sessionQuery = { authToken };
+      findDocuments('Sessions', sessionQuery).then((docs) => {
+        if (docs.length === 0) {
+          authComplete(null); // Auth token was provided, but not found in database
+        } else if (docs.length === 1) {
+          const session = docs[0];
+          const now = new Date();
+          if (session.expireDate < now) {
+            authComplete(null); // The session has expired
+          } else {
+            extendSession(session).then(() => {
+              authComplete(session.userId);
+            }).catch((reason) => {
+              authError(reason);
+            });
+          }
+        } else {
+          /* If we somehow made it here, then there are more than one sessions with
+           * the same authToken. This means something really bad happend (perhaps CRNG
+           * wasn't random). */
+          console.error(`Found ${docs.length} sessions with the same authentication token: ${authToken}`);
+          authError(new Error('Found multiple sessions with the same authentication token.'));
+        }
+      }).catch((reason) => {
+        authError(reason);
+      });
+    }
+  });
+}
+
+module.exports = { authenticateUserRequest, login };
