@@ -23,6 +23,8 @@ const plantSchema = new mongoose.Schema({
   },
   environment: {
     humidity: Number,
+    indoor: Boolean,
+    outdoor: Boolean,
     comment: String,
     temperature: {
       min: Number, // Celcius
