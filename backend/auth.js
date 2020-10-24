@@ -1,9 +1,8 @@
 const bcrypt = require('bcrypt');
 const { SESSIONS } = require('./database/models/sessions');
-const { databaseConnection } = require('./database/mongooseConnect.js');
 const { findDocuments } = require('./database/findDocuments');
 
-const SESSION_TIMEOUT_DAYS = 60; // Number of days of inactivity before a session is destroyed
+const SESSION_TIMEOUT_DAYS = 60; // TODO: Remove this? Should sessions never expire?
 
 /* Updates a session to expire in SESSION_TIMEOUT_DAYS from
  * the moment this function is called.
@@ -35,7 +34,7 @@ function createSession(userId) {
     const now = new Date();
     const expireDate = now;
     expireDate.setDate(expireDate.getDate() + SESSION_TIMEOUT_DAYS);
-    const crngToken = `Session_${now}_${userId}`; // TODO: DO NOT USE THIS! Use CRNG
+    const crngToken = `Session_${now.getTime()}_${userId}`; // TODO: DO NOT USE THIS! Use CRNG
     console.error('Important note to devs: Right now, we are using non-CRNG session tokens. DO NOT LET THIS REACH PRODUCTION!');
     const session = {
       authToken: crngToken,
