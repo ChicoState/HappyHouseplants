@@ -152,8 +152,6 @@ function authenticateUserRequest(req) {
           console.error(`Found ${docs.length} sessions with the same authentication token: ${authToken}`);
           authError(new Error('Found multiple sessions with the same authentication token.'));
         }
-      }).catch((reason) => {
-        authError(reason);
       });
     }
   });
