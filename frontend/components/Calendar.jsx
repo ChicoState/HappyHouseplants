@@ -139,10 +139,8 @@ class InputView extends React.Component {
   saveToCalendar = this.saveToCalendar.bind(this);
 
   // saveUserCalendarNotes = this.saveUserCalendarNotes.bind(this);
-
   // Use this function to save to Database / API to DB
   // saveUserCalendarNotes() {
-
   // }
 
   saveToCalendar() {
