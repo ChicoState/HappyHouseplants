@@ -6,7 +6,6 @@ const sessionSchema = new mongoose.Schema({
   userId: String,
   creationDate: Date,
   lastLoginDate: Date,
-  expireDate: Date,
 });
 
 const SESSIONS = mongoose.model('Sessions', sessionSchema);

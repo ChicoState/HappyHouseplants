@@ -3,25 +3,22 @@ const { SESSIONS } = require('./database/models/sessions');
 const { USERS } = require('./database/models/users');
 const { findDocuments } = require('./database/findDocuments');
 
-const SESSION_TIMEOUT_DAYS = 60; // TODO: Remove this? Should sessions never expire?
 const SALT_ROUNDS = 10; // TODO: Desired rounds for security?
 
-/* Updates a session to expire in SESSION_TIMEOUT_DAYS from
- * the moment this function is called.
+/* Updates the 'lastLogin' property of a Session.
  * @param { session } The session to update.
  * @return { Promise } A Promise that resolves to the updated session. */
-function extendSession(session) {
+function keepaliveSession(session) {
   return new Promise((complete, error) => {
     const now = new Date();
     const { authToken } = session;
-    session.expireDate.setDate(now.getDate() + SESSION_TIMEOUT_DAYS);
     SESSIONS.updateOne({ authToken }, {
-      expireDate: session.expireDate, lastLoginDate: now,
+      lastLoginDate: now,
     }).then(() => {
-      console.log(`Extended session for user ID ${session.userId}, now expires ${session.expireDate}.`);
+      console.log(`Extended session for user ID ${session.userId}.`);
       complete(session);
     }).catch((reason) => {
-      console.error(`Failed to extend session with authentication token ${authToken} (for user ID ${session.userId}) due to an error: ${reason}`);
+      console.error(`Failed to keepalive session with authentication token ${authToken} (for user ID ${session.userId}) due to an error: ${reason}`);
       error(reason);
     });
   });
@@ -34,8 +31,6 @@ function extendSession(session) {
 function createSession(userId) {
   return new Promise((complete) => {
     const now = new Date();
-    const expireDate = now;
-    expireDate.setDate(expireDate.getDate() + SESSION_TIMEOUT_DAYS);
     const crngToken = `Session_${now.getTime()}_${userId}`; // TODO: DO NOT USE THIS! Use CRNG
     console.error('Important note to devs: Right now, we are using non-CRNG session tokens. DO NOT LET THIS REACH PRODUCTION!');
     const session = {
@@ -43,7 +38,6 @@ function createSession(userId) {
       userId,
       creationDate: now,
       lastLoginDate: now,
-      expireDate,
     };
     SESSIONS.insertMany(session).then(() => {
       complete(session.authToken);
@@ -136,16 +130,9 @@ function authenticateUserRequest(req) {
           authComplete(null); // Auth token was provided, but not found in database
         } else if (docs.length === 1) {
           const session = docs[0];
-          const now = new Date();
-          if (session.expireDate < now) {
-            authComplete(null); // The session has expired
-          } else {
-            extendSession(session).then(() => {
-              authComplete(session.userId);
-            }).catch((reason) => {
-              authError(reason);
-            });
-          }
+          keepaliveSession(session).then(() => {
+            authComplete(session.userId);
+          });
         } else {
           /* If we somehow made it here, then there are more than one sessions with
            * the same authToken. This means something really bad happend (perhaps CRNG
