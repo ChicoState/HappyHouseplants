@@ -1,8 +1,10 @@
 const bcrypt = require('bcrypt');
 const { SESSIONS } = require('./database/models/sessions');
+const { USERS } = require('./database/models/users');
 const { findDocuments } = require('./database/findDocuments');
 
 const SESSION_TIMEOUT_DAYS = 60; // TODO: Remove this? Should sessions never expire?
+const SALT_ROUNDS = 10; // TODO: Desired rounds for security?
 
 /* Updates a session to expire in SESSION_TIMEOUT_DAYS from
  * the moment this function is called.
@@ -30,7 +32,7 @@ function extendSession(session) {
  * @return { Promise } A Promise that resolves to the session's authentication token,
  * which the user will need for future session logins. */
 function createSession(userId) {
-  return new Promise((complete, error) => {
+  return new Promise((complete) => {
     const now = new Date();
     const expireDate = now;
     expireDate.setDate(expireDate.getDate() + SESSION_TIMEOUT_DAYS);
@@ -45,8 +47,6 @@ function createSession(userId) {
     };
     SESSIONS.insertMany(session).then(() => {
       complete(session.authToken);
-    }).catch((reason) => {
-      error(reason);
     });
   });
 }
@@ -66,7 +66,7 @@ function createSession(userId) {
  * The Promise will only be rejected due to server errors. */
 function login(username, password) {
   return new Promise((complete, serverError) => {
-    findDocuments('Users', username).then((docs) => {
+    findDocuments('Users', { username }).then((docs) => {
       if (docs.length === 0) {
         complete({ success: false, userMessage: 'The username is not recognized.' });
       } else if (docs.length === 1) {
@@ -90,7 +90,29 @@ function login(username, password) {
           }
         });
       } else {
-        serverError(new Error(`Found multiple user profiles with the same username: ${username}`));
+        serverError(new Error(`Found multiple ${docs.length} user profiles with the same username: ${username}`));
+      }
+    });
+  });
+}
+
+function register(username, password, firstName, lastName) {
+  return new Promise((complete) => {
+    findDocuments('Users', { username }).then((docs) => {
+      if (docs.length === 0) {
+        bcrypt.hash(password, SALT_ROUNDS).then((hashedPassword) => {
+          USERS.insertMany({
+            userId: username, // TODO: Let the DB assign a unique user ID?
+            username,
+            password: hashedPassword,
+            firstName,
+            lastName,
+          }).then(() => {
+            complete({ success: true });
+          });
+        });
+      } else {
+        complete({ success: false, userMessage: 'The username already exists.' });
       }
     });
   });
@@ -138,4 +160,4 @@ function authenticateUserRequest(req) {
   });
 }
 
-module.exports = { authenticateUserRequest, login };
+module.exports = { register, authenticateUserRequest, login };
