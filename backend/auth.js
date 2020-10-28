@@ -90,6 +90,18 @@ function login(username, password) {
   });
 }
 
+/* Registers a new user account.
+ * @param { username } The desired username.
+ * @param { password } The plaintext user password (which will be hashed+salted in storage).
+ * @param { firstName } The user's first name.
+ * @param { lastName } The user's last name.
+ * @return { Promise } A Promise that resolves to an object with the following properties:
+ * {
+ *   success - True if the registration was successful.
+ *   userMessage - Human readable error message that explains why registration failed, or null.
+ * }
+ * The returned Promise will be rejected only due to server errors.
+ */
 function register(username, password, firstName, lastName) {
   return new Promise((complete) => {
     findDocuments('Users', { username }).then((docs) => {
