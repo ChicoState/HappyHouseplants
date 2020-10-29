@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import {
   Layout, Text, Button, Input,
 } from '@ui-kitten/components';
+import { SERVER_ADDR } from '../server';
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
@@ -15,6 +16,26 @@ const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
 const datesMarked = {};
 const noteDateSaved = {};
 let selectedDate = {};
+
+function saveNote(when, text) {
+  return fetch(`${SERVER_ADDR}/mycalendar/notes`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ [when]: text }),
+  });
+}
+
+function getNotes() {
+  return new Promise((resolve) => {
+    fetch(`${SERVER_ADDR}/mycalendar/notes`)
+      .then((response) => response.json())
+      .then((data) => {
+        resolve(data);
+      });
+  });
+}
 
 class Calend extends React.Component {
   render() {
@@ -90,6 +111,7 @@ class Calend extends React.Component {
           }}
           onDayLongPress={(day) => {
             console.log('LONG PRESS');
+            saveNote('1-1-2020', `My Saved Note on ${(new Date().getTime())}`);// TODO: Remove, only for testing
             const { view } = this.props;
             const { selectDay } = this.props;
             view(true);
