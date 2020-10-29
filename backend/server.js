@@ -7,6 +7,7 @@ const PORT = '8080';
 const { databaseConnection } = require('./database/mongooseConnect.js');
 const { findDocuments } = require('./database/findDocuments');
 const { insertTestData } = require('./database/mockData/mockDatabase');
+const { register, login } = require('./auth.js');
 
 function main() {
   console.log('Server starting...');
@@ -116,49 +117,21 @@ app.get('/plants/:plantID', (req, res) => {
   });
 });
 
-function createSession(userId) {
-  SESSIONS.insertMany({
-    authToken, userId, 
-
-    authToken: String,
-  userId: String,
-  creationDate: Date,
-  lastLoginDate: Date,
-  expireDate: Date,
-  })
-}
-
-app.post('/login/', (req, res) => {
-  const { username, password } = req.body;
-  const userQuery = { username };
-  findDocuments('Users', userQuery).then((docs) => {
-    if (docs.length === 0) {
-      res.send({ success: false, message: 'The username you specified is not recognized.' });
-    } else if (docs.length === 1) {
-      const user = docs[0];
-      bcrypt.compare(password, user.password/* Hash */, (passErr, passResult) => {
-        if (!passErr) {
-          if (passResult) {
-            const authToken = createSession(user.userId);
-            res.send({ success: true, authToken });
-          } else {
-            res.send({ success: false, message: 'The password you entered is invalid.' });
-          }
-        } else {
-          console.error('Failed to compare password hashes for a login.');
-          res.send({ success: false, message: 'Failed to login due to a server error.' });
-        }
-      });
-      // TODO: Verify password is correct, then send session token in response.
-      res.send({ success: true });
-    } else {
-      // There are multiple documents with the same username. This should not be possible.
-      res.send({ success: false, message: 'Failed to login due to a server error.' });
-      console.error(`Found more than 1 (${docs.length} Users with the username '${username}'.`);
-    }
+app.get('/register/', (req, res) => {//TODO: Remove
+  const { username, password } = req.query;
+  register(username, password, 'My First Name', 'My Last Name').then((status) => {
+    res.json(status);
   }).catch((reason) => {
-    console.error(`A user tried to login, but the database lookup failed due to: ${reason}.`);
-    res.send({ success: false, message: 'Failed to login due to a server error.' });
+    res.send(`Failed for reason: ${reason}`);
+  });
+});
+
+app.get('/login/', (req, res) => {//TODO: Remove
+  const { username, password } = req.query;
+  login(username, password, 'My First Name', 'My Last Name').then((status) => {
+    res.json(status);
+  }).catch((reason) => {
+    res.send(`Failed for reason: ${reason}`);
   });
 });
 
