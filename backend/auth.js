@@ -125,24 +125,30 @@ function register(username, password, firstName, lastName) {
 }
 
 /* Authenticates a HTTP request to determine the user ID who is logged in.
- * @param {req} The HTTP request object.
+ * @param { req } The HTTP request object.
+ * @param { res } The HTTP response object, to which authentication status
+ * headers will be written. This function will not send anything to the
+ * response directly, it will only append headers.
  * @return { Promise } A Promise that resolves to the user ID who sent the
  * request, or null if the request's authentication failed. The Promise
  * will only be rejected due to server errors, NOT due to authentication failure. */
-function authenticateUserRequest(req) {
+function authenticateUserRequest(req, res) {
   return new Promise((authComplete, authError) => {
     const authToken = req.headers.Auth;
     if (!authToken) {
       // No Auth header provided
+      res.setHeader('AuthStatus', false);
       authComplete(null);
     } else {
       const sessionQuery = { authToken };
       findDocuments('Sessions', sessionQuery).then((docs) => {
         if (docs.length === 0) {
+          res.setHeader('AuthStatus', false);
           authComplete(null); // Auth token was provided, but not found in database
         } else if (docs.length === 1) {
           const session = docs[0];
           keepaliveSession(session).then(() => {
+            res.setHeader('AuthStatus', true);
             authComplete(session.userId);
           });
         } else {
