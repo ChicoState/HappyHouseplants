@@ -8,11 +8,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
 import { default as theme } from './components/colorTheme.json';
-import Calend from './components/Calendar';
+import CalendarView from './components/Calendar';
 import SearchBar from './components/Search';
 import Recommend from './components/RecList';
 import TipList from './components/TipList';
-import UserInput from './components/GetUserInput';
 import PlantProfile from './components/PlantProfile';
 
 const Stack = createStackNavigator();
@@ -67,20 +66,7 @@ function PlantProfileScreen(navContext) {
 function CalendarScreen() {
   return (
     <Layout style={{ flex: 1 }}>
-      <Calend />
-      <UserInput />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
-      <Text />
+      <CalendarView />
     </Layout>
   );
 }
