@@ -94,6 +94,7 @@ class Calend extends React.Component {
           maxDate={lastDayOfYear}
           // Handler which gets executed on day press. Default = undefined
           onDayPress={(day) => {
+            getNotes().then((notes) => console.log(`---GOT---: ${JSON.stringify(notes)}`)); // TODO: Remove
             console.log('selected day', day);
             console.log(day.dateString);
             selectedDate = {};
@@ -111,7 +112,6 @@ class Calend extends React.Component {
           }}
           onDayLongPress={(day) => {
             console.log('LONG PRESS');
-            saveNote('1-1-2020', `My Saved Note on ${(new Date().getTime())}`);// TODO: Remove, only for testing
             const { view } = this.props;
             const { selectDay } = this.props;
             view(true);
@@ -179,7 +179,7 @@ class InputView extends React.Component {
     };
     setSavedDates(noteDateSaved);
     setDateNote({ [datePicked]: tempNotes });
-    // this.saveUserCalendarNotes(dateNote);
+    saveNote(datePicked, tempNotes);
     view(false);
   }
 

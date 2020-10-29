@@ -105,31 +105,22 @@ app.get('/users/:userId/plants', (req, res) => {
 app.get('/mycalendar/notes', (req, res) => {
   const userId = 'MyUserID';// TODO: Obtain userId from session token
   const query = { userId };
-  findDocuments('Users', query).then((docs) => {
-    if (docs.length < 1) {
-      res.status(404).send('User not found');
-    } else {
-      const user = docs[0];
-      res.send(user.calendarNotes);
-    }
+
+  findOneDocument('Users', query).then((userDoc) => {
+    const { calendarNotes } = userDoc;
+    res.send(calendarNotes);
   });
 });
 
 app.post('/mycalendar/notes/', (req, res) => {
   const userId = 'MyUserID';// TODO: Obtain userId from session token
   const query = { userId };
-  console.log(`Request body: ${req.body} = ${JSON.stringify(req.body)}`); // TODO: Remove
   const keys = Object.keys(req.body);
   const values = Object.values(req.body);
   const when = keys[0];
   const note = values[0];
-  console.log(`When: ${when}, note: ${note}`); // TODO: Remove
   findOneDocument('Users', query).then((userDoc) => {
-    console.log(`UserDoc=${JSON.stringify(userDoc)}`); // TODO: Remove
-    
     const { calendarNotes } = userDoc;
-    console.log(`CalendarNotes=${JSON.stringify(calendarNotes)}`); // TODO: Remove
-    
     if (calendarNotes[when]) {
       // Append to the existing date's notes
       calendarNotes[when].push(note);
