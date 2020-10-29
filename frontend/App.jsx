@@ -7,6 +7,7 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
+import { default as theme } from './components/colorTheme.json';
 import Calend from './components/Calendar';
 import SearchBar from './components/Search';
 import Recommend from './components/RecList';
@@ -125,7 +126,7 @@ function App() {
   return (
     <>
       <IconRegistry icons={EvaIconsPack} />
-      <ApplicationProvider mapping={eva.mapping} theme={eva.light}>
+      <ApplicationProvider mapping={eva.mapping} theme={{ ...eva.light, ...theme }}>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Home">
             <Stack.Screen name="Home" component={HomeScreen} />
