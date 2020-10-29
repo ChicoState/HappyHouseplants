@@ -63,7 +63,7 @@ function CardItem(props) {
     <Card
       key={itemInfo.plant.plantID}
       style={itemInfo.styles.card}
-      status="basic"
+      status="success"
       header={(headerProps) => renderItemHeader(headerProps, itemInfo.plant.plantName)}
       footer={renderItemFooter}
       onPress={() => { itemInfo.onPressItem(itemInfo.plant); console.log('onpress item called here'); }}
