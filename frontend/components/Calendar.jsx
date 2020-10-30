@@ -9,6 +9,10 @@ import { SERVER_ADDR } from '../server';
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
 
+/* Saves a single note to the server.
+ * @param { when } The Calendar-formatted string of the date. Example: 2020-10-29 (Oct 29, 2020).
+ * @param { text } The text of the note to store.
+ * @return { Promise } A Promise that resolves to nothing when the note is successfully saved. */
 function saveNote(when, text) {
   return fetch(`${SERVER_ADDR}/mycalendar/notes`, {
     method: 'POST',
@@ -19,6 +23,16 @@ function saveNote(when, text) {
   });
 }
 
+/* Gets a dictionary-form object of all notes that are stored
+ * on the server for the current user.
+ * @return { Promise } A Promise that resolves to a dictionary-form object
+ * with all notes for the user. The keys are the Calendar-form dates associated
+ * with each note, and the values are string arrays of each note per day.
+ * For example:
+ * {
+ *   '2020-10-28': ['My first ever note on Oct 28, 2020'],
+ *   '2020-10-29': ['My note on Oct 29, 2020', 'My second note on this day'],
+ * } */
 function getNotes() {
   return new Promise((resolve) => {
     fetch(`${SERVER_ADDR}/mycalendar/notes`)
@@ -34,7 +48,7 @@ class CalendarView extends React.Component {
     super();
     this.state = {
       notes: {},
-      selectedDate: null, // TODO: Proper initial value?
+      selectedDate: null,
       tempNote: '',
       showInputView: false,
     };
@@ -52,6 +66,13 @@ class CalendarView extends React.Component {
     this.updateNotes();
   }
 
+  /* Gets a dictionary-form object to pass into the Calendar component, which causes
+   * a dot to be rendered on each day with a note, and highlights the current selected
+   * day.
+   * @return { Object } - A dictionary-form object. Each key is a Calendar-form date, and
+   * each value has the following structure { selected: true, marked: true }. The
+   * selected property will only be true for the key that is equal to this.state.selectedDate.
+   * The marked property will be true for all dates that have at least one note. */
   getCalendarMarkInfo() {
     const { notes, selectedDate } = this.state;
     const dates = Object.keys(notes);
@@ -149,6 +170,7 @@ class CalendarView extends React.Component {
           // Minimum date that can be selected.
           minDate={firstDayOfYear}
           // Maximum date that can be selected.
+          maxDate={lastDayOfYear} // TODO: Is this right?
           // Handler which gets executed on day press. Default = undefined
 
           onDayPress={(day) => {
