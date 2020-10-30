@@ -7,7 +7,6 @@ import {
 import { SERVER_ADDR } from '../server';
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
-const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
 
 /* Saves a single note to the server.
  * @param { when } The Calendar-formatted string of the date. Example: 2020-10-29 (Oct 29, 2020).
@@ -169,10 +168,7 @@ class CalendarView extends React.Component {
           current={new Date()}
           // Minimum date that can be selected.
           minDate={firstDayOfYear}
-          // Maximum date that can be selected.
-          maxDate={lastDayOfYear} // TODO: Is this right?
           // Handler which gets executed on day press. Default = undefined
-
           onDayPress={(day) => {
             this.setState({ selectedDate: day.dateString });
           }}
