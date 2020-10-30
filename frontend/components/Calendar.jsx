@@ -2,9 +2,10 @@ import React from 'react';
 import { Calendar } from 'react-native-calendars';
 import { View } from 'react-native';
 import {
-  Layout, Text, Button, Input,
+  Layout, Text, Button, Input, ListItem,
 } from '@ui-kitten/components';
 import { SERVER_ADDR } from '../server';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 
@@ -98,6 +99,18 @@ class CalendarView extends React.Component {
     const {
       notes, tempNote, selectedDate, showInputView,
     } = this.state;
+
+    const noteViews = [];
+    const dates = Object.keys(notes);
+    const notesPerDate = Object.values(notes);
+    console.log(`There are ${notesPerDate.length} notes (${JSON.stringify(notes)})`);
+    for (let i = 0; i < notesPerDate.length; i += 1) {
+      const curDate = dates[i];
+      const notesOnThisDate = notesPerDate[i];
+      const notesStr = notesOnThisDate.join('\n');
+      console.log(`Adding note ${notesStr}`);
+      noteViews.push(<ListItem title={curDate} description={notesStr} key={curDate} />);
+    }
 
     if (showInputView) {
       return (
@@ -194,7 +207,9 @@ class CalendarView extends React.Component {
           enableSwipeMonths
           showSixWeeks
         />
-        <View />
+        <ScrollView>
+          {noteViews}
+        </ScrollView>
       </View>
     );
   }
