@@ -83,7 +83,7 @@ function SearchScreen(obj) {
 function HomeScreen(obj) {
   const { navigation, route } = obj;
   const { tab } = route.params;
-  const tabView = (tab === 'Tips') ? RecommendScreen(obj) : TipScreen(obj);
+  const tabView = (tab === 'Recommendations') ? RecommendScreen(obj) : TipScreen(obj);
   return (
     <Layout style={{ flex: 1 }}>
       {tabView}
@@ -130,7 +130,7 @@ function App() {
                   <HeaderButtons
                     labels={['Recommendations', 'Tips']}
                     selectedLabel={currentTab}
-                    onLabelChanged={(label) => { setCurrentTab(label); navigationRef.current.navigate('Home', { tab: currentTab }); }}
+                    onLabelChanged={(label) => { setCurrentTab(label); navigationRef.current.navigate('Home', { tab: label }); }}
                   />
                 ),
               }}

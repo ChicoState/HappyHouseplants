@@ -120,7 +120,6 @@ CardItem.defaultProps = {
     image: {
       width: '80%',
       height: 300,
-      resizeMode: 'stretch',
     },
   },
 };
