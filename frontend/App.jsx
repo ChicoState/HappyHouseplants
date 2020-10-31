@@ -8,6 +8,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
 import theme from './components/colorTheme.json';
+import HeaderButtons from './components/HeaderButtons';
 import CalendarView from './components/Calendar';
 import SearchBar from './components/Search';
 import Recommend from './components/RecList';
@@ -15,35 +16,6 @@ import TipList from './components/TipList';
 import PlantProfile from './components/PlantProfile';
 
 const Stack = createStackNavigator();
-
-function HomeScreen(obj) {
-  const { navigation } = obj;
-  return (
-    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }}>
-        Go to My Plants
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Calendar'); }}>
-        Go to Calendar
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Tips'); }}>
-        Go to Tips
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Recommend'); }}>
-        Go to Recommendations
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Search'); }}>
-        Go to Search
-      </Button>
-    </Layout>
-  );
-}
 
 function MyPlantsScreen(obj) {
   const { route } = obj;
@@ -108,14 +80,61 @@ function SearchScreen(obj) {
   );
 }
 
+function HomeScreen(obj) {
+  const { navigation, route } = obj;
+  const { tab } = route.params;
+  const tabView = (tab === 'Tips') ? RecommendScreen(obj) : TipScreen(obj);
+  return (
+    <Layout style={{ flex: 1 }}>
+      {tabView}
+      <Text />
+      <Button status="primary" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }}>
+        Go to My Plants
+      </Button>
+      <Text />
+      <Button status="primary" onPress={() => { navigation.navigate('Calendar'); }}>
+        Go to Calendar
+      </Button>
+      <Text />
+      <Button status="primary" onPress={() => { navigation.navigate('Tips'); }}>
+        Go to Tips
+      </Button>
+      <Text />
+      <Button status="primary" onPress={() => { navigation.navigate('Recommend'); }}>
+        Go to Recommendations
+      </Button>
+      <Text />
+      <Button status="primary" onPress={() => { navigation.navigate('Search'); }}>
+        Go to Search
+      </Button>
+    </Layout>
+  );
+}
+
+const navigationRef = React.createRef();
+
 function App() {
+  const [currentTab, setCurrentTab] = React.useState('Recommendations');
   return (
     <>
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider mapping={eva.mapping} theme={{ ...eva.light, ...theme }}>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <Stack.Navigator initialRouteName="Home">
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              initialParams={{ tab: currentTab }}
+              options={{
+                headerTitle: () => (
+                  <HeaderButtons
+                    labels={['Recommendations', 'Tips']}
+                    selectedLabel={currentTab}
+                    onLabelChanged={(label) => { setCurrentTab(label); navigationRef.current.navigate('Home', { tab: currentTab }); }}
+                  />
+                ),
+              }}
+            />
             <Stack.Screen name="My Plants" component={MyPlantsScreen} />
             <Stack.Screen
               name="PlantProfile"
