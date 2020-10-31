@@ -8,7 +8,7 @@
     "savedTipsByID": [1, 2],
     "savedPlantsByID": [1, 3, 4, 7],
     "myPlantsByID": ["p1425", "p69065", "p2349"],
-    "calendarNotes": {"1-1-2020" : ["My First Note"]}
+    "calendarNotes": {}
   },
   {
     "firstName": "FirstName1",
@@ -19,7 +19,7 @@
     "savedTipsByID": [5, 8],
     "savedPlantsByID": [2],
     "myPlantsByID": ["p7895523"],
-    "calendarNotes": {"1-1-2020" : ["My First Note"]}
+    "calendarNotes": {}
   },
   {
     "firstName": "Woooo",
@@ -30,6 +30,6 @@
     "savedTipsByID": [3],
     "savedPlantsByID": [2, 8, 6, 4],
     "myPlantsByID": ["p7, p34802"],
-    "calendarNotes": {"1-1-2020" : ["My First Note"]}
+    "calendarNotes": {}
   }
 ]
