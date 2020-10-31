@@ -133,19 +133,23 @@ function register(username, password, firstName, lastName) {
  * request, or null if the request's authentication failed. The Promise
  * will only be rejected due to server errors, NOT due to authentication failure. */
 function authenticateUserRequest(req, res) {
+  console.log(`Received request: ${JSON.stringify(req.headers)}`);// TODO: Remove
   return new Promise((authComplete, authError) => {
-    const authToken = req.headers.Auth;
+    const authToken = req.headers.authtoken;
     if (!authToken) {
       // No Auth header provided
+      console.log('No auth header'); // TODO: Remove
       res.setHeader('AuthStatus', false);
       authComplete(null);
     } else {
       const sessionQuery = { authToken };
       findDocuments('Sessions', sessionQuery).then((docs) => {
         if (docs.length === 0) {
+          console.log('Session not found'); // TODO: Remove
           res.setHeader('AuthStatus', false);
           authComplete(null); // Auth token was provided, but not found in database
         } else if (docs.length === 1) {
+          console.log('Session found'); // TODO: Remove
           const session = docs[0];
           keepaliveSession(session).then(() => {
             res.setHeader('AuthStatus', true);

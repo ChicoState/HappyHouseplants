@@ -1,8 +1,11 @@
-import { AsyncStorage } from 'AsyncStorage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SERVER_ADDR } from './server';
+
+const SESSION_TOKEN = 'session_token';
 
 function authFetch(url, method = 'GET', body) {
   return new Promise((response) => {
-    AsyncStorage.getItem('session_token').then((authToken) => {
+    AsyncStorage.getItem(SESSION_TOKEN).then((authToken) => {
       const request = {
         method,
         body,
@@ -15,4 +18,61 @@ function authFetch(url, method = 'GET', body) {
   });
 }
 
-module.exports = { authFetch };
+function getLoginInfo() {
+  return new Promise((infoResolved) => {
+    AsyncStorage.getItem(SESSION_TOKEN).then((authToken) => {
+      if (authToken) {
+        authFetch(`${SERVER_ADDR}/login_info`).then((resRaw) => resRaw.json()
+          .then((res) => {
+            infoResolved(res);
+          }));
+      } else {
+        // Not logged in
+        infoResolved(null);
+      }
+    });
+  });
+}
+
+function login(username, password) {
+  return new Promise((statusResolved) => {
+    fetch(`${SERVER_ADDR}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    }).then((resRaw) => resRaw.json())
+      .then((status) => {
+        if (status.success) {
+          AsyncStorage.setItem(SESSION_TOKEN, status.sessionAuthToken)
+            .then(() => {
+              statusResolved(status);
+            });
+        } else {
+          statusResolved(status);
+        }
+      });
+  });
+}
+
+function register(username, password, firstName, lastName) {
+  return new Promise((statusResolved) => {
+    fetch(`${SERVER_ADDR}/register`, { // TODO: This is a common pattern of posting a JSON, refactor
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username, password, firstName, lastName,
+      }),
+    }).then((resRaw) => resRaw.json())
+      .then((res) => {
+        statusResolved(res);
+      });
+  });
+}
+
+module.exports = {
+  authFetch, login, register, getLoginInfo,
+};

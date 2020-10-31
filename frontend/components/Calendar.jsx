@@ -6,6 +6,7 @@ import {
 } from '@ui-kitten/components';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SERVER_ADDR } from '../server';
+import { authFetch, login, register, getLoginInfo } from '../auth';
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 
@@ -34,8 +35,22 @@ function saveNote(when, text) {
  *   '2020-10-29': ['My note on Oct 29, 2020', 'My second note on this day'],
  * } */
 function getNotes() {
+
+  // TODO: Remove the following setup mess
+  register("User3", "MyPassword", 'My Name 3', 'LastName').then((x)=>{
+    console.log(`Register status: ${JSON.stringify(x)}`);
+    login("User3", "MyPassword").then((y)=>{
+      console.log(`A Login status: ${JSON.stringify(y)}`);
+      getLoginInfo().then((li) => {
+        console.log(`Login info: ${JSON.stringify(li)}`);
+      }).catch((lier) => {
+        console.error(`Failed to get login info: ${lier}`);
+      });
+    })
+  });
+
   return new Promise((resolve) => {
-    fetch(`${SERVER_ADDR}/mycalendar/notes`)
+    authFetch(`${SERVER_ADDR}/mycalendar/notes`)
       .then((response) => response.json())
       .then((data) => {
         resolve(data);
