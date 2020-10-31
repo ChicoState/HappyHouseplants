@@ -104,37 +104,42 @@ app.get('/users/:userId/plants', (req, res) => {
 });
 
 app.get('/mycalendar/notes', (req, res) => {
-  const userId = 'MyUserID';// TODO: Obtain userId from session token
-  const query = { userId };
-
-  findOneDocument('Users', query).then((userDoc) => {
-    const { calendarNotes = {/* Default no notes */} } = userDoc;
-    res.send(calendarNotes);
+  authenticateUserRequest(req, res).then((userId) => {
+    if (userId) {
+      const query = { userId };
+      findOneDocument('Users', query).then((userDoc) => {
+        const { calendarNotes = {/* Default no notes */} } = userDoc;
+        res.send(calendarNotes);
+      });
+    } else {
+      res.status(403).send();
+    }
   });
 });
 
 app.post('/mycalendar/notes/', (req, res) => {
-  const userId = 'MyUserID';// TODO: Obtain userId from session token
-  const query = { userId };
-  const keys = Object.keys(req.body);
-  const values = Object.values(req.body);
-  const when = keys[0];
-  const note = values[0];
-  findOneDocument('Users', query).then((userDoc) => {
-    const { calendarNotes = {/* Default no notes */} } = userDoc;
+  authenticateUserRequest(req, res).then((userId) => {
+    const query = { userId };
+    const keys = Object.keys(req.body);
+    const values = Object.values(req.body);
+    const when = keys[0];
+    const note = values[0];
+    findOneDocument('Users', query).then((userDoc) => {
+      const { calendarNotes = {/* Default no notes */} } = userDoc;
 
-    if (calendarNotes[when]) {
-      // Append to the existing date's notes
-      calendarNotes[when].push(note);
-    } else {
-      // Create a new date:note pair
-      calendarNotes[when] = [note];
-    }
-    USERS.updateOne(query, { calendarNotes }).then(() => {
-      res.status(201).send();
-    }).catch((saveError) => {
-      console.error(`Failed to post a note (${JSON.stringify(note)}) to the calendar for user ID ${userId}. Reason: ${saveError}`);
-      res.status(500).send();
+      if (calendarNotes[when]) {
+        // Append to the existing date's notes
+        calendarNotes[when].push(note);
+      } else {
+        // Create a new date:note pair
+        calendarNotes[when] = [note];
+      }
+      USERS.updateOne(query, { calendarNotes }).then(() => {
+        res.status(201).send();
+      }).catch((saveError) => {
+        console.error(`Failed to post a note (${JSON.stringify(note)}) to the calendar for user ID ${userId}. Reason: ${saveError}`);
+        res.status(500).send();
+      });
     });
   });
 });
