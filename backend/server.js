@@ -108,7 +108,7 @@ app.get('/mycalendar/notes', (req, res) => {
   const query = { userId };
 
   findOneDocument('Users', query).then((userDoc) => {
-    const { calendarNotes } = userDoc;
+    const { calendarNotes = {/* Default no notes */} } = userDoc;
     res.send(calendarNotes);
   });
 });
@@ -121,7 +121,8 @@ app.post('/mycalendar/notes/', (req, res) => {
   const when = keys[0];
   const note = values[0];
   findOneDocument('Users', query).then((userDoc) => {
-    const { calendarNotes } = userDoc;
+    const { calendarNotes = {/* Default no notes */} } = userDoc;
+
     if (calendarNotes[when]) {
       // Append to the existing date's notes
       calendarNotes[when].push(note);
