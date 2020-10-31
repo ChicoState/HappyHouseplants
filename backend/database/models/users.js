@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   savedTipsByID: Array,
   savedPlantsByID: Array,
   myPlantsByID: Array,
+  calendarNotes: mongoose.Schema.Types.Mixed,
 });
 
 const USERS = mongoose.model('Users', userSchema);
