@@ -7,6 +7,7 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
+import theme from './components/colorTheme.json';
 import CalendarView from './components/Calendar';
 import SearchBar from './components/Search';
 import Recommend from './components/RecList';
@@ -21,23 +22,23 @@ function HomeScreen(obj) {
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
       <Text />
-      <Button status="success" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }}>
+      <Button status="primary" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }}>
         Go to My Plants
       </Button>
       <Text />
-      <Button status="success" onPress={() => { navigation.navigate('Calendar'); }}>
+      <Button status="primary" onPress={() => { navigation.navigate('Calendar'); }}>
         Go to Calendar
       </Button>
       <Text />
-      <Button status="success" onPress={() => { navigation.navigate('Tips'); }}>
+      <Button status="primary" onPress={() => { navigation.navigate('Tips'); }}>
         Go to Tips
       </Button>
       <Text />
-      <Button status="success" onPress={() => { navigation.navigate('Recommend'); }}>
+      <Button status="primary" onPress={() => { navigation.navigate('Recommend'); }}>
         Go to Recommendations
       </Button>
       <Text />
-      <Button status="success" onPress={() => { navigation.navigate('Search'); }}>
+      <Button status="primary" onPress={() => { navigation.navigate('Search'); }}>
         Go to Search
       </Button>
     </Layout>
@@ -111,7 +112,7 @@ function App() {
   return (
     <>
       <IconRegistry icons={EvaIconsPack} />
-      <ApplicationProvider mapping={eva.mapping} theme={eva.light}>
+      <ApplicationProvider mapping={eva.mapping} theme={{ ...eva.light, ...theme }}>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Home">
             <Stack.Screen name="Home" component={HomeScreen} />
