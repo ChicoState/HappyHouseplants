@@ -1,13 +1,15 @@
 require('dotenv').config();
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
 const HOST = '0.0.0.0';
 const PORT = '8080';
 const { databaseConnection } = require('./database/mongooseConnect.js');
-const { findDocuments } = require('./database/findDocuments');
+const { findDocuments, findOneDocument } = require('./database/findDocuments');
 const { insertTestData } = require('./database/mockData/mockDatabase');
-const { register, login } = require('./auth.js');
+const { register, login, authenticateUserRequest } = require('./auth.js');
+const { USERS } = require('./database/models/users.js');
 
 function main() {
   console.log('Server starting...');
@@ -20,6 +22,8 @@ databaseConnection.once('open', () => {
   main();
   insertTestData();
 });
+
+app.use(bodyParser.json()); // Needed so we can read the body of POSTs
 
 app.get('/random_tips/', (req, res) => {
   const maxCount = req.query.count ? req.query.count : 10;
@@ -76,7 +80,7 @@ app.get('/users/:userId', (req, res) => {
 });
 
 app.get('/users/:userId/tips', (req, res) => {
-  const userQuery = { userId: req.params.userId };
+  const userQuery = { userId: req.params.userId }; // TODO: Authenticate
   findDocuments('Users', userQuery).then((docs) => {
     if (docs.length < 1) {
       res.status(404).send('User not found');
@@ -88,7 +92,7 @@ app.get('/users/:userId/tips', (req, res) => {
 });
 
 app.get('/users/:userId/plants', (req, res) => {
-  const userQuery = { userId: req.params.userId };
+  const userQuery = { userId: req.params.userId }; // TODO: Authenticate
   findDocuments('Users', userQuery).then((docs) => {
     if (docs.length < 1) {
       res.status(404).send('User not found');
@@ -96,6 +100,41 @@ app.get('/users/:userId/plants', (req, res) => {
       const user = docs[0];
       res.send(user.savedPlantsByID);
     }
+  });
+});
+
+app.get('/mycalendar/notes', (req, res) => {
+  const userId = 'MyUserID';// TODO: Obtain userId from session token
+  const query = { userId };
+
+  findOneDocument('Users', query).then((userDoc) => {
+    const { calendarNotes } = userDoc;
+    res.send(calendarNotes);
+  });
+});
+
+app.post('/mycalendar/notes/', (req, res) => {
+  const userId = 'MyUserID';// TODO: Obtain userId from session token
+  const query = { userId };
+  const keys = Object.keys(req.body);
+  const values = Object.values(req.body);
+  const when = keys[0];
+  const note = values[0];
+  findOneDocument('Users', query).then((userDoc) => {
+    const { calendarNotes } = userDoc;
+    if (calendarNotes[when]) {
+      // Append to the existing date's notes
+      calendarNotes[when].push(note);
+    } else {
+      // Create a new date:note pair
+      calendarNotes[when] = [note];
+    }
+    USERS.updateOne(query, { calendarNotes }).then(() => {
+      res.status(201).send();
+    }).catch((saveError) => {
+      console.error(`Failed to post a note (${JSON.stringify(note)}) to the calendar for user ID ${userId}. Reason: ${saveError}`);
+      res.status(500).send();
+    });
   });
 });
 
@@ -117,21 +156,41 @@ app.get('/plants/:plantID', (req, res) => {
   });
 });
 
-app.get('/register/', (req, res) => {//TODO: Remove
-  const { username, password } = req.query;
-  register(username, password, 'My First Name', 'My Last Name').then((status) => {
+app.post('/register/', (req, res) => {
+  const {
+    username, password, firstName, lastName,
+  } = req.body;
+  register(username, password, firstName, lastName).then((status) => {
     res.json(status);
   }).catch((reason) => {
     res.send(`Failed for reason: ${reason}`);
   });
 });
 
-app.get('/login/', (req, res) => {//TODO: Remove
-  const { username, password } = req.query;
-  login(username, password, 'My First Name', 'My Last Name').then((status) => {
+app.post('/login/', (req, res) => {
+  const { username, password } = req.body;
+  login(username, password).then((status) => {
     res.json(status);
   }).catch((reason) => {
     res.send(`Failed for reason: ${reason}`);
+  });
+});
+
+app.get('/login_info', (req, res) => {
+  authenticateUserRequest(req, res).then((userId) => {
+    console.log(`Getting login info for user ID ${userId}...`);
+    findOneDocument('Users', { userId }).then((user) => {
+      console.log(`Got ${JSON.stringify(user)}`);
+      res.json({
+        userId,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      });
+    });
+  }).catch((error) => {
+    console.error(`Failed to get login info due to error: ${error}`);
+    res.json(null);
   });
 });
 
