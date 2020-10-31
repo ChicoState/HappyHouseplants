@@ -35,20 +35,6 @@ function saveNote(when, text) {
  *   '2020-10-29': ['My note on Oct 29, 2020', 'My second note on this day'],
  * } */
 function getNotes() {
-
-  // TODO: Remove the following setup mess
-  register("User3", "MyPassword", 'My Name 3', 'LastName').then((x)=>{
-    console.log(`Register status: ${JSON.stringify(x)}`);
-    login("User3", "MyPassword").then((y)=>{
-      console.log(`A Login status: ${JSON.stringify(y)}`);
-      getLoginInfo().then((li) => {
-        console.log(`Login info: ${JSON.stringify(li)}`);
-      }).catch((lier) => {
-        console.error(`Failed to get login info: ${lier}`);
-      });
-    })
-  });
-
   return new Promise((resolve) => {
     authFetch(`${SERVER_ADDR}/mycalendar/notes`)
       .then((response) => response.json())
