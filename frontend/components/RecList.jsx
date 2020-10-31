@@ -12,25 +12,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '90%',
   },
-  card: {
-    marginVertical: 10,
-
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  button: {
-    margin: 3,
-    width: 1,
-    height: 3,
-    flex: 0.5,
-  },
-  image: {
-    width: '80%',
-    height: 300,
-  },
 });
 
 class RecList extends Component {
