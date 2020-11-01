@@ -24,35 +24,46 @@ import AccountProvider from './components/AccountProvider';
 const Stack = createStackNavigator();
 
 function AccountButtons(props) {
-  const { onRequestLogout } = props;
+  const { onRequestLogin, onRequestRegister } = props;
+
   return (
     <LoginContext.Consumer>
-      {(loginInfo) => {
-        if (!loginInfo) {
+      {(loginState) => {
+        if (!loginState.loginInfo) {
           return (
             <View>
-              <Button>Login</Button>
-              <Button>Register</Button>
+              <Button onPress={onRequestLogin}>Login</Button>
+              <Button onPress={onRequestRegister}>Register</Button>
             </View>
           );
         }
 
-        return (<View><Button onClick={onRequestLogout}>Logout</Button></View>);
+        return (
+          <View>
+            <Button onPress={() => { loginState.onLogout(); }}>
+              Logout
+            </Button>
+          </View>
+        );
       }}
     </LoginContext.Consumer>
   );
 }
 
 AccountButtons.propTypes = {
-  onRequestLogout: PropTypes.func.isRequired,
+  onRequestLogin: PropTypes.func.isRequired,
+  onRequestRegister: PropTypes.func.isRequired,
 };
 
 function LoginScreen(obj) {
   const { navigation } = obj;
   return (
-    <LoginView
-      onLogin={() => { console.log('Successfully logged in'); }}
-    />
+    <LoginContext.Consumer>
+      {
+        (loginState) => (
+          <LoginView onLogin={() => { loginState.onLogin(); navigation.navigate('Home'); }} />)
+      }
+    </LoginContext.Consumer>
   );
 }
 
@@ -60,7 +71,7 @@ function RegisterScreen(obj) {
   const { navigation } = obj;
   return (
     <RegisterView
-      onRegister={() => { console.log('Successfully registered'); }}
+      onRegister={() => { navigation.navigate('Login'); }}
     />
   );
 }
@@ -137,11 +148,6 @@ function HomeScreen(obj) {
     <Layout style={{ flex: 1 }}>
       {tabView}
       <Text />
-      <Layout>
-        <LoginContext.Consumer>
-          {(loginInfo) => (<Text>{JSON.stringify(loginInfo)}</Text>)}
-        </LoginContext.Consumer>
-      </Layout>
       <Button status="primary" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }}>
         Go to My Plants
       </Button>
@@ -161,7 +167,10 @@ function HomeScreen(obj) {
       <Button status="primary" onPress={() => { navigation.navigate('Search'); }}>
         Go to Search
       </Button>
-      <AccountButtons />
+      <AccountButtons
+        onRequestLogin={() => { navigation.navigate('Login'); }}
+        onRequestRegister={() => { navigation.navigate('Register'); }}
+      />
     </Layout>
   );
 }

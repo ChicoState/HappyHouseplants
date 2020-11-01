@@ -5,20 +5,37 @@ import { LoginContext, getLoginInfo } from '../auth';
 class AccountProvider extends React.Component {
   constructor() {
     super();
+    this.logout = this.logout.bind(this);
+    this.afterLogin = this.afterLogin.bind(this);
     this.state = {
-      loginInfo: undefined,
+      login: {
+        loading: true,
+        loginInfo: null,
+        onLogout: this.logout,
+        onLogin: this.afterLogin,
+      },
     };
   }
 
   componentDidMount() {
-    getLoginInfo().then((li) => { this.setState({ loginInfo: li }); });
+    this.afterLogin();
+  }
+
+  logout() {
+    this.setState({ login: { loginInfo: null, loading: false, onLogout: this.logout, onLogin: this.afterLogin } });
+  }
+
+  afterLogin() {
+    getLoginInfo().then((li) => {
+      this.setState({ login: { loginInfo: li, loading: false, onLogout: this.logout, onLogin: this.afterLogin } });
+    });
   }
 
   render() {
-    const { loginInfo } = this.state;
+    const { login } = this.state;
     const { children } = this.props;
     return (
-      <LoginContext.Provider value={loginInfo}>
+      <LoginContext.Provider value={login}>
         { children }
       </LoginContext.Provider>
     );
