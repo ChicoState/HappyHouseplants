@@ -1,5 +1,6 @@
 import { Input } from '@ui-kitten/components';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Button, View, Text } from 'react-native';
 import { register } from '../auth';
 
@@ -79,5 +80,9 @@ class RegisterView extends React.Component {
     );
   }
 }
+
+RegisterView.propTypes = {
+  onRegister: PropTypes.func.isRequired,
+};
 
 export default RegisterView;

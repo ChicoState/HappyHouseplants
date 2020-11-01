@@ -1,5 +1,6 @@
 import { Input } from '@ui-kitten/components';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Button, View, Text } from 'react-native';
 import { login } from '../auth';
 
@@ -51,5 +52,9 @@ class LoginView extends React.Component {
     );
   }
 }
+
+LoginView.propTypes = {
+  onLogin: PropTypes.func.isRequired,
+};
 
 export default LoginView;

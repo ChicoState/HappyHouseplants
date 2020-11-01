@@ -22,12 +22,26 @@ class AccountProvider extends React.Component {
   }
 
   logout() {
-    this.setState({ login: { loginInfo: null, loading: false, onLogout: this.logout, onLogin: this.afterLogin } });
+    this.setState({
+      login: {
+        loginInfo: null,
+        loading: false,
+        onLogout: this.logout,
+        onLogin: this.afterLogin,
+      },
+    });
   }
 
   afterLogin() {
     getLoginInfo().then((li) => {
-      this.setState({ login: { loginInfo: li, loading: false, onLogout: this.logout, onLogin: this.afterLogin } });
+      this.setState({
+        login: {
+          loginInfo: li,
+          loading: false,
+          onLogout: this.logout,
+          onLogin: this.afterLogin,
+        },
+      });
     });
   }
 

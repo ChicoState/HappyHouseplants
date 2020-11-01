@@ -6,7 +6,7 @@ import {
 } from '@ui-kitten/components';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SERVER_ADDR } from '../server';
-import { authFetch, login, register, getLoginInfo } from '../auth';
+import { authFetch } from '../auth';
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 
