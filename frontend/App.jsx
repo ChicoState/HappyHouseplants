@@ -146,6 +146,14 @@ function HomeScreen(obj) {
 
   return (
     <Layout style={{ flex: 1 }}>
+      <LoginContext.Consumer>
+        {(loginState) => (
+          <Text>
+            Welcome
+            {loginState.loginInfo != null ? ` ${loginState.loginInfo.username}` : ', Please login'}
+          </Text>
+        )}
+      </LoginContext.Consumer>
       {tabView}
       <Text />
       <Button status="primary" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }}>
