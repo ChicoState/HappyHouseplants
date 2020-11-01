@@ -11,8 +11,8 @@ function authFetch(url, method = 'GET', body) {
     AsyncStorage.getItem(SESSION_TOKEN).then((authToken) => {
       const request = {
         method,
-        body,
-        headers: new Headers({ AuthToken: authToken }),
+        body: JSON.stringify(body),
+        headers: new Headers({ AuthToken: authToken, 'Content-Type': 'application/json' }),
       };
       fetch(url, request).then((res) => {
         response(res);
