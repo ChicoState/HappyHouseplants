@@ -1,7 +1,10 @@
+import React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SERVER_ADDR } from './server';
 
 const SESSION_TOKEN = 'session_token';
+
+const LoginContext = React.createContext(null);
 
 function authFetch(url, method = 'GET', body) {
   return new Promise((response) => {
@@ -74,5 +77,5 @@ function register(username, password, firstName, lastName) {
 }
 
 module.exports = {
-  authFetch, login, register, getLoginInfo,
+  authFetch, login, register, getLoginInfo, LoginContext,
 };
