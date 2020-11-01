@@ -12,8 +12,28 @@ import SearchBar from './components/Search';
 import Recommend from './components/RecList';
 import TipList from './components/TipList';
 import PlantProfile from './components/PlantProfile';
+import LoginView from './components/LoginView';
+import RegisterView from './components/RegisterView';
 
 const Stack = createStackNavigator();
+
+function LoginScreen(obj) {
+  const { navigation } = obj;
+  return (
+    <LoginView
+      onLogin={() => { console.log('Successfully logged in'); }}
+    />
+  );
+}
+
+function RegisterScreen(obj) {
+  const { navigation } = obj;
+  return (
+    <RegisterView
+      onRegister={() => { console.log('Successfully registered'); }}
+    />
+  );
+}
 
 function HomeScreen(obj) {
   const { navigation } = obj;
@@ -39,6 +59,12 @@ function HomeScreen(obj) {
       <Text />
       <Button status="success" onPress={() => { navigation.navigate('Search'); }}>
         Go to Search
+      </Button>
+      <Button status="success" onPress={() => { navigation.navigate('Login'); }}>
+        Login
+      </Button>
+      <Button status="success" onPress={() => { navigation.navigate('Register'); }}>
+        Register
       </Button>
     </Layout>
   );
@@ -127,6 +153,8 @@ function App() {
             <Stack.Screen name="Tips" component={TipScreen} />
             <Stack.Screen name="Recommend" component={RecommendScreen} />
             <Stack.Screen name="Search" component={SearchScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </ApplicationProvider>
