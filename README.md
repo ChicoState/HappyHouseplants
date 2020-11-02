@@ -54,16 +54,17 @@ EXPO_HOSTNAME=SOMEHOSTNAME
     ```
     
     OR
-    
     ```
-    cd backend && docker-compose build && docker-compose up -d
+    cd backend && docker-compose build && docker-compose up -d && cd ../frontend && npm install && expo start
     ```
     
     OR
     ```
-    cd backend
-    docker-compose build
+    npm install
+    cd backend && docker-compose build
     docker-compose up -d
+    cd ../frontend && npm install
+    expo start
     ```
 
 - Submit a pull request to the main branch when it is polished and ready to review, if the pull request is not ready for review but requires attention, please submit it as a draft.
