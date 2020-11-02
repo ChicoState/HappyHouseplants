@@ -1,25 +1,141 @@
-/* eslint-disable max-classes-per-file */
-/* eslint-disable react/prefer-stateless-function */
 import React from 'react';
 import { Calendar } from 'react-native-calendars';
 import { View } from 'react-native';
-import PropTypes from 'prop-types';
 import {
-  Layout, Text, Button,
+  Layout, Text, Button, Input, ListItem,
 } from '@ui-kitten/components';
-import UserInput from './GetUserInput';
+import { ScrollView } from 'react-native-gesture-handler';
+import { SERVER_ADDR } from '../server';
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
-const lastDayOfYear = new Date(new Date().getFullYear(), 11, 31);
 
-const datesMarked = {};
-const noteDateSaved = {};
-let selectedDate = {};
+/* Saves a single note to the server.
+ * @param { when } The Calendar-formatted string of the date. Example: 2020-10-29 (Oct 29, 2020).
+ * @param { text } The text of the note to store.
+ * @return { Promise } A Promise that resolves to nothing when the note is successfully saved. */
+function saveNote(when, text) {
+  return fetch(`${SERVER_ADDR}/mycalendar/notes`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ [when]: text }),
+  });
+}
 
-class Calend extends React.Component {
+/* Gets a dictionary-form object of all notes that are stored
+ * on the server for the current user.
+ * @return { Promise } A Promise that resolves to a dictionary-form object
+ * with all notes for the user. The keys are the Calendar-form dates associated
+ * with each note, and the values are string arrays of each note per day.
+ * For example:
+ * {
+ *   '2020-10-28': ['My first ever note on Oct 28, 2020'],
+ *   '2020-10-29': ['My note on Oct 29, 2020', 'My second note on this day'],
+ * } */
+function getNotes() {
+  return new Promise((resolve) => {
+    fetch(`${SERVER_ADDR}/mycalendar/notes`)
+      .then((response) => response.json())
+      .then((data) => {
+        resolve(data);
+      });
+  });
+}
+
+class CalendarView extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      notes: {},
+      selectedDate: null,
+      tempNote: '',
+      showInputView: false,
+    };
+
+    this.updateNotes = () => {
+      getNotes().then((downloadedNotes) => { this.setState({ notes: downloadedNotes }); })
+        .catch((error) => {
+          // TODO: Show error to user, then return home?
+          console.error(`Error while fetching calendar notes: ${error}`);
+        });
+    };
+  }
+
+  componentDidMount() {
+    this.updateNotes();
+  }
+
+  /* Gets a dictionary-form object to pass into the Calendar component, which causes
+   * a dot to be rendered on each day with a note, and highlights the current selected
+   * day.
+   * @return { Object } - A dictionary-form object. Each key is a Calendar-form date, and
+   * each value has the following structure { selected: true, marked: true }. The
+   * selected property will only be true for the key that is equal to this.state.selectedDate.
+   * The marked property will be true for all dates that have at least one note. */
+  getCalendarMarkInfo() {
+    const { notes, selectedDate } = this.state;
+    const dates = Object.keys(notes);
+    const notesPerDate = Object.values(notes);
+    const ret = {};
+    for (let i = 0; i < dates.length; i += 1) {
+      const curDate = dates[i];
+      const curNotes = notesPerDate[i];
+      if (curNotes.length > 0) {
+        ret[curDate] = { marked: true };
+      }
+    }
+
+    if (ret[selectedDate]) {
+      ret[selectedDate].selected = true;
+    } else {
+      ret[selectedDate] = { selected: true };
+    }
+
+    return ret;
+  }
+
   render() {
-    const { savedDates } = this.props;
-    console.log(`saved: ${JSON.stringify(savedDates)}`);
+    const {
+      notes, tempNote, selectedDate, showInputView,
+    } = this.state;
+
+    // For each property in notes (key is date, value is array of notes), create a ListItem
+    const noteViews = [];
+    const dates = Object.keys(notes);
+    const notesPerDate = Object.values(notes);
+    for (let i = 0; i < notesPerDate.length; i += 1) {
+      const curDate = dates[i];
+      const notesOnThisDate = notesPerDate[i];
+      const notesStr = notesOnThisDate.join('\n');
+      noteViews.push(<ListItem title={curDate} description={notesStr} key={curDate} />);
+    }
+
+    if (showInputView) {
+      return (
+        <Layout style={{ flex: 1 }}>
+          <Text>
+            Enter Text:
+            <Input
+              placeholder="Enter note here"
+              value={tempNote || ''}
+              onChangeText={(newNote) => this.setState({ tempNote: newNote })}
+            />
+            <Button onPress={() => {
+              saveNote(selectedDate, tempNote).then(() => {
+                this.setState({ showInputView: false });
+                this.updateNotes();
+              }).catch((error) => {
+                // TODO: Alert to user
+                console.error(`Error while trying to save a note: ${error}`);
+              });
+            }}
+            />
+          </Text>
+        </Layout>
+      );
+    }
+
     return (
       <View style={{ flex: 1 }}>
         <Calendar
@@ -28,9 +144,7 @@ class Calend extends React.Component {
             'stylesheet.day.basic': {
               base: {
                 width: '50%',
-                // height: windowHeight / 9,
                 alignItems: 'center',
-                // margin: '50%',
               },
             },
             backgroundColor: '#ffffff',
@@ -59,39 +173,19 @@ class Calend extends React.Component {
             textDayHeaderFontSize: 17,
           }}
           // Collection of dates that have to be marked. Default = {}
-          markedDates={{
-            ...savedDates,
-            ...selectedDate,
-          }}
+          markedDates={
+            this.getCalendarMarkInfo(notes)
+          }
           // Initially visible month. Default = Date()
           current={new Date()}
           // Minimum date that can be selected.
           minDate={firstDayOfYear}
-          // Maximum date that can be selected.
-          maxDate={lastDayOfYear}
           // Handler which gets executed on day press. Default = undefined
           onDayPress={(day) => {
-            console.log('selected day', day);
-            console.log(day.dateString);
-            selectedDate = {};
-            if (datesMarked[day.dateString]) {
-              delete datesMarked[day.dateString];
-            } else {
-              selectedDate[day.dateString] = {
-                selected: true,
-                marked: true,
-                selectedColor: 'green',
-              };
-            }
-            console.log(datesMarked);
-            this.setState(datesMarked);
+            this.setState({ selectedDate: day.dateString });
           }}
           onDayLongPress={(day) => {
-            console.log('LONG PRESS');
-            const { view } = this.props;
-            const { selectDay } = this.props;
-            view(true);
-            selectDay(day.dateString);
+            this.setState({ selectedDate: day.dateString, showInputView: true, tempNote: '' });
           }}
           // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
           monthFormat="MMMM yyyy"
@@ -112,110 +206,12 @@ class Calend extends React.Component {
           enableSwipeMonths
           showSixWeeks
         />
+        <ScrollView>
+          {noteViews}
+        </ScrollView>
       </View>
     );
   }
 }
 
-Calend.propTypes = {
-  view: PropTypes.func.isRequired,
-  // notes: PropTypes.func,
-  // showNotes: PropTypes.objectOf(PropTypes.object()),
-  // datePicked: PropTypes.string,
-  selectDay: PropTypes.func,
-  //savedDates: PropTypes.objectOf(PropTypes.object()),
-  // setSavedDates: PropTypes.func,
-};
-
-Calend.defaultProps = {
-  // notes: null,
-  // showNotes: null,
-  // datePicked: null,
-  selectDay: null,
-  savedDates: null,
-  // setSavedDates: null,
-};
-
-class InputView extends React.Component {
-  // eslint-disable-next-line class-methods-use-this
-  // TODO: change selectedColor to variable that is defined by user selection
-  saveToCalendar = this.saveToCalendar.bind(this);
-
-  saveToCalendar() {
-    console.log('Saved');
-    const {
-      setSavedDates, savedDates, datePicked, view,
-    } = this.props;
-    noteDateSaved[datePicked] = {
-      selected: true,
-      marked: true,
-      selectedColor: 'black',
-      selectedDotColor: 'red',
-    };
-    setSavedDates(noteDateSaved);
-    console.log(savedDates);
-    view(false);
-  }
-
-  render() {
-    return (
-      <Layout style={{ flex: 1 }}>
-        <Text>
-          Enter Text:
-          <UserInput />
-          <Button onPress={this.saveToCalendar} />
-        </Text>
-      </Layout>
-    );
-  }
-}
-
-InputView.propTypes = {
-  view: PropTypes.func.isRequired,
-  // notes: PropTypes.func,
-  // selectDay: PropTypes.func,
-  datePicked: PropTypes.string,
-  //savedDates: PropTypes.objectOf(PropTypes.object()),
-  setSavedDates: PropTypes.func,
-};
-
-InputView.defaultProps = {
-  // notes: null,
-  // selectDay: null,
-  datePicked: null,
-  savedDates: null,
-  setSavedDates: null,
-};
-
-export default function CalendarView() {
-  const savedDates = {};
-  const day = '01-01-01';
-  const [showInputView, setShowInputView] = React.useState(false);
-  // const [showSavedNotes, setSavedNotes] = React.useState(savedDates);
-  const [dayPicked, setDayPicked] = React.useState(day);
-  const [savedDays, setSavedDays] = React.useState(savedDates);
-  return (
-    showInputView
-      ? (
-        <InputView
-          view={setShowInputView}
-          // notes={setSavedNotes}
-          selectDay={setDayPicked}
-          datePicked={dayPicked}
-          savedDates={savedDays}
-          setSavedDates={setSavedDays}
-        />
-      )
-      : (
-        <Calend
-          view={setShowInputView}
-          // notes={setSavedNotes}
-          // showNotes={showSavedNotes}
-          datePicked={dayPicked}
-          selectDay={setDayPicked}
-          savedDates={savedDays}
-          setSavedDates={setSavedDays}
-        />
-      )
-  );
-}
+export default CalendarView;

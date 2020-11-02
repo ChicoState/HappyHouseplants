@@ -4,10 +4,11 @@
     "lastName": "LastName",
     "username": "SomeUser",
     "userId": "MyUserID",
-    "password": "SuperSecretPasswordHash",
+    "password": "SuperSecretPasswordHash1",
     "savedTipsByID": [1, 2],
     "savedPlantsByID": [1, 3, 4, 7],
-    "myPlantsByID": ["p1425", "p69065", "p2349"]
+    "myPlantsByID": ["p1425", "p69065", "p2349"],
+    "calendarNotes": {}
   },
   {
     "firstName": "FirstName1",
@@ -17,7 +18,8 @@
     "password": "SuperSecr23131etPasswordHash",
     "savedTipsByID": [5, 8],
     "savedPlantsByID": [2],
-    "myPlantsByID": ["p7895523"]
+    "myPlantsByID": ["p7895523"],
+    "calendarNotes": {}
   },
   {
     "firstName": "Woooo",
@@ -27,6 +29,7 @@
     "password": "ASLKDJL",
     "savedTipsByID": [3],
     "savedPlantsByID": [2, 8, 6, 4],
-    "myPlantsByID": ["p7, p34802"]
+    "myPlantsByID": ["p7, p34802"],
+    "calendarNotes": {}
   }
 ]
