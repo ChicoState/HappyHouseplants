@@ -15,7 +15,6 @@ The readme for HappyHouseplants
 - Docker
 - Node / npm
 - Android Studio
-- Watchman [optional]
 
 
 ## Setup
@@ -39,8 +38,9 @@ DB_PASSWORD=SOMEPASSWORD
 ```
 `/frontend/.env`
 ```
-EXPO_HOSTNAME=SOMEHOSTNAME
+EXPO_HOSTNAME=SOMEHOSTNAME/IP*
 ```
+*We recommend using the local IP address of the machine running the Docker application.
 
 ### To run a local instance of the database and API:
 - Change directory to HappyHousePlants repository
