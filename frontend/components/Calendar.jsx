@@ -123,7 +123,7 @@ Calend.propTypes = {
   // showNotes: PropTypes.objectOf(PropTypes.object()),
   // datePicked: PropTypes.string,
   selectDay: PropTypes.func,
-  savedDates: PropTypes.objectOf(PropTypes.object()),
+  //savedDates: PropTypes.objectOf(PropTypes.object()),
   // setSavedDates: PropTypes.func,
 };
 
@@ -175,7 +175,7 @@ InputView.propTypes = {
   // notes: PropTypes.func,
   // selectDay: PropTypes.func,
   datePicked: PropTypes.string,
-  savedDates: PropTypes.objectOf(PropTypes.object()),
+  //savedDates: PropTypes.objectOf(PropTypes.object()),
   setSavedDates: PropTypes.func,
 };
 
