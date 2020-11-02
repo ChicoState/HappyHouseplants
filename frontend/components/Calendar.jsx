@@ -6,7 +6,7 @@ import { Calendar } from 'react-native-calendars';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import {
-  Layout, Text, Button, Input,
+  Layout, Button, Input,
 } from '@ui-kitten/components';
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
@@ -165,15 +165,14 @@ class InputView extends React.Component {
     const { tempNotes, setTempNotes } = this.props;
     return (
       <Layout style={{ flex: 1 }}>
-        <Text>
-          Enter Text:
-          <Input
-            placeholder="Enter note here"
-            value={tempNotes || ''}
-            onChangeText={(note) => setTempNotes(note)}
-          />
-          <Button onPress={this.saveToCalendar} />
-        </Text>
+        <Input
+          placeholder="Enter note here"
+          value={tempNotes || ''}
+          onChangeText={(note) => setTempNotes(note)}
+        />
+        <Button status="success" onPress={this.saveToCalendar}>
+          Submit
+        </Button>
       </Layout>
     );
   }
