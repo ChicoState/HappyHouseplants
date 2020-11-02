@@ -1,8 +1,8 @@
 import React from 'react';
 import { Calendar } from 'react-native-calendars';
-import { View } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import {
-  Layout, Text, Button, Input, ListItem,
+  Layout, Button, Input, ListItem,
 } from '@ui-kitten/components';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SERVER_ADDR } from '../server';
@@ -56,7 +56,13 @@ class CalendarView extends React.Component {
     this.updateNotes = () => {
       getNotes().then((downloadedNotes) => { this.setState({ notes: downloadedNotes }); })
         .catch((error) => {
-          // TODO: Show error to user, then return home?
+          Alert.alert(
+            'Network Error',
+            'An error occured while trying to fetch calendar notes',
+            [
+              { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ],
+          );
           console.error(`Error while fetching calendar notes: ${error}`);
         });
     };
@@ -114,24 +120,47 @@ class CalendarView extends React.Component {
     if (showInputView) {
       return (
         <Layout style={{ flex: 1 }}>
-          <Text>
-            Enter Text:
-            <Input
-              placeholder="Enter note here"
-              value={tempNote || ''}
-              onChangeText={(newNote) => this.setState({ tempNote: newNote })}
-            />
-            <Button onPress={() => {
-              saveNote(selectedDate, tempNote).then(() => {
-                this.setState({ showInputView: false });
-                this.updateNotes();
-              }).catch((error) => {
-                // TODO: Alert to user
-                console.error(`Error while trying to save a note: ${error}`);
-              });
+          <Text />
+          <Input
+            placeholder="Enter note here"
+            value={tempNote || ''}
+            onChangeText={(newNote) => this.setState({ tempNote: newNote })}
+          />
+          <Text />
+          <Button
+            status="primary"
+            onPress={() => {
+              if (tempNote !== '') {
+                saveNote(selectedDate, tempNote).then(() => {
+                  this.setState({ showInputView: false });
+                  this.updateNotes();
+                }).catch((error) => {
+                  Alert.alert(
+                    'Internal Error',
+                    'An issue occured while trying to save the note',
+                    [
+                      { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                  );
+                  console.error(`Error while trying to save a note: ${error}`);
+                });
+              } else {
+                Alert.alert(
+                  'Error',
+                  'A blank note can not be saved',
+                  [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                  ],
+                );
+              }
             }}
-            />
-          </Text>
+          >
+            Submit
+          </Button>
+          <Text />
+          <Button status="primary" onPress={() => { this.setState({ showInputView: false }); }}>
+            Cancel
+          </Button>
         </Layout>
       );
     }
@@ -214,124 +243,4 @@ class CalendarView extends React.Component {
   }
 }
 
-<<<<<<< HEAD
-Calend.propTypes = {
-  view: PropTypes.func.isRequired,
-  selectDay: PropTypes.func,
-  savedDates: PropTypes.object,
-  dateNote: PropTypes.object,
-};
-
-Calend.defaultProps = {
-  selectDay: null,
-  savedDates: null,
-  dateNote: null,
-};
-
-class InputView extends React.Component {
-  // eslint-disable-next-line class-methods-use-this
-  // TODO: change selectedColor to variable that is defined by user selection
-  saveToCalendar = this.saveToCalendar.bind(this);
-
-  // saveUserCalendarNotes = this.saveUserCalendarNotes.bind(this);
-  // Use this function to save to Database / API to DB
-  // saveUserCalendarNotes() {
-  // }
-
-  saveToCalendar() {
-    console.log('Saved');
-    const {
-      setSavedDates, datePicked, view,
-      tempNotes, setDateNote,
-    } = this.props;
-    noteDateSaved[datePicked] = {
-      selected: true,
-      marked: true,
-      selectedColor: 'black',
-      selectedDotColor: 'red',
-    };
-    setSavedDates(noteDateSaved);
-    setDateNote({ [datePicked]: tempNotes });
-    // this.saveUserCalendarNotes(dateNote);
-    view(false);
-  }
-
-  render() {
-    const { tempNotes, setTempNotes } = this.props;
-    return (
-      <Layout style={{ flex: 1 }}>
-        <Input
-          placeholder="Enter note here"
-          value={tempNotes || ''}
-          onChangeText={(note) => setTempNotes(note)}
-        />
-        <Button status="success" onPress={this.saveToCalendar}>
-          Submit
-        </Button>
-      </Layout>
-    );
-  }
-}
-
-InputView.propTypes = {
-  view: PropTypes.func.isRequired,
-  setTempNotes: PropTypes.func,
-  tempNotes: PropTypes.string,
-  datePicked: PropTypes.string,
-  setSavedDates: PropTypes.func,
-  setDateNote: PropTypes.func,
-};
-
-InputView.defaultProps = {
-  datePicked: null,
-  setSavedDates: null,
-  setTempNotes: null,
-  tempNotes: '',
-  setDateNote: null,
-
-};
-
-export default function CalendarView() {
-  const savedDates = {};
-  const day = '01-01-01';
-  const [showInputView, setShowInputView] = React.useState(false);
-  const [showTempNotes, setTempNotes] = React.useState(savedDates);
-  const [showSavedNotes, setSavedNotes] = React.useState(savedDates);
-  const [showDateNote, setDateNote] = React.useState(savedDates);
-  const [dayPicked, setDayPicked] = React.useState(day);
-  const [savedDays, setSavedDays] = React.useState(savedDates);
-  return (
-    showInputView
-      ? (
-        <InputView
-          view={setShowInputView}
-          setNotes={setSavedNotes}
-          setTempNotes={setTempNotes}
-          tempNotes={showTempNotes}
-          notes={showSavedNotes}
-          selectDay={setDayPicked}
-          datePicked={dayPicked}
-          savedDates={savedDays}
-          setSavedDates={setSavedDays}
-          setDateNote={setDateNote}
-          dateNote={showDateNote}
-
-        />
-      )
-      : (
-        <Calend
-          view={setShowInputView}
-          showNotes={showSavedNotes}
-          datePicked={dayPicked}
-          selectDay={setDayPicked}
-          savedDates={savedDays}
-          setSavedDates={setSavedDays}
-          setDateNote={setDateNote}
-          dateNote={showDateNote}
-        />
-      )
-  );
-}
-=======
 export default CalendarView;
->>>>>>> upstream/main
