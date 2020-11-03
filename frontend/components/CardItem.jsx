@@ -11,7 +11,6 @@ import {
 function CardItem(props) {
   const { plant, styles, onPressItem } = props;
 
-  // console.log(`before style=${JSON.stringify(styles)}`);
   if (styles.image === undefined) {
     styles.image = CardItem.defaultProps.styles.image;
   }
@@ -118,7 +117,6 @@ CardItem.defaultProps = {
       flex: 0.5,
     },
     image: {
-      width: '80%',
       height: 300,
     },
   },
