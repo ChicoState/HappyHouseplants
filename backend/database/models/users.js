@@ -9,7 +9,12 @@ const userSchema = new mongoose.Schema({
   password: String,
   savedTipsByID: Array,
   savedPlantsByID: Array,
-  myPlantsByID: Array,
+  myPlantsByID: [
+    {
+      plantID: String,
+      location: String,
+    },
+  ],
   calendarNotes: mongoose.Schema.Types.Mixed,
 });
 
