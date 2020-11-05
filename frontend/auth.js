@@ -60,12 +60,12 @@ function login(username, password) {
 }
 
 function logout() {
-  return AsyncStorage.setItem(SESSION_TOKEN, null);
+  return AsyncStorage.removeItem(SESSION_TOKEN);
 }
 
 function register(username, password, firstName, lastName) {
   return new Promise((statusResolved) => {
-    fetch(`${SERVER_ADDR}/register`, { // TODO: This is a common pattern of posting a JSON, refactor
+    fetch(`${SERVER_ADDR}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
