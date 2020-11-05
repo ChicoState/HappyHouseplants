@@ -59,6 +59,10 @@ function login(username, password) {
   });
 }
 
+function logout() {
+  return AsyncStorage.setItem(SESSION_TOKEN, null);
+}
+
 function register(username, password, firstName, lastName) {
   return new Promise((statusResolved) => {
     fetch(`${SERVER_ADDR}/register`, { // TODO: This is a common pattern of posting a JSON, refactor
@@ -77,5 +81,5 @@ function register(username, password, firstName, lastName) {
 }
 
 module.exports = {
-  authFetch, login, register, getLoginInfo, LoginContext,
+  authFetch, login, register, getLoginInfo, LoginContext, logout,
 };

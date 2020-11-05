@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const { LoginContext, getLoginInfo } = require('../auth');
+const { LoginContext, getLoginInfo, logout } = require('../auth');
 
 class AccountProvider extends React.Component {
   constructor() {
@@ -23,13 +23,17 @@ class AccountProvider extends React.Component {
   }
 
   logout() {
-    this.setState({
-      login: {
-        loginInfo: null,
-        loading: false,
-        onLogout: this.logout,
-        onLogin: this.afterLogin,
-      },
+    logout().then(() => {
+      this.setState({
+        login: {
+          loginInfo: null,
+          loading: false,
+          onLogout: this.logout,
+          onLogin: this.afterLogin,
+        },
+      });
+    }).catch((error) => {
+      console.error(`Failed to logout due to an error: ${error}`);
     });
   }
 
