@@ -18,8 +18,9 @@ import TipList from './components/TipList';
 import PlantProfile from './components/PlantProfile';
 import LoginView from './components/LoginView';
 import RegisterView from './components/RegisterView';
-import { LoginContext } from './auth';
 import AccountProvider from './components/AccountProvider';
+
+const { LoginContext } = require('./auth');
 
 const Stack = createStackNavigator();
 

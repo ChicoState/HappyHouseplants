@@ -2,7 +2,8 @@ import { Input } from '@ui-kitten/components';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, View, Text } from 'react-native';
-import { login } from '../auth';
+
+const { login } = require('../auth');
 
 class LoginView extends React.Component {
   constructor() {
