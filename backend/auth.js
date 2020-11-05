@@ -1,9 +1,10 @@
+const { cryptoRandomHex } = require('crng');
 const bcrypt = require('bcrypt');
 const { SESSIONS } = require('./database/models/sessions');
 const { USERS } = require('./database/models/users');
 const { findDocuments } = require('./database/findDocuments');
 
-const SALT_ROUNDS = 10; // TODO: Desired rounds for security?
+const SALT_ROUNDS = 12;
 
 /* Updates the 'lastLogin' property of a Session.
  * @param { session } The session to update.
@@ -15,7 +16,6 @@ function keepaliveSession(session) {
     SESSIONS.updateOne({ authToken }, {
       lastLoginDate: now,
     }).then(() => {
-      console.log(`Extended session for user ID ${session.userId}.`);
       complete(session);
     }).catch((reason) => {
       console.error(`Failed to keepalive session with authentication token ${authToken} (for user ID ${session.userId}) due to an error: ${reason}`);
@@ -31,8 +31,7 @@ function keepaliveSession(session) {
 function createSession(userId) {
   return new Promise((complete) => {
     const now = new Date();
-    const crngToken = `Session_${now.getTime()}_${userId}`; // TODO: DO NOT USE THIS! Use CRNG
-    console.error('Important note to devs: Right now, we are using non-CRNG session tokens. DO NOT LET THIS REACH PRODUCTION!');
+    const crngToken = cryptoRandomHex(32);
     const session = {
       authToken: crngToken,
       userId,
