@@ -80,26 +80,18 @@ app.get('/users/:userId', (req, res) => {
 });
 
 app.get('/users/:userId/tips', (req, res) => {
-  const userQuery = { userId: req.params.userId }; // TODO: Authenticate
-  findDocuments('Users', userQuery).then((docs) => {
-    if (docs.length < 1) {
-      res.status(404).send('User not found');
-    } else {
-      const user = docs[0];
+  authenticateUserRequest(req, res).then((userId) => {
+    findOneDocument('Users', { userId }).then((user) => {
       res.send(user.savedTipsByID);
-    }
+    });
   });
 });
 
 app.get('/users/:userId/plants', (req, res) => {
-  const userQuery = { userId: req.params.userId }; // TODO: Authenticate
-  findDocuments('Users', userQuery).then((docs) => {
-    if (docs.length < 1) {
-      res.status(404).send('User not found');
-    } else {
-      const user = docs[0];
+  authenticateUserRequest(req, res).then((userId) => {
+    findOneDocument('Users', { userId }).then((user) => {
       res.send(user.savedPlantsByID);
-    }
+    });
   });
 });
 
@@ -184,9 +176,7 @@ app.post('/login/', (req, res) => {
 
 app.get('/login_info', (req, res) => {
   authenticateUserRequest(req, res).then((userId) => {
-    console.log(`Getting login info for user ID ${userId}...`);
     findOneDocument('Users', { userId }).then((user) => {
-      console.log(`Got ${JSON.stringify(user)}`);
       res.json({
         userId,
         username: user.username,
