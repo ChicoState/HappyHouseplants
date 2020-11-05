@@ -1,8 +1,8 @@
 import React from 'react';
 import { Calendar } from 'react-native-calendars';
-import { View } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import {
-  Layout, Text, Button, Input, ListItem,
+  Layout, Button, Input, ListItem,
 } from '@ui-kitten/components';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SERVER_ADDR } from '../server';
@@ -56,7 +56,13 @@ class CalendarView extends React.Component {
     this.updateNotes = () => {
       getNotes().then((downloadedNotes) => { this.setState({ notes: downloadedNotes }); })
         .catch((error) => {
-          // TODO: Show error to user, then return home?
+          Alert.alert(
+            'Network Error',
+            'An error occured while trying to fetch calendar notes',
+            [
+              { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ],
+          );
           console.error(`Error while fetching calendar notes: ${error}`);
         });
     };
@@ -114,24 +120,47 @@ class CalendarView extends React.Component {
     if (showInputView) {
       return (
         <Layout style={{ flex: 1 }}>
-          <Text>
-            Enter Text:
-            <Input
-              placeholder="Enter note here"
-              value={tempNote || ''}
-              onChangeText={(newNote) => this.setState({ tempNote: newNote })}
-            />
-            <Button onPress={() => {
-              saveNote(selectedDate, tempNote).then(() => {
-                this.setState({ showInputView: false });
-                this.updateNotes();
-              }).catch((error) => {
-                // TODO: Alert to user
-                console.error(`Error while trying to save a note: ${error}`);
-              });
+          <Text />
+          <Input
+            placeholder="Enter note here"
+            value={tempNote || ''}
+            onChangeText={(newNote) => this.setState({ tempNote: newNote })}
+          />
+          <Text />
+          <Button
+            status="primary"
+            onPress={() => {
+              if (tempNote !== '') {
+                saveNote(selectedDate, tempNote).then(() => {
+                  this.setState({ showInputView: false });
+                  this.updateNotes();
+                }).catch((error) => {
+                  Alert.alert(
+                    'Internal Error',
+                    'An issue occured while trying to save the note',
+                    [
+                      { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                  );
+                  console.error(`Error while trying to save a note: ${error}`);
+                });
+              } else {
+                Alert.alert(
+                  'Error',
+                  'A blank note can not be saved',
+                  [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                  ],
+                );
+              }
             }}
-            />
-          </Text>
+          >
+            Submit
+          </Button>
+          <Text />
+          <Button status="primary" onPress={() => { this.setState({ showInputView: false }); }}>
+            Cancel
+          </Button>
         </Layout>
       );
     }
