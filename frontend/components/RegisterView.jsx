@@ -1,7 +1,9 @@
 import { Input } from '@ui-kitten/components';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, View, Text } from 'react-native';
+import {
+  Button, View, Text, Alert,
+} from 'react-native';
 
 const { register } = require('../auth');
 
@@ -34,7 +36,13 @@ class RegisterView extends React.Component {
           this.setState({ errorMessage: status.userMessage });
         }
       }).catch((error) => {
-        // TODO: Show error dialog
+        Alert.alert(
+          'Network Error',
+          'Failed to connect to the registration server.',
+          [
+            { text: 'OK' },
+          ],
+        );
         console.error(`Failed to register due to an error: ${error}`);
       });
     } else {
