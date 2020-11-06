@@ -107,7 +107,10 @@ app.get('/mycalendar/notes', (req, res) => {
   const query = { userId };
 
   findOneDocument('Users', query).then((userDoc) => {
-    const { calendarNotes = {/* Default no notes */} } = userDoc;
+    let calendarNotes = {};
+    if (userDoc) {
+      calendarNotes = userDoc.calendarNotes;
+    }
     res.send(calendarNotes);
   });
 });
