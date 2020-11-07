@@ -7,6 +7,8 @@ import {
 import { ScrollView } from 'react-native-gesture-handler';
 import { SERVER_ADDR } from '../server';
 
+const { authFetch } = require('../auth');
+
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 
 /* Saves a single note to the server.
@@ -14,13 +16,7 @@ const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
  * @param { text } The text of the note to store.
  * @return { Promise } A Promise that resolves to nothing when the note is successfully saved. */
 function saveNote(when, text) {
-  return fetch(`${SERVER_ADDR}/mycalendar/notes`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ [when]: text }),
-  });
+  return authFetch(`${SERVER_ADDR}/mycalendar/notes`, 'POST', { [when]: text });
 }
 
 /* Gets a dictionary-form object of all notes that are stored
@@ -35,7 +31,7 @@ function saveNote(when, text) {
  * } */
 function getNotes() {
   return new Promise((resolve) => {
-    fetch(`${SERVER_ADDR}/mycalendar/notes`)
+    authFetch(`${SERVER_ADDR}/mycalendar/notes`)
       .then((response) => response.json())
       .then((data) => {
         resolve(data);
