@@ -23,7 +23,6 @@
     "react-dom": "16.13.1",
     "react-native": "~0.63.2",
     "react-native-calendars": "^1.403.0",
-    "react-native-camera": "git+https://git@github.com/react-native-community/react-native-camera.git",
     "react-native-gesture-handler": "~1.7.0",
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "3.1.4",
@@ -31,8 +30,7 @@
     "react-native-svg": "12.1.0",
     "react-native-unimodules": "~0.11.0",
     "react-native-web": "~0.13.12",
-    "expo-camera": "~9.0.0",
-    "expo-permissions": "~9.3.0"
+    "expo-camera": "~9.0.0"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
