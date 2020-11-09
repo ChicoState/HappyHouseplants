@@ -15,7 +15,6 @@ import Recommend from './components/RecList';
 import TipList from './components/TipList';
 import PlantProfile from './components/PlantProfile';
 
-
 const Stack = createStackNavigator();
 
 function MyPlantsScreen(obj) {
