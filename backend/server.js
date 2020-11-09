@@ -79,7 +79,7 @@ app.get('/users/:userId', (req, res) => {
   });
 });
 
-app.get('/users/:userId/tips', (req, res) => {
+app.get('/mytips', (req, res) => {
   authenticateUserRequest(req, res).then((userId) => {
     findOneDocument('Users', { userId }).then((user) => {
       res.send(user.savedTipsByID);
@@ -87,10 +87,38 @@ app.get('/users/:userId/tips', (req, res) => {
   });
 });
 
-app.get('/users/:userId/plants', (req, res) => {
+app.get('/myplants', (req, res) => {
   authenticateUserRequest(req, res).then((userId) => {
-    findOneDocument('Users', { userId }).then((user) => {
-      res.send(user.savedPlantsByID);
+    findOneDocument('Users', { userId }).then((userDoc) => {
+      let myPlantsByID = [];
+      if (userDoc.myPlantsByID) {
+        myPlantsByID = userDoc.myPlantsByID;
+      }
+
+      res.send(myPlantsByID);
+    });
+  });
+});
+
+app.post('/myplants', (req, res) => {
+  authenticateUserRequest(req, res).then((userId) => {
+    const query = { userId };
+    const plant = req.body;
+    findOneDocument('Users', query).then((userDoc) => {
+      let myPlantsByID = [];
+      if (userDoc.myPlantsByID) {
+        myPlantsByID = userDoc.myPlantsByID;
+      }
+
+      myPlantsByID.push(plant);
+
+      USERS.updateOne(query, { myPlantsByID }).then(() => {
+        console.log(`Added plant ${plant} to user ID ${userId}'s plants.`);
+        res.status(201).send();
+      }).catch((saveError) => {
+        console.error(`Failed to add a plant to 'myplants' for user ID ${userId}. Reason: ${saveError}`);
+        res.status(500).send();
+      });
     });
   });
 });
@@ -176,14 +204,19 @@ app.post('/login/', (req, res) => {
 
 app.get('/login_info', (req, res) => {
   authenticateUserRequest(req, res).then((userId) => {
-    findOneDocument('Users', { userId }).then((user) => {
-      res.json({
-        userId,
-        username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
+    if (userId) {
+      findOneDocument('Users', { userId }).then((user) => {
+        res.json({
+          userId,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        });
       });
-    });
+    } else {
+      // Not logged in, send null info
+      res.json(null);
+    }
   }).catch((error) => {
     console.error(`Failed to get login info due to error: ${error}`);
     res.json(null);
