@@ -9,6 +9,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import PropTypes from 'prop-types';
 import 'react-native-gesture-handler';
+import Cam from './components/Camera';
 import theme from './components/colorTheme.json';
 import HeaderButtons from './components/HeaderButtons';
 import CalendarView from './components/Calendar';
@@ -78,15 +79,18 @@ function RegisterScreen(obj) {
 }
 
 function MyPlantsScreen(obj) {
-  const { route } = obj;
-  const { otherParam } = route.params;
+  const { navigation } = obj;
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>My Plants</Text>
-      <Text />
-      <Text>{JSON.stringify(otherParam)}</Text>
+      <Button status="primary" onPress={() => { navigation.navigate('Camera'); }}>
+        Go to Camera
+      </Button>
     </Layout>
   );
+}
+
+function CameraScreen() {
+  return (<Cam />);
 }
 
 function PlantProfileScreen(navContext) {
@@ -157,7 +161,7 @@ function HomeScreen(obj) {
       </LoginContext.Consumer>
       {tabView}
       <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }}>
+      <Button status="primary" onPress={() => { navigation.navigate('My Plants'); }}>
         Go to My Plants
       </Button>
       <Text />
@@ -222,6 +226,7 @@ function App() {
               <Stack.Screen name="Tips" component={TipScreen} />
               <Stack.Screen name="Recommend" component={RecommendScreen} />
               <Stack.Screen name="Search" component={SearchScreen} />
+              <Stack.Screen name="Camera" component={CameraScreen} />
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="Register" component={RegisterScreen} />
             </Stack.Navigator>
