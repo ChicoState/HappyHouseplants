@@ -29,6 +29,10 @@ function MyPlantsScreen(obj) {
   );
 }
 
+/**
+ * Plant Profile Screen
+ * @param {*} navContext
+ */
 function PlantProfileScreen(navContext) {
   const { route } = navContext;
   const { params } = route;
