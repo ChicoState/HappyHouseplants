@@ -14,7 +14,6 @@ import SearchBar from './components/Search';
 import Recommend from './components/RecList';
 import TipList from './components/TipList';
 import PlantProfile from './components/PlantProfile';
-import BottomNavi from './components/BottomNavi';
 
 const Stack = createStackNavigator();
 
@@ -150,7 +149,6 @@ function App() {
             <Stack.Screen name="Search" component={SearchScreen} />
           </Stack.Navigator>
         </NavigationContainer>
-        <BottomNavi />
       </ApplicationProvider>
     </>
   );
