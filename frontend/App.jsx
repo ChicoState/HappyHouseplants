@@ -27,7 +27,7 @@ const Stack = createStackNavigator();
 
 function AccountButtons(props) {
   const { onRequestLogin, onRequestRegister } = props;
-
+  // test
   return (
     <LoginContext.Consumer>
       {(loginState) => {
