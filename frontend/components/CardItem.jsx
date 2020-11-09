@@ -2,11 +2,14 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable react/forbid-prop-types */
 import React, { useState } from 'react';
-import { Image, ViewPropTypes } from 'react-native';
+import { Alert, Image, ViewPropTypes } from 'react-native';
 import { PropTypes } from 'prop-types';
 import {
   Button, Card, Icon, Layout, Text,
 } from '@ui-kitten/components';
+import { SERVER_ADDR } from '../server';
+
+const { authFetch } = require('../auth');
 
 function CardItem(props) {
   const { plant, styles, onPressItem } = props;
@@ -24,19 +27,77 @@ function CardItem(props) {
     styles.card = CardItem.defaultProps.styles.card;
   }
 
-  const [saveEntry, setSaveEntry] = useState(true);
-  const [collectionEntry, setCollectionEntry] = useState(true);
+  const [saveEntry, setSaveEntry] = useState(true);//TODO: Initialize via fetch
+  const [collectionEntry, setCollectionEntry] = useState(true);//TODO: Initialize via fetch
 
   const toggleSaveEntry = () => {
-    console.log('saveEntry status = ', saveEntry);
-    setSaveEntry(!saveEntry);
-    // need to remove or or add to from database
+    if (!saveEntry) {
+      authFetch(`${SERVER_ADDR}/savedplants`, 'POST', {
+        plantID: plant.plantID,
+        location: 'Kitchen', // TODO: Get location choice from user
+      }).then(() => {
+        setSaveEntry(true);
+      }).catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'Failed to save this plant',
+          [
+            { text: 'OK' },
+          ],
+        );
+        console.error(`Failed to save a plant due to an error: ${error}`);
+      });
+    } else {
+      authFetch(`${SERVER_ADDR}/savedplants`, 'DELETE', {
+        plantID: plant.plantID,
+      }).then(() => {
+        setSaveEntry(false);
+      }).catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'Failed to remove this plant',
+          [
+            { text: 'OK' },
+          ],
+        );
+        console.error(`Failed to remove a plant due to an error: ${error}`);
+      });
+    }
   };
 
   const toggleCollectionEntry = () => {
-    console.log('collectionEntry status = ', collectionEntry);
-    setCollectionEntry(!collectionEntry);
-    // need to remove or or add to from database
+    if (!collectionEntry) {
+      authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
+        plantID: plant.plantID,
+        location: 'Kitchen', // TODO: Get location choice from user
+      }).then(() => {
+        setCollectionEntry(true);
+      }).catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'Failed to add this plant',
+          [
+            { text: 'OK' },
+          ],
+        );
+        console.error(`Failed to save a plant due to an error: ${error}`);
+      });
+    } else {
+      authFetch(`${SERVER_ADDR}/myplants`, 'DELETE', {
+        plantID: plant.plantID,
+      }).then(() => {
+        setCollectionEntry(false);
+      }).catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'Failed to remove this plant',
+          [
+            { text: 'OK' },
+          ],
+        );
+        console.error(`Failed to remove a plant due to an error: ${error}`);
+      });
+    }
   };
 
   const saveIcon = (info) => (

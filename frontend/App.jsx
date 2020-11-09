@@ -19,6 +19,7 @@ import PlantProfile from './components/PlantProfile';
 import LoginView from './components/LoginView';
 import RegisterView from './components/RegisterView';
 import AccountProvider from './components/AccountProvider';
+import MyPlantsList from './components/MyPlantsList';
 
 const { LoginContext } = require('./auth');
 
@@ -82,7 +83,7 @@ function MyPlantsScreen(obj) {
   const { otherParam } = route.params;
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>My Plants</Text>
+      <MyPlantsList />
       <Text />
       <Text>{JSON.stringify(otherParam)}</Text>
     </Layout>
