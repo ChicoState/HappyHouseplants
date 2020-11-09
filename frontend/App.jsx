@@ -107,6 +107,9 @@ function CalendarScreen() {
   );
 }
 
+/**
+ * Tip Screen
+ */
 function TipScreen() {
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
