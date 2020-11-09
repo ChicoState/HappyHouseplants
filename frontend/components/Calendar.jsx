@@ -12,12 +12,13 @@ import {
 import { Icon } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SERVER_ADDR } from '../server';
-import {
+
+const {
   getCalendarTheme,
   getCalendarThemeDark,
   calendarThemeDark,
   calendarThemeLight,
-} from './CalendarTheme';
+} = require('./CalendarTheme');
 
 const { authFetch } = require('../auth');
 
