@@ -1,6 +1,6 @@
 The readme for HappyHouseplants
 
-[![Build Status](https://travis-ci.org/maklh899/HappyHouseplants.svg?branch=main)](https://travis-ci.org/maklh899/HappyHouseplants)
+[![Build Status](https://travis-ci.org/ChicoState/HappyHouseplants.svg?branch=main)](https://travis-ci.org/ChicoState/HappyHouseplants)
 
 # Getting Started
 ## Frameworks and tools:
@@ -15,7 +15,6 @@ The readme for HappyHouseplants
 - Docker
 - Node / npm
 - Android Studio
-- Watchman [optional]
 
 
 ## Setup
@@ -39,8 +38,9 @@ DB_PASSWORD=SOMEPASSWORD
 ```
 `/frontend/.env`
 ```
-EXPO_HOSTNAME=SOMEHOSTNAME
+EXPO_HOSTNAME=SOMEHOSTNAME/IP*
 ```
+*We recommend using the local IP address of the machine running the Docker application.
 
 ### To run a local instance of the database and API:
 - Change directory to HappyHousePlants repository
@@ -54,16 +54,17 @@ EXPO_HOSTNAME=SOMEHOSTNAME
     ```
     
     OR
-    
     ```
-    cd backend && docker-compose build && docker-compose up -d
+    cd backend && docker-compose build && docker-compose up -d && cd ../frontend && npm install && expo start
     ```
     
     OR
     ```
-    cd backend
-    docker-compose build
+    npm install
+    cd backend && docker-compose build
     docker-compose up -d
+    cd ../frontend && npm install
+    expo start
     ```
 
 - Submit a pull request to the main branch when it is polished and ready to review, if the pull request is not ready for review but requires attention, please submit it as a draft.
