@@ -26,6 +26,14 @@ const plantSchema = new mongoose.Schema({
     indoor: Boolean,
     outdoor: Boolean,
     comment: String,
+    commonPests: {
+      sourceURL: String,
+      pests: Array,
+    },
+    climate: {
+      hot: Boolean,
+      cold: Boolean,
+    },
     temperature: {
       min: Number, // Celcius
       max: Number, // Celcius

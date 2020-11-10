@@ -20,7 +20,15 @@
       "humidity": 2,
       "indoor": null,
       "outdoor": null,
+      "commonPests": {
+        "sourceURL": "https://homeguides.sfgate.com/common-pests-aglaonema-modestum-34855.html",
+        "pests": ["Mealybugs", "Spider Mites", "Aphids", "Scales", "Nematodes" ]
+      },
       "comment": "The temperature should be between 65 and 80 degrees farenheit. Keep the himidity medium or high, otherwise the leaves will become dry.",
+      "climate": {
+        "hot": false,
+        "cold": true
+      },
       "temperature": {
         "min": 18,
         "max": 27
@@ -57,7 +65,15 @@
       "humidity": null,
       "indoor": null,
       "outdoor": null,
+      "commonPests": {
+        "sourceURL": "https://homeguides.sfgate.com/jade-plant-infestation-63533.html",
+        "pests": ["Mealybugs", "Spider Mites"]
+      },
       "comment": null,
+      "climate": {
+        "hot": true,
+        "cold": false
+      },
       "temperature": {
           "min": 18,
           "max": 24
