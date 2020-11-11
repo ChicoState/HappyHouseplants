@@ -30,10 +30,6 @@ const plantSchema = new mongoose.Schema({
       pests: Array,
     },
     comment: String,
-    commonPests: {
-      sourceURL: String,
-      pests: Array,
-    },
     climate: {
       hot: Boolean,
       cold: Boolean,
