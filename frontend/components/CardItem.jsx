@@ -100,8 +100,9 @@ class CardItem extends React.Component {
 
   toggleCollectionEntry() {
     const { owned } = this.state;
-    const { plant } = this.props;
-    if (!owned) {
+    const { plant, onRemoveFromOwned } = this.props;
+    const idProp = '_id';
+    if (!owned || onRemoveFromOwned === undefined) {
       authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
         plantID: plant.plantID,
         location: 'Kitchen', // TODO: Get location choice from user
@@ -122,11 +123,12 @@ class CardItem extends React.Component {
       });
     } else {
       authFetch(`${SERVER_ADDR}/myplants`, 'DELETE', {
-        plantID: plant.plantID,
+        [idProp]: plant[idProp],
       }).then(() => {
         this.setState({
           owned: false,
         });
+        onRemoveFromOwned(plant);
       }).catch((error) => {
         Alert.alert(
           'Network Error',
@@ -203,6 +205,7 @@ class CardItem extends React.Component {
 CardItem.propTypes = {
   plant: PropTypes.object.isRequired,
   onPressItem: PropTypes.func.isRequired,
+  onRemoveFromOwned: PropTypes.func,
   styles: PropTypes.objectOf(ViewPropTypes.style),
 };
 
@@ -226,6 +229,7 @@ CardItem.defaultProps = {
       height: 300,
     },
   },
+  onRemoveFromOwned: undefined,
 };
 
 export default CardItem;

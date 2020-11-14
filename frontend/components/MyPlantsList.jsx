@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
 class MyPlantsList extends Component {
   constructor() {
     super();
+    this.removePlant = this.removePlant.bind(this);
     this.state = {
       loaded: false,
       error: null,
@@ -40,6 +41,15 @@ class MyPlantsList extends Component {
       });
   }
 
+  removePlant(plant) {
+    const { plants } = this.state;
+    const idProp = '_id';
+    const newPlants = plants.filter((cur) => cur[idProp].toString() !== plant[idProp].toString());
+    this.setState({
+      plants: newPlants,
+    });
+  }
+
   render() {
     const { loaded, error, plants } = this.state;
     const { onPressItem } = this.props;
@@ -59,13 +69,16 @@ class MyPlantsList extends Component {
         plant={plant}
         styles={styles}
         onPressItem={onPressItem}
+        onRemoveFromOwned={this.removePlant}
       />
     ));
 
-    // TODO: If 'myCards' is empty, put some text like "You have no saved plants, would you like to explore?"
+    const emptyNotice = plants.length === 0
+      ? (<Text>You don&apos;t own any plants</Text>) : undefined;
 
     return (
       <Layout style={styles.container}>
+        {emptyNotice}
         <ScrollView>
           {myCards}
         </ScrollView>
