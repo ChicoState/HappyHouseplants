@@ -105,6 +105,7 @@ class CardItem extends React.Component {
       authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
         plantID: plant.plantID,
         location: 'Kitchen', // TODO: Get location choice from user
+        image: plant.image, // TODO: Allow user to use a custom image
       }).then(() => {
         this.setState({
           owned: true,
