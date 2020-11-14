@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable react/forbid-prop-types */
-import React, { useState } from 'react';
+import React from 'react';
 import { Alert, Image, ViewPropTypes } from 'react-native';
 import { PropTypes } from 'prop-types';
 import {
@@ -11,32 +11,63 @@ import { SERVER_ADDR } from '../server';
 
 const { authFetch } = require('../auth');
 
-function CardItem(props) {
-  const { plant, styles, onPressItem } = props;
+class CardItem extends React.Component {
+  constructor(props) {
+    super(props);
+    const { styles } = props;
 
-  if (styles.image === undefined) {
-    styles.image = CardItem.defaultProps.styles.image;
-  }
-  if (styles.cardFooter === undefined) {
-    styles.cardFooter = CardItem.defaultProps.styles.cardFooter;
-  }
-  if (styles.button === undefined) {
-    styles.button = CardItem.defaultProps.styles.button;
-  }
-  if (styles.card === undefined) {
-    styles.card = CardItem.defaultProps.styles.card;
+    if (styles.image === undefined) {
+      styles.image = CardItem.defaultProps.styles.image;
+    }
+    if (styles.cardFooter === undefined) {
+      styles.cardFooter = CardItem.defaultProps.styles.cardFooter;
+    }
+    if (styles.button === undefined) {
+      styles.button = CardItem.defaultProps.styles.button;
+    }
+    if (styles.card === undefined) {
+      styles.card = CardItem.defaultProps.styles.card;
+    }
+
+    this.state = {
+      saved: undefined,
+      owned: undefined,
+    };
+
+    this.toggleCollectionEntry = this.toggleCollectionEntry.bind(this);
+    this.toggleSaveEntry = this.toggleSaveEntry.bind(this);
   }
 
-  const [saveEntry, setSaveEntry] = useState(true);//TODO: Initialize via fetch
-  const [collectionEntry, setCollectionEntry] = useState(true);//TODO: Initialize via fetch
+  componentDidMount() {
+    const { plant } = this.props;
+    const itemThis = this;
+    authFetch(`${SERVER_ADDR}/savedplants`)
+      .then((savedPlantIDs) => {
+        itemThis.setState({ saved: savedPlantIDs.find((cur) => cur.plantID === plant.plantID) });
+      }).catch((error) => {
+        // TODO: Show an error icon? Popup would result in spam per CardItem, which would be bad
+        console.error(`Failed to determine save status of plant ID ${plant.plantID} due to an error: ${error}.`);
+      });
 
-  const toggleSaveEntry = () => {
-    if (!saveEntry) {
+    authFetch(`${SERVER_ADDR}/myplants`)
+      .then((myPlantIDs) => {
+        itemThis.setState({ owned: myPlantIDs.find((cur) => cur.plantID === plant.plantID) });
+      }).catch((error) => {
+        // TODO: Show an error icon? Popup would result in spam per CardItem, which would be bad
+        console.error(`Failed to determine save status of plant ID ${plant.plantID} due to an error: ${error}.`);
+      });
+  }
+
+  toggleSaveEntry() {
+    const { saved } = this.state;
+    const { plant } = this.props;
+    if (!saved) {
       authFetch(`${SERVER_ADDR}/savedplants`, 'POST', {
         plantID: plant.plantID,
-        location: 'Kitchen', // TODO: Get location choice from user
       }).then(() => {
-        setSaveEntry(true);
+        this.setState({
+          saved: true,
+        });
       }).catch((error) => {
         Alert.alert(
           'Network Error',
@@ -51,7 +82,9 @@ function CardItem(props) {
       authFetch(`${SERVER_ADDR}/savedplants`, 'DELETE', {
         plantID: plant.plantID,
       }).then(() => {
-        setSaveEntry(false);
+        this.setState({
+          saved: false,
+        });
       }).catch((error) => {
         Alert.alert(
           'Network Error',
@@ -63,15 +96,19 @@ function CardItem(props) {
         console.error(`Failed to remove a plant due to an error: ${error}`);
       });
     }
-  };
+  }
 
-  const toggleCollectionEntry = () => {
-    if (!collectionEntry) {
+  toggleCollectionEntry() {
+    const { owned } = this.state;
+    const { plant } = this.props;
+    if (!owned) {
       authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
         plantID: plant.plantID,
         location: 'Kitchen', // TODO: Get location choice from user
       }).then(() => {
-        setCollectionEntry(true);
+        this.setState({
+          owned: true,
+        });
       }).catch((error) => {
         Alert.alert(
           'Network Error',
@@ -86,7 +123,9 @@ function CardItem(props) {
       authFetch(`${SERVER_ADDR}/myplants`, 'DELETE', {
         plantID: plant.plantID,
       }).then(() => {
-        setCollectionEntry(false);
+        this.setState({
+          owned: false,
+        });
       }).catch((error) => {
         Alert.alert(
           'Network Error',
@@ -98,61 +137,66 @@ function CardItem(props) {
         console.error(`Failed to remove a plant due to an error: ${error}`);
       });
     }
-  };
+  }
 
-  const saveIcon = (info) => (
-    <Icon {...info} name={!saveEntry ? 'heart' : 'heart-outline'} />
-  );
+  render() {
+    const { plant, styles, onPressItem } = this.props;
+    const { saved, owned } = this.state;
 
-  const collectionIcon = (info) => (
-    <Icon {...info} name="plus-outline" />
-  );
+    const saveIcon = (info) => (
+      <Icon {...info} name={saved ? 'heart' : 'heart-outline'} />
+    );
 
-  const renderItemHeader = (headerProps, info) => (
-    <Layout {...headerProps}>
-      <Text category="h6">
-        {info}
-      </Text>
-    </Layout>
-  );
+    const collectionIcon = (info) => (
+      <Icon {...info} name="plus-outline" />
+    );
 
-  const renderItemFooter = (footerProps) => (
-    <Layout
-      {...footerProps}
-      style={styles.cardFooter}
-    >
-      <Button
-        style={styles.button}
-        status="primary"
-        appearance={!saveEntry ? 'filled' : 'outline'}
-        accessoryLeft={saveIcon}
-        onPress={toggleSaveEntry}
-      />
-      <Button
-        style={styles.button}
-        status="primary"
-        appearance={!collectionEntry ? 'filled' : 'outline'}
-        accessoryLeft={collectionIcon}
-        onPress={toggleCollectionEntry}
-      />
-    </Layout>
-  );
+    const renderItemHeader = (headerProps, info) => (
+      <Layout {...headerProps}>
+        <Text category="h6">
+          {info}
+        </Text>
+      </Layout>
+    );
 
-  return (
-    <Card
-      key={plant.plantID}
-      style={styles.card}
-      status="success"
-      header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
-      footer={renderItemFooter}
-      onPress={() => { onPressItem(plant); console.log('onpress item called here'); }}
-    >
-      <Image
-        source={{ uri: plant.image.sourceURL }}
-        style={styles.image}
-      />
-    </Card>
-  );
+    const renderItemFooter = (footerProps) => (
+      <Layout
+        {...footerProps}
+        style={styles.cardFooter}
+      >
+        <Button
+          style={styles.button}
+          status="primary"
+          appearance={saved ? 'filled' : 'outline'}
+          accessoryLeft={saveIcon}
+          onPress={this.toggleSaveEntry}
+        />
+        <Button
+          style={styles.button}
+          status="primary"
+          appearance={owned ? 'filled' : 'outline'}
+          accessoryLeft={collectionIcon}
+          onPress={this.toggleCollectionEntry}
+        />
+      </Layout>
+    );
+
+    return (
+      <Card
+        key={plant.plantID}
+        style={styles.card}
+        status="success"
+        header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
+        footer={renderItemFooter}
+        onPress={() => { onPressItem(plant); }}
+      >
+        <Image
+          source={{ uri: plant.image.sourceURL }}
+          style={styles.image}
+        />
+      </Card>
+    );
+  }
 }
 
 CardItem.propTypes = {
