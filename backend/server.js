@@ -129,13 +129,15 @@ app.post('/myplants', (req, res) => {
   authenticateUserRequest(req, res).then((userId) => {
     if (userId) {
       const query = { userId };
-      const plant = req.body;
+      const { plantID, location, image } = req.body;
       findOneDocument('Users', query).then((userDoc) => {
         let myPlantsByID = [];
         if (userDoc.myPlantsByID) {
           myPlantsByID = userDoc.myPlantsByID;
         }
 
+        // Only store known properties (don't allow client to store arbitrary data)
+        const plant = { plantID, location, image };
         myPlantsByID.push(plant);
 
         USERS.updateOne(query, { myPlantsByID }).then(() => {
@@ -180,23 +182,23 @@ app.post('/savedplants', (req, res) => {
 });
 
 app.delete('/myplants', (req, res) => {
+  const idProp = '_id';
   authenticateUserRequest(req, res).then((userId) => {
     if (userId) {
       const query = { userId };
-      const plant = req.body;
+      const id = req.body[idProp];
       findOneDocument('Users', query).then((userDoc) => {
         let myPlantsByID = [];
         if (userDoc.myPlantsByID) {
           myPlantsByID = userDoc.myPlantsByID;
         }
 
-        const index = myPlantsByID.indexOf(plant);
-        if (index > -1) {
-          myPlantsByID.splice(index, 1);
-        }
+        const newMyPlantsByID = myPlantsByID.filter(
+          (cur) => cur[idProp].toString() !== id.toString(),
+        );
 
-        USERS.updateOne(query, { myPlantsByID }).then(() => {
-          console.log(`Removed plant ${JSON.stringify(plant)} from user ID ${userId}'s owned plants.`);
+        USERS.updateOne(query, { myPlantsByID: newMyPlantsByID }).then(() => {
+          console.log(`Removed plant with _id=${id} from user ID ${userId}'s owned plants.`);
           res.status(201).json({});
         }).catch((saveError) => {
           console.error(`Failed to remove a plant from 'myplants' for user ID ${userId}. Reason: ${saveError}`);
