@@ -27,7 +27,6 @@ const Stack = createStackNavigator();
 
 function AccountButtons(props) {
   const { onRequestLogin, onRequestRegister } = props;
-
   return (
     <LoginContext.Consumer>
       {(loginState) => {
@@ -107,6 +106,9 @@ function CalendarScreen() {
   );
 }
 
+/**
+ * Tip Screen
+ */
 function TipScreen() {
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
