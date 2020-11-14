@@ -88,7 +88,6 @@ function MyPlantsScreen(obj) {
   );
 }
 
-
 function CameraScreen() {
   return (<Cam />);
 }
