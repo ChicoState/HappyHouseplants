@@ -79,11 +79,14 @@ function RegisterScreen(obj) {
 }
 
 function MyPlantsScreen(obj) {
-  const { route } = obj;
+  const { route, navigation } = obj;
   const { otherParam } = route.params;
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <MyPlantsList />
+      <MyPlantsList onPressItem={(plant) => {
+        navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
+      }}
+      />
       <Text />
       <Text>{JSON.stringify(otherParam)}</Text>
     </Layout>
