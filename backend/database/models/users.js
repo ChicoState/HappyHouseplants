@@ -13,6 +13,9 @@ const userSchema = new mongoose.Schema({
     {
       plantID: String,
       location: String,
+      image: {
+        sourceURL: String,
+      },
     },
   ],
   calendarNotes: mongoose.Schema.Types.Mixed,
