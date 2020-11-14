@@ -8,6 +8,7 @@ const PORT = '8080';
 const { databaseConnection } = require('./database/mongooseConnect.js');
 const { findDocuments, findOneDocument } = require('./database/findDocuments');
 const { insertTestData } = require('./database/mockData/mockDatabase');
+const { register, login, authenticateUserRequest } = require('./auth.js');
 const { USERS } = require('./database/models/users.js');
 
 function main() {
@@ -79,61 +80,64 @@ app.get('/users/:userId', (req, res) => {
 });
 
 app.get('/users/:userId/tips', (req, res) => {
-  const userQuery = { userId: req.params.userId }; // TODO: Authenticate
-  findDocuments('Users', userQuery).then((docs) => {
-    if (docs.length < 1) {
-      res.status(404).send('User not found');
-    } else {
-      const user = docs[0];
+  authenticateUserRequest(req, res).then((userId) => {
+    findOneDocument('Users', { userId }).then((user) => {
       res.send(user.savedTipsByID);
-    }
+    });
   });
 });
 
 app.get('/users/:userId/plants', (req, res) => {
-  const userQuery = { userId: req.params.userId }; // TODO: Authenticate
-  findDocuments('Users', userQuery).then((docs) => {
-    if (docs.length < 1) {
-      res.status(404).send('User not found');
-    } else {
-      const user = docs[0];
+  authenticateUserRequest(req, res).then((userId) => {
+    findOneDocument('Users', { userId }).then((user) => {
       res.send(user.savedPlantsByID);
-    }
+    });
   });
 });
 
 app.get('/mycalendar/notes', (req, res) => {
-  const userId = 'MyUserID';// TODO: Obtain userId from session token
-  const query = { userId };
-
-  findOneDocument('Users', query).then((userDoc) => {
-    const { calendarNotes = {/* Default no notes */} } = userDoc;
-    res.send(calendarNotes);
+  authenticateUserRequest(req, res).then((userId) => {
+    if (userId) {
+      const query = { userId };
+      findOneDocument('Users', query).then((userDoc) => {
+        let calendarNotes = {};
+        if (userDoc.calendarNotes) {
+          calendarNotes = userDoc.calendarNotes;
+        }
+        res.send(calendarNotes);
+      });
+    } else {
+      res.status(403).send();
+    }
   });
 });
 
 app.post('/mycalendar/notes/', (req, res) => {
-  const userId = 'MyUserID';// TODO: Obtain userId from session token
-  const query = { userId };
-  const keys = Object.keys(req.body);
-  const values = Object.values(req.body);
-  const when = keys[0];
-  const note = values[0];
-  findOneDocument('Users', query).then((userDoc) => {
-    const { calendarNotes = {/* Default no notes */} } = userDoc;
+  authenticateUserRequest(req, res).then((userId) => {
+    const query = { userId };
+    const keys = Object.keys(req.body);
+    const values = Object.values(req.body);
+    const when = keys[0];
+    const note = values[0];
+    findOneDocument('Users', query).then((userDoc) => {
+      let calendarNotes = {};
+      if (userDoc.calendarNotes) {
+        calendarNotes = userDoc.calendarNotes;
+      }
 
-    if (calendarNotes[when]) {
-      // Append to the existing date's notes
-      calendarNotes[when].push(note);
-    } else {
-      // Create a new date:note pair
-      calendarNotes[when] = [note];
-    }
-    USERS.updateOne(query, { calendarNotes }).then(() => {
-      res.status(201).send();
-    }).catch((saveError) => {
-      console.error(`Failed to post a note (${JSON.stringify(note)}) to the calendar for user ID ${userId}. Reason: ${saveError}`);
-      res.status(500).send();
+      if (calendarNotes[when]) {
+        // Append to the existing date's notes
+        calendarNotes[when].push(note);
+      } else {
+        // Create a new date:note pair
+        calendarNotes[when] = [note];
+      }
+      USERS.updateOne(query, { calendarNotes }).then(() => {
+        res.status(201).send();
+      }).catch((saveError) => {
+        console.error(`Failed to post a note (${JSON.stringify(note)}) to the calendar for user ID ${userId}. Reason: ${saveError}`);
+        res.status(500).send();
+      });
     });
   });
 });
@@ -153,6 +157,42 @@ app.get('/plants/:plantID', (req, res) => {
     } else {
       res.send(docs[0]);
     }
+  });
+});
+
+app.post('/register/', (req, res) => {
+  const {
+    username, password, firstName, lastName,
+  } = req.body;
+  register(username, password, firstName, lastName).then((status) => {
+    res.json(status);
+  }).catch((reason) => {
+    res.send(`Failed for reason: ${reason}`);
+  });
+});
+
+app.post('/login/', (req, res) => {
+  const { username, password } = req.body;
+  login(username, password).then((status) => {
+    res.json(status);
+  }).catch((reason) => {
+    res.send(`Failed for reason: ${reason}`);
+  });
+});
+
+app.get('/login_info', (req, res) => {
+  authenticateUserRequest(req, res).then((userId) => {
+    findOneDocument('Users', { userId }).then((user) => {
+      res.json({
+        userId,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      });
+    });
+  }).catch((error) => {
+    console.error(`Failed to get login info due to error: ${error}`);
+    res.json(null);
   });
 });
 
