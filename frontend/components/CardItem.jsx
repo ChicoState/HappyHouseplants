@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable import/prefer-default-export */
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import { Alert, Image, ViewPropTypes } from 'react-native';
@@ -34,6 +33,7 @@ class CardItem extends React.Component {
       owned: undefined,
     };
 
+    this.startChangePicture = this.startChangePicture.bind(this);
     this.toggleCollectionEntry = this.toggleCollectionEntry.bind(this);
     this.toggleSaveEntry = this.toggleSaveEntry.bind(this);
   }
@@ -56,6 +56,12 @@ class CardItem extends React.Component {
         // TODO: Show an error icon? Popup would result in spam per CardItem, which would be bad
         console.error(`Failed to determine save status of plant ID ${plant.plantID} due to an error: ${error}.`);
       });
+  }
+
+  startChangePicture() {
+    const { plant } = this.props;
+    // TODO: Implement
+    console.log(`Changing the picture for plant ID ${plant.plantID}...`);
   }
 
   toggleSaveEntry() {
@@ -143,7 +149,13 @@ class CardItem extends React.Component {
   }
 
   render() {
-    const { plant, styles, onPressItem } = this.props;
+    const {
+      plant,
+      styles,
+      onPressItem,
+      allowChangePicture,
+      onRemoveFromOwned,
+    } = this.props;
     const { saved, owned } = this.state;
 
     const saveIcon = (info) => (
@@ -151,7 +163,11 @@ class CardItem extends React.Component {
     );
 
     const collectionIcon = (info) => (
-      <Icon {...info} name="plus-outline" />
+      <Icon {...info} name={onRemoveFromOwned === undefined ? 'plus-outline' : 'trash-outline'} />
+    );
+
+    const cameraIcon = (info) => (
+      <Icon {...info} name="camera-outline" />
     );
 
     const renderItemHeader = (headerProps, info) => (
@@ -161,6 +177,16 @@ class CardItem extends React.Component {
         </Text>
       </Layout>
     );
+
+    const cameraButton = allowChangePicture ? (
+      <Button
+        style={styles.button}
+        status="primary"
+        appearance="outline"
+        accessoryLeft={cameraIcon}
+        onPress={this.startChangePicture}
+      />
+    ) : undefined;
 
     const renderItemFooter = (footerProps) => (
       <Layout
@@ -177,10 +203,11 @@ class CardItem extends React.Component {
         <Button
           style={styles.button}
           status="primary"
-          appearance={owned ? 'filled' : 'outline'}
+          appearance={(owned && onRemoveFromOwned === undefined) ? 'filled' : 'outline'}
           accessoryLeft={collectionIcon}
           onPress={this.toggleCollectionEntry}
         />
+        {cameraButton}
       </Layout>
     );
 
@@ -206,6 +233,7 @@ CardItem.propTypes = {
   plant: PropTypes.object.isRequired,
   onPressItem: PropTypes.func.isRequired,
   onRemoveFromOwned: PropTypes.func,
+  allowChangePicture: PropTypes.bool,
   styles: PropTypes.objectOf(ViewPropTypes.style),
 };
 
@@ -230,6 +258,7 @@ CardItem.defaultProps = {
     },
   },
   onRemoveFromOwned: undefined,
+  allowChangePicture: false,
 };
 
 export default CardItem;
