@@ -7,7 +7,14 @@
     "password": "SuperSecretPasswordHash1",
     "savedTipsByID": [1, 2],
     "savedPlantsByID": [1, 3, 4, 7],
-    "myPlantsByID": ["p1425", "p69065", "p2349"],
+    "myPlantsByID": [
+      { "plantID": "p1425", 
+        "location": "living room" },
+      { "plantID": "p69065", 
+        "location": "bedroom" },
+      { "plantID": "p2349",
+        "location": "bedroom" }
+    ],
     "calendarNotes": {}
   },
   {
@@ -18,7 +25,14 @@
     "password": "SuperSecr23131etPasswordHash",
     "savedTipsByID": [5, 8],
     "savedPlantsByID": [2],
-    "myPlantsByID": ["p7895523"],
+    "myPlantsByID": [
+      { "plantID": "p1425", 
+        "location": "bathroom" },
+      { "plantID": "p69065", 
+        "location": "porch" },
+      { "plantID": "p2349",
+        "location": "porch" }
+    ],
     "calendarNotes": {}
   },
   {
@@ -29,7 +43,14 @@
     "password": "ASLKDJL",
     "savedTipsByID": [3],
     "savedPlantsByID": [2, 8, 6, 4],
-    "myPlantsByID": ["p7, p34802"],
+    "myPlantsByID": [
+      { "plantID": "p1425", 
+        "location": "living room" },
+      { "plantID": "p69065", 
+        "location": "porch" },
+      { "plantID": "p2349",
+        "location": "bedroom" }
+    ],
     "calendarNotes": {}
   }
 ]
