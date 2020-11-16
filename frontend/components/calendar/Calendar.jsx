@@ -190,7 +190,7 @@ class CalendarView extends React.Component {
           </Picker>
         );
       } else {
-        tagColor ='brown';
+        tagColor = 'brown';
       }
       return (
         <Layout style={{ flex: 1, alignItems: 'center', backgroundColor: 'rgba(116, 194, 24, 0.08)' }}>
@@ -220,7 +220,7 @@ class CalendarView extends React.Component {
             }}
           >
             <Picker.Item label="Water Plant" value="water" />
-            <Picker.Item label="Seed Plant" value="seed" />
+            <Picker.Item label="Plant Seedling" value="seed" />
             { // TODO, ADD custom labels that were created
             // <Picker.Item label={} value={} />
             }
@@ -236,8 +236,7 @@ class CalendarView extends React.Component {
             onPress={() => {
               if (tempNote !== '') {
                 saveNote(selectedDate, tempNote, tagColor).then(() => {
-                  this.setState({ tagColor });
-                  this.setState({ showInputView: false });
+                  this.setState({ tagColor, showInputView: false });
                   this.updateNotes();
                 }).catch((error) => {
                   Alert.alert(
