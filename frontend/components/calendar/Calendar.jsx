@@ -155,14 +155,14 @@ class CalendarView extends React.Component {
         selector = (
           <>
             <Input
-              style={{ width: '80%' }}
+              style={{ width: '100%' }}
               placeholder="Custom label name"
               value={customLabel || ''}
               onChangeText={(newLabel) => this.setState({ customLabel: newLabel })}
             />
             <Picker
               selectedValue={tagColor}
-              style={{ width: '80%' }}
+              style={{ width: '100%' }}
               onValueChange={(itemValue) => {
                 this.setState({ tagColor: itemValue });
               }}
@@ -179,7 +179,7 @@ class CalendarView extends React.Component {
         selector = (
           <Picker
             selectedValue={noteTag}
-            style={{ width: '80%' }}
+            style={{ width: '100%' }}
             onValueChange={() => {
               this.setState({ tagColor: 'blue' });
             }}
@@ -193,78 +193,86 @@ class CalendarView extends React.Component {
         tagColor = 'brown';
       }
       return (
-        <Layout style={{ flex: 1, alignItems: 'center', backgroundColor: colorTheme['color-primary-transparent-100'] }}>
-          <Text style={{
-            width: '80%',
-            marginTop: '2%',
-            marginBottom: '2%',
-            backgroundColor: colorTheme['color-primary-transparent-100'],
-            paddingTop: '2%',
-            paddingBottom: '2%',
-            textAlign: 'center',
+        <Layout style={{
+          flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colorTheme['color-primary-transparent-100'],
+        }}
+        >
+          <Layout style={{
+            backgroundColor: colorTheme['color-primary-transparent-100'], justifyContent: 'center', width: '95%', flex: 0.75, padding: '3%' 
           }}
           >
-            Add trackers for seeding and watering here!
-          </Text>
-          <Input
-            style={{ width: '80%' }}
-            placeholder="Enter note here"
-            value={tempNote || ''}
-            onChangeText={(newNote) => this.setState({ tempNote: newNote })}
-          />
-          <Picker
-            selectedValue={noteTag}
-            style={{ width: '80%' }}
-            onValueChange={(itemValue) => {
-              this.setState({ noteTag: itemValue, tagColor: itemValue });
-            }}
-          >
-            <Picker.Item label="Water Plant" value="water" />
-            <Picker.Item label="Plant Seedling" value="seed" />
-            { // TODO, ADD custom labels that were created
-            // <Picker.Item label={} value={} />
-            }
-            <Picker.Item label="Add Custom Label" value="custom" />
-          </Picker>
-          {selector}
-          <Text />
-          <Button
-            style={{
-              width: '80%',
-            }}
-            status="primary"
-            onPress={() => {
-              if (tempNote !== '') {
-                saveNote(selectedDate, tempNote, tagColor).then(() => {
-                  this.setState({ tagColor, showInputView: false });
-                  this.updateNotes();
-                }).catch((error) => {
+            <Text
+              style={{
+                width: '95%',
+                marginTop: '2%',
+                marginBottom: '2%',
+                paddingTop: '2%',
+                paddingBottom: '2%',
+                textAlign: 'center',
+              }}
+            >
+              Add trackers for seeding and watering here!
+            </Text>
+            <Input
+              style={{ width: '100%' }}
+              placeholder="Enter note here"
+              value={tempNote || ''}
+              onChangeText={(newNote) => this.setState({ tempNote: newNote })}
+            />
+            <Picker
+              selectedValue={noteTag}
+              style={{ width: '100%' }}
+              onValueChange={(itemValue) => {
+                this.setState({ noteTag: itemValue, tagColor: itemValue });
+              }}
+            >
+              <Picker.Item label="Water Plant" value="water" />
+              <Picker.Item label="Plant Seedling" value="seed" />
+              { // TODO, ADD custom labels that were created
+              // <Picker.Item label={} value={} />
+              }
+              <Picker.Item label="Add Custom Label" value="custom" />
+            </Picker>
+            {selector}
+            <Text />
+            <Button
+              style={{
+                width: '100%',
+              }}
+              status="primary"
+              onPress={() => {
+                if (tempNote !== '') {
+                  saveNote(selectedDate, tempNote, tagColor).then(() => {
+                    this.setState({ tagColor, showInputView: false });
+                    this.updateNotes();
+                  }).catch((error) => {
+                    Alert.alert(
+                      'Internal Error',
+                      'An issue occured while trying to save the note',
+                      [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                      ],
+                    );
+                    console.error(`Error while trying to save a note: ${error}`);
+                  });
+                } else {
                   Alert.alert(
-                    'Internal Error',
-                    'An issue occured while trying to save the note',
+                    'Error',
+                    'A blank note can not be saved',
                     [
                       { text: 'OK', onPress: () => console.log('OK Pressed') },
                     ],
                   );
-                  console.error(`Error while trying to save a note: ${error}`);
-                });
-              } else {
-                Alert.alert(
-                  'Error',
-                  'A blank note can not be saved',
-                  [
-                    { text: 'OK', onPress: () => console.log('OK Pressed') },
-                  ],
-                );
-              }
-            }}
-          >
-            Submit
-          </Button>
-          <Text />
-          <Button style={{ width: '80%' }} status="primary" onPress={() => { this.setState({ showInputView: false }); }}>
-            Cancel
-          </Button>
+                }
+              }}
+            >
+              Submit
+            </Button>
+            <Text />
+            <Button style={{ width: '100%' }} status="primary" onPress={() => { this.setState({ showInputView: false }); }}>
+              Cancel
+            </Button>
+          </Layout>
         </Layout>
       );
     }
