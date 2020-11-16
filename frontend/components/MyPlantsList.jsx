@@ -90,7 +90,9 @@ class MyPlantsList extends Component {
     for (let i = 0; i < locations.length; i += 1) {
       const location = locations[i];
       const cards = cardsByLocation[location];
-    cardsAndHeaders.push((<CollapsibleDrawer title={location} collapsed={false}>{cards}</CollapsibleDrawer>));
+      cardsAndHeaders.push((
+        <CollapsibleDrawer title={location} collapsed={false}>{cards}</CollapsibleDrawer>
+      ));
     }
 
     const emptyNotice = plants.length === 0
