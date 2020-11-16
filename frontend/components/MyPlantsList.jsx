@@ -91,7 +91,9 @@ class MyPlantsList extends Component {
       const location = locations[i];
       const cards = cardsByLocation[location];
       cardsAndHeaders.push((
-        <CollapsibleDrawer title={location} collapsed={false}>{cards}</CollapsibleDrawer>
+        <CollapsibleDrawer title={location} collapsed={false} key={location}>
+          {cards}
+        </CollapsibleDrawer>
       ));
     }
 
