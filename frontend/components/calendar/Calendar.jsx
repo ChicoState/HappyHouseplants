@@ -54,7 +54,8 @@ function getNotes() {
   });
 }
 
-// TODO add getMyNotes() fetch
+// TODO: add getMyLabels for custom label select, and update labels
+// TODO add getMyDotColors() fetch
 
 class CalendarView extends React.Component {
   constructor() {
