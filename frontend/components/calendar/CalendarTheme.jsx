@@ -81,7 +81,7 @@ const CalendarTheme = StyleSheet.create({
     backgroundColor: colorTheme['color-primary-transparent-100'],
   },
   calendar: {
-    borderWidth: 5,
+    borderWidth: 2,
     borderColor: '#BFEC70',
     width: '98%',
     alignSelf: 'center',
