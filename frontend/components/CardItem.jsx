@@ -41,7 +41,7 @@ class CardItem extends React.Component {
     };
 
     this.startChangePicture = this.startChangePicture.bind(this);
-    this.toggleCollectionEntry = this.toggleCollectionEntry.bind(this);
+    this.toggleOwned = this.toggleOwned.bind(this);
     this.toggleSaveEntry = this.toggleSaveEntry.bind(this);
   }
 
@@ -111,7 +111,7 @@ class CardItem extends React.Component {
     }
   }
 
-  toggleCollectionEntry() { // TODO: Rename
+  toggleOwned() {
     const { owned } = this.state;
     const { plant, onRemoveFromOwned } = this.props;
     const idProp = '_id';
@@ -195,7 +195,7 @@ class CardItem extends React.Component {
           status="primary"
           appearance={(owned && onRemoveFromOwned === undefined) ? 'filled' : 'outline'}
           accessoryLeft={collectionIcon}
-          onPress={this.toggleCollectionEntry}
+          onPress={this.toggleOwned}
         />
         {cameraButton}
       </Layout>

@@ -24,6 +24,8 @@ class AddMyPlantDialog extends React.Component {
     };
 
     this.updateLocations = this.updateLocations.bind(this);
+    this.submit = this.submit.bind(this);
+    this.cancel = this.cancel.bind(this);
     this.prevVisible = false;
   }
 
@@ -43,7 +45,7 @@ class AddMyPlantDialog extends React.Component {
     const distinctFilter = (cur, idx, arr) => arr.indexOf(cur) === idx;
 
     const listDialog = this;
-    authFetch(`${SERVER_ADDR}/myplants/`) // TODO: Would like to do this fetch upon each dialog opening, so new data for locations can be updated
+    authFetch(`${SERVER_ADDR}/myplants/`)
       .then((data) => {
         listDialog.setState({
           locations: data.map((cur) => cur.location).filter(distinctFilter),
@@ -69,6 +71,7 @@ class AddMyPlantDialog extends React.Component {
       location: locations[locationIndex - 1],
       image: plant.image, // TODO: Use custom image if provided
     }).then(() => {
+      this.setState({ locationIndex: 0 });
       onSubmit();
     }).catch((error) => {
       Alert.alert(
@@ -82,9 +85,15 @@ class AddMyPlantDialog extends React.Component {
     });
   }
 
+  cancel() {
+    const { onCancel } = this.props;
+    this.setState({ locationIndex: 0 });
+    onCancel();
+  }
+
   render() {
     const { locationIndex, locations, showCustomLocationPrompt } = this.state;
-    const { visible, plant, onCancel } = this.props;
+    const { visible, plant } = this.props;
 
     const locationSelection = locations !== undefined ? (
       <Select
@@ -125,7 +134,7 @@ class AddMyPlantDialog extends React.Component {
       <View>
         <Portal>
           {customLocationPrompt}
-          <Dialog visible={visible} onDismiss={() => onCancel()}>
+          <Dialog visible={visible} onDismiss={() => this.cancel()}>
             <Dialog.Title>{`Add ${plant.plantName}`}</Dialog.Title>
             <Dialog.Content>
               <Text>Location</Text>
@@ -140,7 +149,7 @@ class AddMyPlantDialog extends React.Component {
               >
                 Add
               </Button>
-              <Button onPress={() => onCancel()}>Cancel</Button>
+              <Button onPress={() => this.cancel()}>Cancel</Button>
             </Dialog.Actions>
           </Dialog>
         </Portal>
