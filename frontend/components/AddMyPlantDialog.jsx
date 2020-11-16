@@ -2,7 +2,13 @@
 import React from 'react';
 import { Alert, Text, View } from 'react-native';
 import { Portal, Dialog } from 'react-native-paper';
-import { Select, SelectItem, Button, Spinner } from '@ui-kitten/components';
+import {
+  Select,
+  SelectItem,
+  Button,
+  Spinner,
+} from '@ui-kitten/components';
+import Prompt from 'react-native-input-prompt';
 import { PropTypes } from 'prop-types';
 import { SERVER_ADDR } from '../server';
 
@@ -12,16 +18,32 @@ class AddMyPlantDialog extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      showCustomLocationPrompt: false,
       locations: undefined, // Initialized from fetch
       locationIndex: 0,
     };
+
+    this.updateLocations = this.updateLocations.bind(this);
+    this.prevVisible = false;
   }
 
   componentDidMount() {
+    this.updateLocations();
+  }
+
+  componentDidUpdate() {
+    const { visible } = this.props;
+    if (visible !== this.prevVisible) {
+      this.updateLocations();
+      this.prevVisible = visible;
+    }
+  }
+
+  updateLocations() {
     const distinctFilter = (cur, idx, arr) => arr.indexOf(cur) === idx;
 
     const listDialog = this;
-    authFetch(`${SERVER_ADDR}/myplants/`)
+    authFetch(`${SERVER_ADDR}/myplants/`) // TODO: Would like to do this fetch upon each dialog opening, so new data for locations can be updated
       .then((data) => {
         listDialog.setState({
           locations: data.map((cur) => cur.location).filter(distinctFilter),
@@ -61,7 +83,7 @@ class AddMyPlantDialog extends React.Component {
   }
 
   render() {
-    const { locationIndex, locations } = this.state;
+    const { locationIndex, locations, showCustomLocationPrompt } = this.state;
     const { visible, plant, onCancel } = this.props;
 
     const locationSelection = locations !== undefined ? (
@@ -69,16 +91,40 @@ class AddMyPlantDialog extends React.Component {
         placeholder="Select location..."
         value={locationIndex <= locations.length ? locations[locationIndex - 1] : 'Select location...'}
         selectedIndex={locationIndex}
-        onSelect={(newIndex) => this.setState({ locationIndex: newIndex })}
+        onSelect={(newIndex) => {
+          if (Number(newIndex) === locations.length + 1) {
+            this.setState({ showCustomLocationPrompt: true });
+          } else {
+            this.setState({ locationIndex: newIndex });
+          }
+        }}
       >
         { locations.map((loc) => (<SelectItem title={loc} key={loc} />)) }
         <SelectItem title="New Location..." />
       </Select>
     ) : <Spinner />;
 
+    const customLocationPrompt = (
+      <Prompt
+        visible={showCustomLocationPrompt}
+        title="Enter the new location name"
+        placeholder="ex: Bedroom"
+        onCancel={() => this.setState({ showCustomLocationPrompt: false })}
+        onSubmit={(loc) => {
+          locations.push(loc);
+          this.setState({
+            locations,
+            locationIndex: locations.length,
+            showCustomLocationPrompt: false,
+          });
+        }}
+      />
+    );
+
     return (
       <View>
         <Portal>
+          {customLocationPrompt}
           <Dialog visible={visible} onDismiss={() => onCancel()}>
             <Dialog.Title>{`Add ${plant.plantName}`}</Dialog.Title>
             <Dialog.Content>
