@@ -47,8 +47,12 @@ class AddMyPlantDialog extends React.Component {
     const listDialog = this;
     authFetch(`${SERVER_ADDR}/myplants/`)
       .then((data) => {
+        const defaultLocations = ['Living room', 'Kitchen', 'Bedroom', 'Porch'];
+        const newLocations = data.map((cur) => cur.location)
+          .concat(defaultLocations).filter(distinctFilter);
+
         listDialog.setState({
-          locations: data.map((cur) => cur.location).filter(distinctFilter),
+          locations: newLocations,
         });
       }, (error) => {
         Alert.alert(
