@@ -321,7 +321,25 @@ class CalendarView extends React.Component {
                 );
               }}
               onDayLongPress={(day) => {
-                this.setState({ selectedDate: day.dateString, showInputView: true, tempNote: '' });
+                this.setState({ selectedDate: day.dateString });
+                Alert.alert(
+                  day.dateString,
+                  'Save note for this date?',
+                  [
+                    {
+                      text: 'Cancel',
+                      onPress: () => {
+                        this.setState({ showInputView: false });
+                      },
+                    },
+                    {
+                      text: 'Yes',
+                      onPress: () => {
+                        this.setState({ showInputView: true });
+                      },
+                    },
+                  ],
+                );
               }}
               monthFormat="MMMM yyyy"
               hideArrows={false}
