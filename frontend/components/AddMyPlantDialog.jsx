@@ -68,6 +68,7 @@ class AddMyPlantDialog extends React.Component {
 
     authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
       plantID: plant.plantID,
+      plantName: plant.name,
       location: locations[locationIndex - 1],
       image: plant.image, // TODO: Use custom image if provided
     }).then(() => {
