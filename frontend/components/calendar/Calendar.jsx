@@ -20,7 +20,7 @@ const {
   calendarThemeDark,
   calendarThemeLight,
 } = require('./CalendarTheme');
-
+const colorTheme = require('../colorTheme.json');
 const { authFetch } = require('../../auth');
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
@@ -193,12 +193,12 @@ class CalendarView extends React.Component {
         tagColor = 'brown';
       }
       return (
-        <Layout style={{ flex: 1, alignItems: 'center', backgroundColor: 'rgba(116, 194, 24, 0.08)' }}>
+        <Layout style={{ flex: 1, alignItems: 'center', backgroundColor: colorTheme['color-primary-transparent-100'] }}>
           <Text style={{
             width: '80%',
             marginTop: '2%',
             marginBottom: '2%',
-            backgroundColor: 'rgba(116, 194, 24, 0.08)',
+            backgroundColor: colorTheme['color-primary-transparent-100'],
             paddingTop: '2%',
             paddingBottom: '2%',
             textAlign: 'center',
@@ -271,10 +271,10 @@ class CalendarView extends React.Component {
     return (
       <>
         <View style={toggleTheme ? getCalendarThemeDark('toggleWrapper') : getCalendarTheme('toggleWrapper')}>
-          <Icon name="moon-o" type="font-awesome" color={toggleTheme ? 'white' : 'green'} />
+          <Icon name="moon-o" type="font-awesome" color={toggleTheme ? colorTheme['color-white-background'] : 'green'} />
           <Switch
-            trackColor={{ true: 'white', false: '#BFEC70' }}
-            thumbColor={toggleTheme ? 'gray' : '#5BA611'}
+            trackColor={{ true: colorTheme['color-white-background'], false: colorTheme['color-primary-300'] }}
+            thumbColor={toggleTheme ? colorTheme['color-dark-background-400'] : colorTheme['color-primary-600']}
             value={toggleTheme}
             onValueChange={(value) => {
               console.log(`Toggle theme: ${value}`);

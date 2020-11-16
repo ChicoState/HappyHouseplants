@@ -71,6 +71,7 @@
   "color-white-background": "#ffffff",
   "color-black-background": "black",
   "color-dark-background-100": "lightgray",
+  "color-dark-background-400": "#808080",
   "color-dark-background-600": "#3B3B3B",
   "color-dark-background-900": "black",
   "color-calendar-day-text": "#2d4150",
