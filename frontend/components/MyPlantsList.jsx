@@ -29,7 +29,6 @@ class MyPlantsList extends Component {
     const listThis = this;
     authFetch(`${SERVER_ADDR}/myplants/`)
       .then((data) => {
-        console.log(`Received plants: ${JSON.stringify(data)}`);
         listThis.setState({
           loaded: true,
           plants: data,
