@@ -72,7 +72,7 @@ class AddMyPlantDialog extends React.Component {
 
     authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
       plantID: plant.plantID,
-      plantName: plant.name,
+      plantName: plant.plantName,
       location: locations[locationIndex - 1],
       image: plant.image, // TODO: Use custom image if provided
     }).then(() => {
@@ -154,7 +154,12 @@ class AddMyPlantDialog extends React.Component {
               >
                 Add
               </Button>
-              <Button onPress={() => this.cancel()}>Cancel</Button>
+              <Button
+                onPress={() => this.cancel()}
+                style={{ marginLeft: '5%' }}
+              >
+                Cancel
+              </Button>
             </Dialog.Actions>
           </Dialog>
         </Portal>

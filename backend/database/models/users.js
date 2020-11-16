@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
   myPlantsByID: [
     {
       plantID: String,
+      plantName: String,
       location: String,
       image: {
         sourceURL: String,

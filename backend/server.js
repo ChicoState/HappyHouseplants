@@ -129,7 +129,12 @@ app.post('/myplants', (req, res) => {
   authenticateUserRequest(req, res).then((userId) => {
     if (userId) {
       const query = { userId };
-      const { plantID, location, image } = req.body;
+      const {
+        plantID,
+        plantName,
+        location,
+        image,
+      } = req.body;
       findOneDocument('Users', query).then((userDoc) => {
         let myPlantsByID = [];
         if (userDoc.myPlantsByID) {
@@ -137,7 +142,12 @@ app.post('/myplants', (req, res) => {
         }
 
         // Only store known properties (don't allow client to store arbitrary data)
-        const plant = { plantID, location, image };
+        const plant = {
+          plantID,
+          plantName,
+          location,
+          image,
+        };
         myPlantsByID.push(plant);
 
         USERS.updateOne(query, { myPlantsByID }).then(() => {

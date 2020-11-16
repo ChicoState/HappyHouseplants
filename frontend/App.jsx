@@ -80,8 +80,7 @@ function RegisterScreen(obj) {
 }
 
 function MyPlantsScreen(obj) {
-  const { route, navigation } = obj;
-  const { otherParam } = route.params;
+  const { navigation } = obj;
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <MyPlantsList onPressItem={(plant) => {
@@ -89,7 +88,6 @@ function MyPlantsScreen(obj) {
       }}
       />
       <Text />
-      <Text>{JSON.stringify(otherParam)}</Text>
     </Layout>
   );
 }
@@ -239,6 +237,7 @@ function App() {
                 <Stack.Screen name="Tips" component={TipScreen} />
                 <Stack.Screen name="Recommend" component={RecommendScreen} />
                 <Stack.Screen name="Search" component={SearchScreen} />
+                <Stack.Screen name="Camera" component={CameraScreen} />
                 <Stack.Screen name="Login" component={LoginScreen} />
                 <Stack.Screen name="Register" component={RegisterScreen} />
               </Stack.Navigator>
