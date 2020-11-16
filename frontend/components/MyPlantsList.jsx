@@ -4,6 +4,7 @@ import { Layout, Spinner, Text } from '@ui-kitten/components';
 import PropTypes from 'prop-types';
 import { SERVER_ADDR } from '../server';
 import CardItem from './CardItem';
+import CollapsibleDrawer from './CollapsibleDrawer';
 
 const { authFetch } = require('../auth');
 
@@ -61,26 +62,49 @@ class MyPlantsList extends Component {
       return (<Spinner />);
     }
 
-    const id = '_id'; // to prevent linter issues
-    const myCards = plants.map((plant) => (
-      <CardItem
-        key={plant[id]}
-        plant={plant}
-        styles={styles}
-        onPressItem={onPressItem}
-        onRemoveFromOwned={this.removePlant}
-        allowChangePicture
-      />
-    ));
+    const idProp = '_id'; // to prevent linter issues
+
+    const cardsByLocation = [];
+    for (let i = 0; i < plants.length; i += 1) {
+      const plant = plants[i];
+      const plantCard = (
+        <CardItem
+          key={plant[idProp]}
+          plant={plant}
+          styles={styles}
+          onPressItem={onPressItem}
+          onRemoveFromOwned={this.removePlant}
+          allowChangePicture
+        />
+      );
+
+      if (!cardsByLocation[plant.location]) {
+        cardsByLocation[plant.location] = [plantCard];
+      } else {
+        cardsByLocation[plant.location].push(plantCard);
+      }
+    }
+
+    const cardsAndHeaders = [];
+    const locations = Object.keys(cardsByLocation);
+    for (let i = 0; i < locations.length; i += 1) {
+      const location = locations[i];
+      const cards = cardsByLocation[location];
+    cardsAndHeaders.push((<CollapsibleDrawer title={location} collapsed={false}>{cards}</CollapsibleDrawer>));
+    }
 
     const emptyNotice = plants.length === 0
-      ? (<Text>You don&apos;t own any plants</Text>) : undefined;
+      ? (
+        <Text style={{ width: '100%', textAlign: 'center', marginTop: '10%' }}>
+          You don&apos;t own any plants
+        </Text>
+      ) : undefined;
 
     return (
       <Layout style={styles.container}>
         {emptyNotice}
         <ScrollView>
-          {myCards}
+          {cardsAndHeaders}
         </ScrollView>
       </Layout>
     );

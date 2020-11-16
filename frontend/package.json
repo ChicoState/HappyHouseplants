@@ -25,6 +25,7 @@
     "react-native": "~0.63.2",
     "react-native-async-storage": "0.0.1",
     "react-native-calendars": "^1.403.0",
+    "react-native-collapsible": "^1.5.3",
     "react-native-gesture-handler": "~1.7.0",
     "react-native-input-prompt": "^1.0.0",
     "react-native-paper": "^4.4.0",

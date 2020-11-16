@@ -52,7 +52,6 @@ class CardItem extends React.Component {
       .then((savedPlantIDs) => {
         itemThis.setState({ saved: savedPlantIDs.find((cur) => cur.plantID === plant.plantID) });
       }).catch((error) => {
-        // TODO: Show an error icon? Popup would result in spam per CardItem, which would be bad
         console.error(`Failed to determine save status of plant ID ${plant.plantID} due to an error: ${error}.`);
       });
 
@@ -60,8 +59,7 @@ class CardItem extends React.Component {
       .then((myPlantIDs) => {
         itemThis.setState({ owned: myPlantIDs.find((cur) => cur.plantID === plant.plantID) });
       }).catch((error) => {
-        // TODO: Show an error icon? Popup would result in spam per CardItem, which would be bad
-        console.error(`Failed to determine save status of plant ID ${plant.plantID} due to an error: ${error}.`);
+        console.error(`Failed to determine ownership status of plant ID ${plant.plantID} due to an error: ${error}.`);
       });
   }
 
