@@ -11,7 +11,8 @@ import {
 } from '@ui-kitten/components';
 import { Icon } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
-import { SERVER_ADDR } from '../server';
+import { Picker } from '@react-native-picker/picker';
+import { SERVER_ADDR } from '../../server';
 
 const {
   getCalendarTheme,
@@ -20,7 +21,7 @@ const {
   calendarThemeLight,
 } = require('./CalendarTheme');
 
-const { authFetch } = require('../auth');
+const { authFetch } = require('../../auth');
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 
@@ -28,8 +29,9 @@ const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
  * @param { when } The Calendar-formatted string of the date. Example: 2020-10-29 (Oct 29, 2020).
  * @param { text } The text of the note to store.
  * @return { Promise } A Promise that resolves to nothing when the note is successfully saved. */
-function saveNote(when, text) {
-  return authFetch(`${SERVER_ADDR}/mycalendar/notes`, 'POST', { [when]: text });
+function saveNote(when, text, color) {
+  // TODO: Update to allow multiple dots on one day, may need to fetch current dots first
+  return authFetch(`${SERVER_ADDR}/mycalendar/notes`, 'POST', { [when]: { note: text, dots: color } });
 }
 
 /* Gets a dictionary-form object of all notes that are stored
@@ -52,6 +54,8 @@ function getNotes() {
   });
 }
 
+// TODO add getMyNotes() fetch
+
 class CalendarView extends React.Component {
   constructor() {
     super();
@@ -61,6 +65,9 @@ class CalendarView extends React.Component {
       tempNote: '',
       showInputView: false,
       toggleTheme: false,
+      noteTag: 'water',
+      tagColor: 'blue',
+      customLabel: '',
     };
 
     this.updateNotes = () => {
@@ -100,22 +107,22 @@ class CalendarView extends React.Component {
       const curDate = dates[i];
       const curNotes = notesPerDate[i];
       if (curNotes.length > 0) {
-        ret[curDate] = { marked: true };
+        for (let j = 0; j < curNotes.length; j += 1) {
+          ret[curDate] = { marked: true, dots: [{ color: curNotes[j].dots }] };
+        }
       }
     }
-
     if (ret[selectedDate]) {
       ret[selectedDate].selected = true;
     } else {
       ret[selectedDate] = { selected: true };
     }
-
     return ret;
   }
 
   render() {
     const {
-      notes, tempNote, selectedDate, showInputView, toggleTheme,
+      notes, tempNote, selectedDate, showInputView, toggleTheme, customLabel,
     } = this.state;
     // For each property in notes (key is date, value is array of notes), create a ListItem
     const noteViews = [];
@@ -124,7 +131,10 @@ class CalendarView extends React.Component {
     for (let i = 0; i < notesPerDate.length; i += 1) {
       const curDate = dates[i];
       const notesOnThisDate = notesPerDate[i];
-      const notesStr = notesOnThisDate.join('\n');
+      let notesStr = '';
+      for (let j = 0; j < notesOnThisDate.length; j += 1) {
+        notesStr += `${notesOnThisDate[j].note}\n`;
+      }
       noteViews.push(
         <ListItem
           style={toggleTheme ? getCalendarThemeDark('listItem') : getCalendarTheme('listItem')}
@@ -136,15 +146,85 @@ class CalendarView extends React.Component {
     }
 
     if (showInputView) {
+      const { noteTag } = this.state;
+      let { tagColor } = this.state;
+      let selector = <></>;
+      if (noteTag === 'custom') {
+        selector = (
+          <>
+            <Input
+              style={{ width: '80%' }}
+              placeholder="Custom label name"
+              value={customLabel || ''}
+              onChangeText={(newLabel) => this.setState({ customLabel: newLabel })}
+            />
+            <Picker
+              selectedValue={tagColor}
+              style={{ width: '80%' }}
+              onValueChange={(itemValue) => {
+                this.setState({ tagColor: itemValue });
+              }}
+            >
+              <Picker.Item label="Green" value="green" />
+              <Picker.Item label="Black" value="black" />
+              <Picker.Item label="Red" value="red" />
+              <Picker.Item label="Yellow" value="yellow" />
+              <Picker.Item label="Blue" value="blue" />
+            </Picker>
+          </>
+        );
+      } else if (noteTag === 'water') {
+        selector = (
+          <Picker
+            selectedValue={noteTag}
+            style={{ width: '80%' }}
+            onValueChange={() => {
+              this.setState({ tagColor: 'blue' });
+            }}
+          >
+            {// TODO: Loop through all owned plants and give option to add owned plant here
+            }
+            <Picker.Item label="Jade Plant" value="blue" />
+          </Picker>
+        );
+      } else {
+        tagColor ='brown';
+      }
       return (
-        <Layout style={{ flex: 1, alignItems: 'center' }}>
-          <Text />
+        <Layout style={{ flex: 1, alignItems: 'center', backgroundColor: 'rgba(116, 194, 24, 0.08)' }}>
+          <Text style={{
+            width: '80%',
+            marginTop: '2%',
+            marginBottom: '2%',
+            backgroundColor: 'rgba(116, 194, 24, 0.08)',
+            paddingTop: '2%',
+            paddingBottom: '2%',
+            textAlign: 'center',
+          }}
+          >
+            Add trackers for seeding and watering here!
+          </Text>
           <Input
             style={{ width: '80%' }}
             placeholder="Enter note here"
             value={tempNote || ''}
             onChangeText={(newNote) => this.setState({ tempNote: newNote })}
           />
+          <Picker
+            selectedValue={noteTag}
+            style={{ width: '80%' }}
+            onValueChange={(itemValue) => {
+              this.setState({ noteTag: itemValue, tagColor: itemValue });
+            }}
+          >
+            <Picker.Item label="Water Plant" value="water" />
+            <Picker.Item label="Seed Plant" value="seed" />
+            { // TODO, ADD custom labels that were created
+            // <Picker.Item label={} value={} />
+            }
+            <Picker.Item label="Add Custom Label" value="custom" />
+          </Picker>
+          {selector}
           <Text />
           <Button
             style={{
@@ -153,7 +233,8 @@ class CalendarView extends React.Component {
             status="primary"
             onPress={() => {
               if (tempNote !== '') {
-                saveNote(selectedDate, tempNote).then(() => {
+                saveNote(selectedDate, tempNote, tagColor).then(() => {
+                  this.setState({ tagColor });
                   this.setState({ showInputView: false });
                   this.updateNotes();
                 }).catch((error) => {
@@ -207,6 +288,7 @@ class CalendarView extends React.Component {
               // TODO: currently only the else theme is being rendered on state changes
               // toggleTheme is working correctly
               theme={toggleTheme ? calendarThemeDark : calendarThemeLight}
+              markingType="multi-dot"
               markedDates={
                 this.getCalendarMarkInfo(notes)
               }

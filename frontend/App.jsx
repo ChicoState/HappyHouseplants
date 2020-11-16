@@ -12,7 +12,7 @@ import 'react-native-gesture-handler';
 import Cam from './components/Camera';
 import theme from './components/colorTheme.json';
 import HeaderButtons from './components/HeaderButtons';
-import CalendarView from './components/Calendar';
+import CalendarView from './components/calendar/Calendar';
 import SearchBar from './components/Search';
 import Recommend from './components/RecList';
 import TipList from './components/TipList';
