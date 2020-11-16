@@ -18,7 +18,7 @@ class CollapsibleDrawer extends React.Component {
     const { children, title } = this.props;
     const { collapsed } = this.state;
 
-    const expandIcon = (props) => <Icon {...props} fill="#000000" name={collapsed ? 'arrow-circle-up-outline' : 'arrow-circle-down-outline'} />;
+    const expandIcon = (props) => <Icon {...props} fill="#000000" name={collapsed ? 'arrow-circle-down-outline' : 'arrow-circle-up-outline'} />;
 
     return (
       <>
