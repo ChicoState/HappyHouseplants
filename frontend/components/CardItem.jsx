@@ -1,11 +1,17 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
-import { Alert, Image, ViewPropTypes } from 'react-native';
+import {
+  Alert,
+  Image,
+  ViewPropTypes,
+  View,
+} from 'react-native';
 import { PropTypes } from 'prop-types';
 import {
   Button, Card, Icon, Layout, Text,
 } from '@ui-kitten/components';
+import AddMyPlantDialog from './AddMyPlantDialog';
 import { SERVER_ADDR } from '../server';
 
 const { authFetch } = require('../auth');
@@ -31,6 +37,7 @@ class CardItem extends React.Component {
     this.state = {
       saved: undefined,
       owned: undefined,
+      showAddDialog: false,
     };
 
     this.startChangePicture = this.startChangePicture.bind(this);
@@ -104,29 +111,12 @@ class CardItem extends React.Component {
     }
   }
 
-  toggleCollectionEntry() {
+  toggleCollectionEntry() { // TODO: Rename
     const { owned } = this.state;
     const { plant, onRemoveFromOwned } = this.props;
     const idProp = '_id';
     if (!owned || onRemoveFromOwned === undefined) {
-      authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
-        plantID: plant.plantID,
-        location: 'Kitchen', // TODO: Get location choice from user
-        image: plant.image, // TODO: Allow user to use a custom image
-      }).then(() => {
-        this.setState({
-          owned: true,
-        });
-      }).catch((error) => {
-        Alert.alert(
-          'Network Error',
-          'Failed to add this plant',
-          [
-            { text: 'OK' },
-          ],
-        );
-        console.error(`Failed to save a plant due to an error: ${error}`);
-      });
+      this.setState({ showAddDialog: true });
     } else {
       authFetch(`${SERVER_ADDR}/myplants`, 'DELETE', {
         [idProp]: plant[idProp],
@@ -156,7 +146,7 @@ class CardItem extends React.Component {
       allowChangePicture,
       onRemoveFromOwned,
     } = this.props;
-    const { saved, owned } = this.state;
+    const { saved, owned, showAddDialog } = this.state;
 
     const saveIcon = (info) => (
       <Icon {...info} name={saved ? 'heart' : 'heart-outline'} />
@@ -212,19 +202,28 @@ class CardItem extends React.Component {
     );
 
     return (
-      <Card
-        key={plant.plantID}
-        style={styles.card}
-        status="success"
-        header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
-        footer={renderItemFooter}
-        onPress={() => { onPressItem(plant); }}
-      >
-        <Image
-          source={{ uri: plant.image.sourceURL }}
-          style={styles.image}
+      <View>
+        <AddMyPlantDialog
+          visible={showAddDialog}
+          plantName={plant.plantName}
+          plantID={plant.plantID}
+          onSubmit={() => this.setState({ showAddDialog: false })}
+          onCancel={() => this.setState({ showAddDialog: false })}
         />
-      </Card>
+        <Card
+          key={plant.plantID}
+          style={styles.card}
+          status="success"
+          header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
+          footer={renderItemFooter}
+          onPress={() => { onPressItem(plant); }}
+        >
+          <Image
+            source={{ uri: plant.image.sourceURL }}
+            style={styles.image}
+          />
+        </Card>
+      </View>
     );
   }
 }
