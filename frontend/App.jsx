@@ -10,6 +10,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-native-paper';
 import PropTypes from 'prop-types';
 import 'react-native-gesture-handler';
+import Cam from './components/Camera';
 import theme from './components/colorTheme.json';
 import HeaderButtons from './components/HeaderButtons';
 import CalendarView from './components/Calendar';
@@ -28,7 +29,6 @@ const Stack = createStackNavigator();
 
 function AccountButtons(props) {
   const { onRequestLogin, onRequestRegister } = props;
-
   return (
     <LoginContext.Consumer>
       {(loginState) => {
@@ -94,6 +94,14 @@ function MyPlantsScreen(obj) {
   );
 }
 
+function CameraScreen() {
+  return (<Cam />);
+}
+
+/**
+ * Plant Profile Screen
+ * @param {*} navContext
+ */
 function PlantProfileScreen(navContext) {
   const { route } = navContext;
   const { params } = route;
@@ -108,6 +116,9 @@ function CalendarScreen() {
   );
 }
 
+/**
+ * Tip Screen
+ */
 function TipScreen() {
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -162,7 +173,7 @@ function HomeScreen(obj) {
       </LoginContext.Consumer>
       {tabView}
       <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('My Plants', { otherParam: 'List of all of your plants' }); }}>
+      <Button status="primary" onPress={() => { navigation.navigate('My Plants'); }}>
         Go to My Plants
       </Button>
       <Text />

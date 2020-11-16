@@ -261,7 +261,10 @@ app.post('/mycalendar/notes/', (req, res) => {
       const when = keys[0];
       const note = values[0];
       findOneDocument('Users', query).then((userDoc) => {
-        const { calendarNotes = {/* Default no notes */} } = userDoc;
+        let calendarNotes = {};
+        if (userDoc.calendarNotes) {
+          calendarNotes = userDoc.calendarNotes;
+        }
 
         if (calendarNotes[when]) {
           // Append to the existing date's notes
