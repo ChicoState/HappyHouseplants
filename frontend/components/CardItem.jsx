@@ -205,6 +205,7 @@ class CardItem extends React.Component {
       <View>
         <AddMyPlantDialog
           visible={showAddDialog}
+          plant={plant}
           plantName={plant.plantName}
           plantID={plant.plantID}
           onSubmit={() => this.setState({ showAddDialog: false })}

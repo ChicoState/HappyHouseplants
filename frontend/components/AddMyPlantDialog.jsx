@@ -11,19 +11,23 @@ class AddMyPlantDialog extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      locations: ['Kitchen', 'Living room', 'Bedroom', 'Porch'],
+      locations: ['Kitchen', 'Living room', 'Bedroom', 'Porch'], // TODO: Fetch from custom rooms
       locationIndex: 0,
     };
   }
 
   submit() {
-    const { plantID, onSubmit, onCancel } = this.props;
+    const { plant, onSubmit, onCancel } = this.props;
     const { locations, locationIndex } = this.state;
 
+    if (locationIndex === -1) {
+      throw Error('Cannot submit a plant in an undefined location. Assign locationIndex.');
+    }
+
     authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
-      plantID,
+      plantID: plant.plantID,
       location: locations[locationIndex - 1],
-      image: null, // TODO: Use custom image if provided
+      image: plant.image, // TODO: Use custom image if provided
     }).then(() => {
       onSubmit();
     }).catch((error) => {
@@ -40,12 +44,12 @@ class AddMyPlantDialog extends React.Component {
 
   render() {
     const { locationIndex, locations } = this.state;
-    const { visible, plantName, onCancel } = this.props;
+    const { visible, plant, onCancel } = this.props;
     return (
       <View>
         <Portal>
           <Dialog visible={visible}>
-            <Dialog.Title>{`Add ${plantName}`}</Dialog.Title>
+            <Dialog.Title>{`Add ${plant.plantName}`}</Dialog.Title>
             <Dialog.Content>
               <Text>Location</Text>
               <Select
@@ -61,7 +65,12 @@ class AddMyPlantDialog extends React.Component {
               { /* TODO: Put 'custom image' form stuff here */ }
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={() => this.submit()}>Add</Button>
+              <Button
+                onPress={() => this.submit()}
+                disabled={locationIndex < 1 || locationIndex > locations.length}
+              >
+                Add
+              </Button>
               <Button onPress={() => onCancel()}>Cancel</Button>
             </Dialog.Actions>
           </Dialog>
