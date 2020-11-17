@@ -38,5 +38,15 @@
     "firstName" : "",
     "lastName" : "",
     "myPlantsByID" : [ ]
+  },
+  {
+    "savedTipsByID" : [ ],
+    "savedPlantsByID" : [ ],
+    "userId" : "myothra7777",
+    "username" : "Myothra7777",
+    "password" : "$2b$12$OWFbkoPA69xr32sEZa3t2.y37G9OEJ3dVIfR1zevRteg8J5bTeGqa",
+    "firstName" : "",
+    "lastName" : "",
+    "myPlantsByID" : [ ]
   }
 ]
