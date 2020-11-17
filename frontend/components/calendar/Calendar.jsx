@@ -198,7 +198,7 @@ class CalendarView extends React.Component {
         }}
         >
           <Layout style={{
-            backgroundColor: colorTheme['color-primary-transparent-100'], justifyContent: 'center', width: '95%', flex: 0.75, padding: '3%' 
+            backgroundColor: colorTheme['color-primary-transparent-100'], justifyContent: 'center', width: '95%', flex: 0.75, padding: '3%',
           }}
           >
             <Text
