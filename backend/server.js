@@ -151,7 +151,7 @@ app.post('/myplants', (req, res) => {
         myPlantsByID.push(plant);
 
         USERS.updateOne(query, { myPlantsByID }).then(() => {
-          console.log(`Added plant ${JSON.stringify(plant)} to user ID ${userId}'s owned plants.`);
+          console.log(`Added plant ${plantID} to user ID ${userId}'s owned plants`);
           res.status(201).json({});
         }).catch((saveError) => {
           console.error(`Failed to add a plant to 'myplants' for user ID ${userId}. Reason: ${saveError}`);
@@ -168,17 +168,27 @@ app.post('/savedplants', (req, res) => {
   authenticateUserRequest(req, res).then((userId) => {
     if (userId) {
       const query = { userId };
-      const plantID = req.body;
+      const {
+        plantID,
+        plantName,
+        image,
+      } = req.body;
       findOneDocument('Users', query).then((userDoc) => {
         let savedPlantsByID = [];
         if (userDoc.savedPlantsByID) {
           savedPlantsByID = userDoc.savedPlantsByID;
         }
 
-        savedPlantsByID.push(plantID);
+        // Only store known properties (don't allow client to store arbitrary data)
+        const plant = {
+          plantID,
+          plantName,
+          image,
+        };
+        savedPlantsByID.push(plant);
 
         USERS.updateOne(query, { savedPlantsByID }).then(() => {
-          console.log(`Added plant ID ${plantID} to user ID ${userId}'s saved plants.`);
+          console.log(`Added plant ${plantID} to user ID ${userId}'s saved plants.`);
           res.status(201).json({});
         }).catch((saveError) => {
           console.error(`Failed to add a plant to 'savedplants' for user ID ${userId}. Reason: ${saveError}`);

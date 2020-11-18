@@ -8,7 +8,15 @@ const userSchema = new mongoose.Schema({
   userId: { type: String, index: true },
   password: String, // Salted+Hashed
   savedTipsByID: Array,
-  savedPlantsByID: Array,
+  savedPlantsByID: [
+    {
+      plantID: String,
+      plantName: String,
+      image: {
+        sourceURL: String,
+      },
+    },
+  ],
   myPlantsByID: [
     {
       plantID: String,

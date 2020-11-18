@@ -71,10 +71,12 @@ class CardItem extends React.Component {
 
   toggleSaveEntry() {
     const { saved } = this.state;
-    const { plant } = this.props;
+    const { plant, onRemoveFromFavorites } = this.props;
     if (!saved) {
       authFetch(`${SERVER_ADDR}/savedplants`, 'POST', {
         plantID: plant.plantID,
+        plantName: plant.plantName,
+        image: plant.image,
       }).then(() => {
         this.setState({
           saved: true,
@@ -96,6 +98,9 @@ class CardItem extends React.Component {
         this.setState({
           saved: false,
         });
+        if (onRemoveFromFavorites) {
+          onRemoveFromFavorites(plant);
+        }
       }).catch((error) => {
         Alert.alert(
           'Network Error',
@@ -231,6 +236,7 @@ CardItem.propTypes = {
   plant: PropTypes.object.isRequired,
   onPressItem: PropTypes.func.isRequired,
   onRemoveFromOwned: PropTypes.func,
+  onRemoveFromFavorites: PropTypes.func,
   allowChangePicture: PropTypes.bool,
   styles: PropTypes.objectOf(ViewPropTypes.style),
 };
@@ -256,6 +262,7 @@ CardItem.defaultProps = {
     },
   },
   onRemoveFromOwned: undefined,
+  onRemoveFromFavorites: undefined,
   allowChangePicture: false,
 };
 
