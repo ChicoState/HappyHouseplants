@@ -20,7 +20,8 @@
       { "plantID": "p2349",
         "location": "bedroom" }
     ],
-    "calendarNotes": {}
+    "calendarNotes": {},
+    "customLabels": []
   },
   {
     "firstName": "FirstName1",
@@ -38,7 +39,8 @@
       { "plantID": "p2349",
         "location": "porch" }
     ],
-    "calendarNotes": {}
+    "calendarNotes": {},
+    "customLabels": []
   },
   {
     "firstName": "Woooo",
@@ -56,6 +58,7 @@
       { "plantID": "p2349",
         "location": "bedroom" }
     ],
-    "calendarNotes": {}
+    "calendarNotes": {},
+    "customLabels": []
   }
 ]
