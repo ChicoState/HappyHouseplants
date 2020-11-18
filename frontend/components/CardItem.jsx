@@ -57,7 +57,9 @@ class CardItem extends React.Component {
 
     authFetch(`${SERVER_ADDR}/myplants`)
       .then((myPlantIDs) => {
-        itemThis.setState({ owned: myPlantIDs.find((cur) => cur.plantID === plant.plantID) });
+        itemThis.setState({
+          owned: myPlantIDs.filter((cur) => cur.plantID === plant.plantID).length,
+        });
       }).catch((error) => {
         console.error(`Failed to determine ownership status of plant ID ${plant.plantID} due to an error: ${error}.`);
       });
@@ -125,7 +127,7 @@ class CardItem extends React.Component {
         [idProp]: plant[idProp],
       }).then(() => {
         this.setState({
-          owned: false,
+          owned: owned - 1,
         });
         onRemoveFromOwned(plant);
       }).catch((error) => {
