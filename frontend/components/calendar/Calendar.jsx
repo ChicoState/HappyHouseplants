@@ -47,7 +47,6 @@ function saveNote(when, text, color) {
 function getNotes() {
   return new Promise((resolve) => {
     authFetch(`${SERVER_ADDR}/mycalendar/notes`)
-      .then((response) => response.json())
       .then((data) => {
         resolve(data);
       });

@@ -8,8 +8,13 @@
     "savedTipsByID": [1, 2],
     "savedPlantsByID": [1, 3, 4, 7],
     "myPlantsByID": [
-      { "plantID": "p1425", 
-        "location": "living room" },
+      { "plantID": "p1425",
+        "plantName": "My First Plant",
+        "location": "living room",
+        "image": {
+          "sourceURL": "404"
+        }
+      },
       { "plantID": "p69065", 
         "location": "bedroom" },
       { "plantID": "p2349",
