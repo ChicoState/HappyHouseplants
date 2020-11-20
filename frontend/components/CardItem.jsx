@@ -1,102 +1,245 @@
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable import/prefer-default-export */
 /* eslint-disable react/forbid-prop-types */
-import React, { useState } from 'react';
-import { Image, ViewPropTypes } from 'react-native';
+import React from 'react';
+import {
+  Alert,
+  Image,
+  ViewPropTypes,
+  View,
+} from 'react-native';
 import { PropTypes } from 'prop-types';
 import {
   Button, Card, Icon, Layout, Text,
 } from '@ui-kitten/components';
+import AddMyPlantDialog from './AddMyPlantDialog';
+import { SERVER_ADDR } from '../server';
 
-function CardItem(props) {
-  const { plant, styles, onPressItem } = props;
+const { authFetch } = require('../auth');
 
-  if (styles.image === undefined) {
-    styles.image = CardItem.defaultProps.styles.image;
+class CardItem extends React.Component {
+  constructor(props) {
+    super(props);
+    const { styles } = props;
+
+    if (styles.image === undefined) {
+      styles.image = CardItem.defaultProps.styles.image;
+    }
+    if (styles.cardFooter === undefined) {
+      styles.cardFooter = CardItem.defaultProps.styles.cardFooter;
+    }
+    if (styles.button === undefined) {
+      styles.button = CardItem.defaultProps.styles.button;
+    }
+    if (styles.card === undefined) {
+      styles.card = CardItem.defaultProps.styles.card;
+    }
+
+    this.state = {
+      saved: undefined,
+      owned: undefined,
+      showAddDialog: false,
+    };
+
+    this.startChangePicture = this.startChangePicture.bind(this);
+    this.toggleOwned = this.toggleOwned.bind(this);
+    this.toggleSaveEntry = this.toggleSaveEntry.bind(this);
   }
-  if (styles.cardFooter === undefined) {
-    styles.cardFooter = CardItem.defaultProps.styles.cardFooter;
+
+  componentDidMount() {
+    const { plant } = this.props;
+    const itemThis = this;
+    authFetch(`${SERVER_ADDR}/savedplants`)
+      .then((savedPlantIDs) => {
+        itemThis.setState({ saved: savedPlantIDs.find((cur) => cur.plantID === plant.plantID) });
+      }).catch((error) => {
+        console.error(`Failed to determine save status of plant ID ${plant.plantID} due to an error: ${error}.`);
+      });
+
+    authFetch(`${SERVER_ADDR}/myplants`)
+      .then((myPlantIDs) => {
+        itemThis.setState({
+          owned: myPlantIDs.filter((cur) => cur.plantID === plant.plantID).length,
+        });
+      }).catch((error) => {
+        console.error(`Failed to determine ownership status of plant ID ${plant.plantID} due to an error: ${error}.`);
+      });
   }
-  if (styles.button === undefined) {
-    styles.button = CardItem.defaultProps.styles.button;
+
+  startChangePicture() {
+    const { plant } = this.props;
+    // TODO: Implement
+    console.log(`Changing the picture for plant ID ${plant.plantID}...`);
   }
-  if (styles.card === undefined) {
-    styles.card = CardItem.defaultProps.styles.card;
+
+  toggleSaveEntry() {
+    const { saved } = this.state;
+    const { plant, onRemoveFromFavorites } = this.props;
+    if (!saved) {
+      authFetch(`${SERVER_ADDR}/savedplants`, 'POST', {
+        plantID: plant.plantID,
+        plantName: plant.plantName,
+        image: plant.image,
+      }).then(() => {
+        this.setState({
+          saved: true,
+        });
+      }).catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'Failed to save this plant',
+          [
+            { text: 'OK' },
+          ],
+        );
+        console.error(`Failed to save a plant due to an error: ${error}`);
+      });
+    } else {
+      authFetch(`${SERVER_ADDR}/savedplants`, 'DELETE', {
+        plantID: plant.plantID,
+      }).then(() => {
+        this.setState({
+          saved: false,
+        });
+        if (onRemoveFromFavorites) {
+          onRemoveFromFavorites(plant);
+        }
+      }).catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'Failed to remove this plant',
+          [
+            { text: 'OK' },
+          ],
+        );
+        console.error(`Failed to remove a plant due to an error: ${error}`);
+      });
+    }
   }
 
-  const [saveEntry, setSaveEntry] = useState(true);
-  const [collectionEntry, setCollectionEntry] = useState(true);
+  toggleOwned() {
+    const { owned } = this.state;
+    const { plant, onRemoveFromOwned } = this.props;
+    const idProp = '_id';
+    if (!owned || onRemoveFromOwned === undefined) {
+      this.setState({ showAddDialog: true });
+    } else {
+      authFetch(`${SERVER_ADDR}/myplants`, 'DELETE', {
+        [idProp]: plant[idProp],
+      }).then(() => {
+        this.setState({
+          owned: owned - 1,
+        });
+        onRemoveFromOwned(plant);
+      }).catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'Failed to remove this plant',
+          [
+            { text: 'OK' },
+          ],
+        );
+        console.error(`Failed to remove a plant due to an error: ${error}`);
+      });
+    }
+  }
 
-  const toggleSaveEntry = () => {
-    console.log('saveEntry status = ', saveEntry);
-    setSaveEntry(!saveEntry);
-    // need to remove or or add to from database
-  };
+  render() {
+    const {
+      plant,
+      styles,
+      onPressItem,
+      allowChangePicture,
+      onRemoveFromOwned,
+    } = this.props;
+    const { saved, owned, showAddDialog } = this.state;
 
-  const toggleCollectionEntry = () => {
-    console.log('collectionEntry status = ', collectionEntry);
-    setCollectionEntry(!collectionEntry);
-    // need to remove or or add to from database
-  };
+    const saveIcon = (info) => (
+      <Icon {...info} name={saved ? 'heart' : 'heart-outline'} />
+    );
 
-  const saveIcon = (info) => (
-    <Icon {...info} name={!saveEntry ? 'heart' : 'heart-outline'} />
-  );
+    const collectionIcon = (info) => (
+      <Icon {...info} name={onRemoveFromOwned === undefined ? 'plus-outline' : 'trash-outline'} />
+    );
 
-  const collectionIcon = (info) => (
-    <Icon {...info} name="plus-outline" />
-  );
+    const cameraIcon = (info) => (
+      <Icon {...info} name="camera-outline" />
+    );
 
-  const renderItemHeader = (headerProps, info) => (
-    <Layout {...headerProps}>
-      <Text category="h6">
-        {info}
-      </Text>
-    </Layout>
-  );
+    const renderItemHeader = (headerProps, info) => (
+      <Layout {...headerProps}>
+        <Text category="h6">
+          {info}
+        </Text>
+      </Layout>
+    );
 
-  const renderItemFooter = (footerProps) => (
-    <Layout
-      {...footerProps}
-      style={styles.cardFooter}
-    >
+    const cameraButton = allowChangePicture ? (
       <Button
         style={styles.button}
         status="primary"
-        appearance={!saveEntry ? 'filled' : 'outline'}
-        accessoryLeft={saveIcon}
-        onPress={toggleSaveEntry}
+        appearance="outline"
+        accessoryLeft={cameraIcon}
+        onPress={this.startChangePicture}
       />
-      <Button
-        style={styles.button}
-        status="primary"
-        appearance={!collectionEntry ? 'filled' : 'outline'}
-        accessoryLeft={collectionIcon}
-        onPress={toggleCollectionEntry}
-      />
-    </Layout>
-  );
+    ) : undefined;
 
-  return (
-    <Card
-      key={plant.plantID}
-      style={styles.card}
-      status="success"
-      header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
-      footer={renderItemFooter}
-      onPress={() => { onPressItem(plant); console.log('onpress item called here'); }}
-    >
-      <Image
-        source={{ uri: plant.image.sourceURL }}
-        style={styles.image}
-      />
-    </Card>
-  );
+    const renderItemFooter = (footerProps) => (
+      <Layout
+        {...footerProps}
+        style={styles.cardFooter}
+      >
+        <Button
+          style={styles.button}
+          status="primary"
+          appearance={saved ? 'filled' : 'outline'}
+          accessoryLeft={saveIcon}
+          onPress={this.toggleSaveEntry}
+        />
+        <Button
+          style={styles.button}
+          status="primary"
+          appearance={(owned && onRemoveFromOwned === undefined) ? 'filled' : 'outline'}
+          accessoryLeft={collectionIcon}
+          onPress={this.toggleOwned}
+        />
+        {cameraButton}
+      </Layout>
+    );
+
+    return (
+      <View>
+        <AddMyPlantDialog
+          visible={showAddDialog}
+          plant={plant}
+          plantName={plant.plantName}
+          plantID={plant.plantID}
+          onSubmit={() => this.setState({ showAddDialog: false })}
+          onCancel={() => this.setState({ showAddDialog: false })}
+        />
+        <Card
+          key={plant.plantID}
+          style={styles.card}
+          status="success"
+          header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
+          footer={renderItemFooter}
+          onPress={() => { onPressItem(plant); }}
+        >
+          <Image
+            source={{ uri: plant.image.sourceURL }}
+            style={styles.image}
+          />
+        </Card>
+      </View>
+    );
+  }
 }
 
 CardItem.propTypes = {
   plant: PropTypes.object.isRequired,
   onPressItem: PropTypes.func.isRequired,
+  onRemoveFromOwned: PropTypes.func,
+  onRemoveFromFavorites: PropTypes.func,
+  allowChangePicture: PropTypes.bool,
   styles: PropTypes.objectOf(ViewPropTypes.style),
 };
 
@@ -120,6 +263,9 @@ CardItem.defaultProps = {
       height: 300,
     },
   },
+  onRemoveFromOwned: undefined,
+  onRemoveFromFavorites: undefined,
+  allowChangePicture: false,
 };
 
 export default CardItem;
