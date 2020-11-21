@@ -147,7 +147,7 @@ class AddMyPlantDialog extends React.Component {
           <Dialog visible={visible} onDismiss={() => this.cancel()}>
             <Dialog.Title>{`Add ${plant.plantName}`}</Dialog.Title>
             <Dialog.Content>
-              <Text>Nickname</Text>
+              <Text>Nickname (optional)</Text>
               <Input
                 placeholder="ex: Window Jade"
                 onChangeText={(newText) => this.setState({ nickname: newText })}
