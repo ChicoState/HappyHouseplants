@@ -1,56 +1,52 @@
 [
   {
-    "firstName": "FirstName",
-    "lastName": "LastName",
-    "username": "SomeUser",
-    "userId": "MyUserID",
-    "password": "SuperSecretPasswordHash1",
-    "savedTipsByID": [1, 2],
-    "savedPlantsByID": [1, 3, 4, 7],
-    "myPlantsByID": [
-      { "plantID": "p1425", 
-        "location": "living room" },
-      { "plantID": "p69065", 
-        "location": "bedroom" },
-      { "plantID": "p2349",
-        "location": "bedroom" }
-    ],
-    "calendarNotes": {}
+    "savedTipsByID" : [ ],
+    "savedPlantsByID" : [ ],
+    "userId" : "aleggett",
+    "username" : "ALeggett",
+    "password" : "$2b$12$Q9CJtawj9KFmffuWSFXHIONIbYJ1GaeAwnLHIze6fBtWNJT7QWczy",
+    "firstName" : "Aaron",
+    "lastName" : "",
+    "myPlantsByID" : [ ]
   },
   {
-    "firstName": "FirstName1",
-    "lastName": "LastName23212",
-    "username": "SomeUser231",
-    "userId": "MyUserID123",
-    "password": "SuperSecr23131etPasswordHash",
-    "savedTipsByID": [5, 8],
-    "savedPlantsByID": [2],
-    "myPlantsByID": [
-      { "plantID": "p1425", 
-        "location": "bathroom" },
-      { "plantID": "p69065", 
-        "location": "porch" },
-      { "plantID": "p2349",
-        "location": "porch" }
-    ],
-    "calendarNotes": {}
+    "savedTipsByID" : [ ],
+    "savedPlantsByID" : [ ],
+    "userId" : "neodusk",
+    "username" : "Neodusk",
+    "password" : "$2b$12$ZEA7EUWfC.rvW5cn8/MCYuRQ19CV2pOGaqpTqCbI2JQtJMMGdaD7m",
+    "firstName" : "Haley",
+    "lastName" : "",
+    "myPlantsByID" : [ ]
   },
   {
-    "firstName": "Woooo",
-    "lastName": "Weeee",
-    "username": "ImAUser",
-    "userId": "MyUseasdasfID123",
-    "password": "ASLKDJL",
-    "savedTipsByID": [3],
-    "savedPlantsByID": [2, 8, 6, 4],
-    "myPlantsByID": [
-      { "plantID": "p1425", 
-        "location": "living room" },
-      { "plantID": "p69065", 
-        "location": "porch" },
-      { "plantID": "p2349",
-        "location": "bedroom" }
-    ],
-    "calendarNotes": {}
+    "savedTipsByID" : [ ],
+    "savedPlantsByID" : [ ],
+    "userId" : "sick",
+    "username" : "Sick",
+    "password" : "$2b$12$EB0pk/l.0kbfi8XzDe3AXeIU4Hp6K6snV/aL/U5shBrgriVpaQ6Ju",
+    "firstName" : "",
+    "lastName" : "",
+    "myPlantsByID" : [ ]
+  },
+  {
+    "savedTipsByID" : [ ],
+    "savedPlantsByID" : [ ],
+    "userId" : "wakeua",
+    "username" : "wakeua",
+    "password" : "$2b$12$OWFbkoPA69xr32sEZa3t2.y37G9OEJ3dVIfR1zevRteg8J5bTeGqa",
+    "firstName" : "",
+    "lastName" : "",
+    "myPlantsByID" : [ ]
+  },
+  {
+    "savedTipsByID" : [ ],
+    "savedPlantsByID" : [ ],
+    "userId" : "myothra7777",
+    "username" : "Myothra7777",
+    "password" : "$2b$12$OWFbkoPA69xr32sEZa3t2.y37G9OEJ3dVIfR1zevRteg8J5bTeGqa",
+    "firstName" : "",
+    "lastName" : "",
+    "myPlantsByID" : [ ]
   }
 ]

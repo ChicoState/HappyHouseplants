@@ -15,6 +15,7 @@ function authFetch(url, method = 'GET', body) {
         headers: new Headers({ AuthToken: authToken, 'Content-Type': 'application/json' }),
       };
       fetch(url, request)
+        .then((resRaw) => resRaw.json())
         .then((res) => {
           response(res);
         })
@@ -29,10 +30,10 @@ function getLoginInfo() {
   return new Promise((infoResolved, rejected) => {
     AsyncStorage.getItem(SESSION_TOKEN).then((authToken) => {
       if (authToken) {
-        authFetch(`${SERVER_ADDR}/login_info`).then((resRaw) => resRaw.json()
+        authFetch(`${SERVER_ADDR}/login_info`)
           .then((res) => {
             infoResolved(res);
-          }))
+          })
           .catch((reason) => {
             rejected(reason);
           });

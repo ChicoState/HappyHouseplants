@@ -7,12 +7,13 @@ import { View } from 'react-native';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Provider } from 'react-native-paper';
 import PropTypes from 'prop-types';
 import 'react-native-gesture-handler';
 import Cam from './components/Camera';
 import theme from './components/colorTheme.json';
 import HeaderButtons from './components/HeaderButtons';
-import CalendarView from './components/Calendar';
+import CalendarView from './components/calendar/Calendar';
 import SearchBar from './components/Search';
 import Recommend from './components/RecList';
 import TipList from './components/TipList';
@@ -20,7 +21,7 @@ import PlantProfile from './components/PlantProfile';
 import LoginView from './components/LoginView';
 import RegisterView from './components/RegisterView';
 import AccountProvider from './components/AccountProvider';
-import SelectImage from './components/SelectImage';
+import MyPlantsList from './components/MyPlantsList';
 
 const { LoginContext } = require('./auth');
 
@@ -82,12 +83,11 @@ function MyPlantsScreen(obj) {
   const { navigation } = obj;
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button status="primary" onPress={() => { navigation.navigate('Camera'); }}>
-        Go to Camera
-      </Button>
-      <Button status="primary" onPress={() => { navigation.navigate('Gallery'); }}>
-        Select Image
-      </Button>
+      <MyPlantsList onPressItem={(plant) => {
+        navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
+      }}
+      />
+      <Text />
     </Layout>
   );
 }
@@ -211,42 +211,43 @@ function App() {
     <>
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider mapping={eva.mapping} theme={{ ...eva.light, ...theme }}>
-        <AccountProvider>
-          <NavigationContainer ref={navigationRef}>
-            <Stack.Navigator initialRouteName="Home">
-              <Stack.Screen
-                name="Home"
-                component={HomeScreen}
-                initialParams={{ tab: currentTab }}
-                options={{
-                  headerTitle: () => (
-                    <HeaderButtons
-                      labels={['Recommendations', 'Tips']}
-                      selectedLabel={currentTab}
-                      onLabelChanged={(label) => { setCurrentTab(label); navigationRef.current.navigate('Home', { tab: label }); }}
-                    />
-                  ),
-                }}
-              />
-              <Stack.Screen name="My Plants" component={MyPlantsScreen} />
-              <Stack.Screen
-                name="PlantProfile"
-                component={PlantProfileScreen}
-                options={(navContext) => ({
-                  title: navContext.route.params.plantName ?? 'Plant Profile',
-                })}
-              />
-              <Stack.Screen name="Calendar" component={CalendarScreen} />
-              <Stack.Screen name="Tips" component={TipScreen} />
-              <Stack.Screen name="Recommend" component={RecommendScreen} />
-              <Stack.Screen name="Search" component={SearchScreen} />
-              <Stack.Screen name="Camera" component={CameraScreen} />
-              <Stack.Screen name="Gallery" component={GalleryScreen} />
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Register" component={RegisterScreen} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </AccountProvider>
+        <Provider>
+          <AccountProvider>
+            <NavigationContainer ref={navigationRef}>
+              <Stack.Navigator initialRouteName="Home">
+                <Stack.Screen
+                  name="Home"
+                  component={HomeScreen}
+                  initialParams={{ tab: currentTab }}
+                  options={{
+                    headerTitle: () => (
+                      <HeaderButtons
+                        labels={['Recommendations', 'Tips']}
+                        selectedLabel={currentTab}
+                        onLabelChanged={(label) => { setCurrentTab(label); navigationRef.current.navigate('Home', { tab: label }); }}
+                      />
+                    ),
+                  }}
+                />
+                <Stack.Screen name="My Plants" component={MyPlantsScreen} />
+                <Stack.Screen
+                  name="PlantProfile"
+                  component={PlantProfileScreen}
+                  options={(navContext) => ({
+                    title: navContext.route.params.plantName ?? 'Plant Profile',
+                  })}
+                />
+                <Stack.Screen name="Calendar" component={CalendarScreen} />
+                <Stack.Screen name="Tips" component={TipScreen} />
+                <Stack.Screen name="Recommend" component={RecommendScreen} />
+                <Stack.Screen name="Search" component={SearchScreen} />
+                <Stack.Screen name="Camera" component={CameraScreen} />
+                <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen name="Register" component={RegisterScreen} />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </AccountProvider>
+        </Provider>
       </ApplicationProvider>
     </>
   );
