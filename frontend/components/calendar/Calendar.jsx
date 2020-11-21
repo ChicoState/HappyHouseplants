@@ -11,7 +11,8 @@ import {
 } from '@ui-kitten/components';
 import { Icon } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
-import { SERVER_ADDR } from '../server';
+import { Picker } from '@react-native-picker/picker';
+import { SERVER_ADDR } from '../../server';
 
 const {
   getCalendarTheme,
@@ -19,8 +20,8 @@ const {
   calendarThemeDark,
   calendarThemeLight,
 } = require('./CalendarTheme');
-
-const { authFetch } = require('../auth');
+const colorTheme = require('../colorTheme.json');
+const { authFetch } = require('../../auth');
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 
@@ -28,8 +29,9 @@ const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
  * @param { when } The Calendar-formatted string of the date. Example: 2020-10-29 (Oct 29, 2020).
  * @param { text } The text of the note to store.
  * @return { Promise } A Promise that resolves to nothing when the note is successfully saved. */
-function saveNote(when, text) {
-  return authFetch(`${SERVER_ADDR}/mycalendar/notes`, 'POST', { [when]: text });
+function saveNote(when, text, color) {
+  // TODO: Update to allow multiple dots on one day, may need to fetch current dots first
+  return authFetch(`${SERVER_ADDR}/mycalendar/notes`, 'POST', { [when]: { note: text, dots: color } });
 }
 
 /* Gets a dictionary-form object of all notes that are stored
@@ -45,12 +47,14 @@ function saveNote(when, text) {
 function getNotes() {
   return new Promise((resolve) => {
     authFetch(`${SERVER_ADDR}/mycalendar/notes`)
-      .then((response) => response.json())
       .then((data) => {
         resolve(data);
       });
   });
 }
+
+// TODO: add getMyLabels for custom label select, and update labels
+// TODO add getMyDotColors() fetch
 
 class CalendarView extends React.Component {
   constructor() {
@@ -61,6 +65,10 @@ class CalendarView extends React.Component {
       tempNote: '',
       showInputView: false,
       toggleTheme: false,
+      noteTag: 'water',
+      tagColor: 'blue',
+      customLabel: '',
+      currentMonthView: new Date(),
     };
 
     this.updateNotes = () => {
@@ -100,22 +108,22 @@ class CalendarView extends React.Component {
       const curDate = dates[i];
       const curNotes = notesPerDate[i];
       if (curNotes.length > 0) {
-        ret[curDate] = { marked: true };
+        for (let j = 0; j < curNotes.length; j += 1) {
+          ret[curDate] = { marked: true, dots: [{ color: curNotes[j].dots }] };
+        }
       }
     }
-
     if (ret[selectedDate]) {
       ret[selectedDate].selected = true;
     } else {
       ret[selectedDate] = { selected: true };
     }
-
     return ret;
   }
 
   render() {
     const {
-      notes, tempNote, selectedDate, showInputView, toggleTheme,
+      notes, tempNote, selectedDate, showInputView, toggleTheme, customLabel, currentMonthView,
     } = this.state;
     // For each property in notes (key is date, value is array of notes), create a ListItem
     const noteViews = [];
@@ -124,7 +132,10 @@ class CalendarView extends React.Component {
     for (let i = 0; i < notesPerDate.length; i += 1) {
       const curDate = dates[i];
       const notesOnThisDate = notesPerDate[i];
-      const notesStr = notesOnThisDate.join('\n');
+      let notesStr = '';
+      for (let j = 0; j < notesOnThisDate.length; j += 1) {
+        notesStr += `${notesOnThisDate[j].note}\n`;
+      }
       noteViews.push(
         <ListItem
           style={toggleTheme ? getCalendarThemeDark('listItem') : getCalendarTheme('listItem')}
@@ -136,63 +147,141 @@ class CalendarView extends React.Component {
     }
 
     if (showInputView) {
-      return (
-        <Layout style={{ flex: 1, alignItems: 'center' }}>
-          <Text />
-          <Input
-            style={{ width: '80%' }}
-            placeholder="Enter note here"
-            value={tempNote || ''}
-            onChangeText={(newNote) => this.setState({ tempNote: newNote })}
-          />
-          <Text />
-          <Button
-            style={{
-              width: '80%',
+      const { noteTag } = this.state;
+      let { tagColor } = this.state;
+      let selector = <></>;
+      if (noteTag === 'custom') {
+        selector = (
+          <>
+            <Input
+              style={{ width: '100%' }}
+              placeholder="Custom label name"
+              value={customLabel || ''}
+              onChangeText={(newLabel) => this.setState({ customLabel: newLabel })}
+            />
+            <Picker
+              selectedValue={tagColor}
+              style={{ width: '100%' }}
+              onValueChange={(itemValue) => {
+                this.setState({ tagColor: itemValue });
+              }}
+            >
+              <Picker.Item label="Green" value="green" />
+              <Picker.Item label="Black" value="black" />
+              <Picker.Item label="Red" value="red" />
+              <Picker.Item label="Yellow" value="yellow" />
+              <Picker.Item label="Blue" value="blue" />
+            </Picker>
+          </>
+        );
+      } else if (noteTag === 'water') {
+        selector = (
+          <Picker
+            selectedValue={noteTag}
+            style={{ width: '100%' }}
+            onValueChange={() => {
+              this.setState({ tagColor: 'blue' });
             }}
-            status="primary"
-            onPress={() => {
-              if (tempNote !== '') {
-                saveNote(selectedDate, tempNote).then(() => {
-                  this.setState({ showInputView: false });
-                  this.updateNotes();
-                }).catch((error) => {
+          >
+            {// TODO: Loop through all owned plants and give option to add owned plant here
+            }
+            <Picker.Item label="Jade Plant" value="blue" />
+          </Picker>
+        );
+      } else {
+        tagColor = 'brown';
+      }
+      return (
+        <Layout style={{
+          flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colorTheme['color-primary-transparent-100'],
+        }}
+        >
+          <Layout style={{
+            backgroundColor: colorTheme['color-primary-transparent-100'], justifyContent: 'center', width: '95%', flex: 0.75, padding: '3%',
+          }}
+          >
+            <Text
+              style={{
+                width: '95%',
+                marginTop: '2%',
+                marginBottom: '2%',
+                paddingTop: '2%',
+                paddingBottom: '2%',
+                textAlign: 'center',
+              }}
+            >
+              Add trackers for seeding and watering here!
+            </Text>
+            <Input
+              style={{ width: '100%' }}
+              placeholder="Enter note here"
+              value={tempNote || ''}
+              onChangeText={(newNote) => this.setState({ tempNote: newNote })}
+            />
+            <Picker
+              selectedValue={noteTag}
+              style={{ width: '100%' }}
+              onValueChange={(itemValue) => {
+                this.setState({ noteTag: itemValue, tagColor: itemValue });
+              }}
+            >
+              <Picker.Item label="Water Plant" value="water" />
+              <Picker.Item label="Plant Seedling" value="seed" />
+              { // TODO, ADD custom labels that were created
+              // <Picker.Item label={} value={} />
+              }
+              <Picker.Item label="Add Custom Label" value="custom" />
+            </Picker>
+            {selector}
+            <Text />
+            <Button
+              style={{
+                width: '100%',
+              }}
+              status="primary"
+              onPress={() => {
+                if (tempNote !== '') {
+                  saveNote(selectedDate, tempNote, tagColor).then(() => {
+                    this.setState({ tagColor, showInputView: false });
+                    this.updateNotes();
+                  }).catch((error) => {
+                    Alert.alert(
+                      'Internal Error',
+                      'An issue occured while trying to save the note',
+                      [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                      ],
+                    );
+                    console.error(`Error while trying to save a note: ${error}`);
+                  });
+                } else {
                   Alert.alert(
-                    'Internal Error',
-                    'An issue occured while trying to save the note',
+                    'Error',
+                    'A blank note can not be saved',
                     [
                       { text: 'OK', onPress: () => console.log('OK Pressed') },
                     ],
                   );
-                  console.error(`Error while trying to save a note: ${error}`);
-                });
-              } else {
-                Alert.alert(
-                  'Error',
-                  'A blank note can not be saved',
-                  [
-                    { text: 'OK', onPress: () => console.log('OK Pressed') },
-                  ],
-                );
-              }
-            }}
-          >
-            Submit
-          </Button>
-          <Text />
-          <Button style={{ width: '80%' }} status="primary" onPress={() => { this.setState({ showInputView: false }); }}>
-            Cancel
-          </Button>
+                }
+              }}
+            >
+              Submit
+            </Button>
+            <Text />
+            <Button style={{ width: '100%' }} status="primary" onPress={() => { this.setState({ showInputView: false }); }}>
+              Cancel
+            </Button>
+          </Layout>
         </Layout>
       );
     }
     return (
       <>
         <View style={toggleTheme ? getCalendarThemeDark('toggleWrapper') : getCalendarTheme('toggleWrapper')}>
-          <Icon name="moon-o" type="font-awesome" color={toggleTheme ? 'white' : 'green'} />
+          <Icon name="moon-o" type="font-awesome" color={toggleTheme ? colorTheme['color-white-background'] : 'green'} />
           <Switch
-            trackColor={{ true: 'white', false: '#BFEC70' }}
-            thumbColor={toggleTheme ? 'gray' : '#5BA611'}
+            trackColor={{ true: colorTheme['color-white-background'], false: colorTheme['color-primary-300'] }}
+            thumbColor={toggleTheme ? colorTheme['color-dark-background-400'] : colorTheme['color-primary-600']}
             value={toggleTheme}
             onValueChange={(value) => {
               console.log(`Toggle theme: ${value}`);
@@ -207,11 +296,15 @@ class CalendarView extends React.Component {
               // TODO: currently only the else theme is being rendered on state changes
               // toggleTheme is working correctly
               theme={toggleTheme ? calendarThemeDark : calendarThemeLight}
+              markingType="multi-dot"
               markedDates={
                 this.getCalendarMarkInfo(notes)
               }
-              current={new Date()}
+              current={currentMonthView}
               minDate={firstDayOfYear}
+              onMonthChange={(month) => {
+                this.setState({ currentMonthView: month });
+              }}
               onDayPress={(day) => {
                 this.setState({ selectedDate: day.dateString });
                 Alert.alert(
@@ -234,12 +327,27 @@ class CalendarView extends React.Component {
                 );
               }}
               onDayLongPress={(day) => {
-                this.setState({ selectedDate: day.dateString, showInputView: true, tempNote: '' });
+                this.setState({ selectedDate: day.dateString });
+                Alert.alert(
+                  day.dateString,
+                  'Save note for this date?',
+                  [
+                    {
+                      text: 'Cancel',
+                      onPress: () => {
+                        this.setState({ showInputView: false });
+                      },
+                    },
+                    {
+                      text: 'Yes',
+                      onPress: () => {
+                        this.setState({ showInputView: true });
+                      },
+                    },
+                  ],
+                );
               }}
               monthFormat="MMMM yyyy"
-              onMonthChange={(month) => {
-                console.log('month changed', month);
-              }}
               hideArrows={false}
               hideExtraDays={false}
               disableMonthChange
