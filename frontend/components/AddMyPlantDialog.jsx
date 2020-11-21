@@ -7,6 +7,7 @@ import {
   SelectItem,
   Button,
   Spinner,
+  Input,
 } from '@ui-kitten/components';
 import Prompt from 'react-native-input-prompt';
 import { PropTypes } from 'prop-types';
@@ -21,6 +22,7 @@ class AddMyPlantDialog extends React.Component {
       showCustomLocationPrompt: false,
       locations: undefined, // Initialized from fetch
       locationIndex: 0,
+      nickname: undefined,
     };
 
     this.updateLocations = this.updateLocations.bind(this);
@@ -37,6 +39,7 @@ class AddMyPlantDialog extends React.Component {
     const { visible } = this.props;
     if (visible !== this.prevVisible) {
       this.updateLocations();
+      this.nickname = undefined;
       this.prevVisible = visible;
     }
   }
@@ -68,11 +71,13 @@ class AddMyPlantDialog extends React.Component {
 
   submit() {
     const { plant, onSubmit, onCancel } = this.props;
-    const { locations, locationIndex } = this.state;
+    const { locations, locationIndex, nickname } = this.state;
+
+    const plantName = nickname ?? plant.plantName;
 
     authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
       plantID: plant.plantID,
-      plantName: plant.plantName,
+      plantName,
       location: locations[locationIndex - 1],
       image: plant.image, // TODO: Use custom image if provided
     }).then(() => {
@@ -142,6 +147,12 @@ class AddMyPlantDialog extends React.Component {
           <Dialog visible={visible} onDismiss={() => this.cancel()}>
             <Dialog.Title>{`Add ${plant.plantName}`}</Dialog.Title>
             <Dialog.Content>
+              <Text>Nickname</Text>
+              <Input
+                placeholder="ex: Window Jade"
+                onChangeText={(newText) => this.setState({ nickname: newText })}
+              />
+              <Text />
               <Text>Location</Text>
               {locationSelection}
               <Text />
