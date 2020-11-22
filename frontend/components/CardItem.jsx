@@ -13,6 +13,7 @@ import {
 } from '@ui-kitten/components';
 import AddMyPlantDialog from './AddMyPlantDialog';
 import { SERVER_ADDR } from '../server';
+import PlantImage from './PlantImage';
 
 const { authFetch } = require('../auth');
 
@@ -224,8 +225,9 @@ class CardItem extends React.Component {
           footer={renderItemFooter}
           onPress={() => { onPressItem(plant); }}
         >
-          <Image
-            source={{ uri: plant.image.sourceURL }}
+          <PlantImage
+            sourceURL={plant.image.sourceURL}
+            authenticationRequired={plant.image.authenticationRequired}
             style={styles.image}
           />
         </Card>

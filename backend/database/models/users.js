@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema({
       location: String,
       image: {
         sourceURL: String,
+        base64: String,
       },
     },
   ],

@@ -274,6 +274,7 @@ class AddMyPlantDialog extends React.Component {
                 onPress={() => this.submit()}
                 disabled={locationIndex < 1 || locationIndex > locations.length}
               >
+                {/* TODO: Add spinner while submitting POST */}
                 Add
               </Button>
               <Button

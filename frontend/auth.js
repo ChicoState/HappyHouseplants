@@ -6,6 +6,25 @@ const SESSION_TOKEN = 'session_token';
 
 const LoginContext = React.createContext(null);
 
+function authFetchRaw(url, method = 'GET', body) {
+  return new Promise((response, rejected) => {
+    AsyncStorage.getItem(SESSION_TOKEN).then((authToken) => {
+      const request = {
+        method,
+        body: JSON.stringify(body),
+        headers: new Headers({ AuthToken: authToken, 'Content-Type': 'application/json' }),
+      };
+      fetch(url, request)
+        .then((res) => {
+          response(res);
+        })
+        .catch((reason) => {
+          rejected(reason);
+        });
+    });
+  });
+}
+
 function authFetch(url, method = 'GET', body) {
   return new Promise((response, rejected) => {
     AsyncStorage.getItem(SESSION_TOKEN).then((authToken) => {
@@ -95,5 +114,5 @@ function register(username, password, firstName, lastName) {
 }
 
 module.exports = {
-  authFetch, login, register, getLoginInfo, LoginContext, logout,
+  authFetch, authFetchRaw, login, register, getLoginInfo, LoginContext, logout,
 };
