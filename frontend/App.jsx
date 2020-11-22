@@ -10,7 +10,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-native-paper';
 import PropTypes from 'prop-types';
 import 'react-native-gesture-handler';
-import Cam from './components/Camera';
 import theme from './components/colorTheme.json';
 import HeaderButtons from './components/HeaderButtons';
 import CalendarView from './components/calendar/Calendar';
@@ -21,7 +20,6 @@ import PlantProfile from './components/PlantProfile';
 import LoginView from './components/LoginView';
 import RegisterView from './components/RegisterView';
 import AccountProvider from './components/AccountProvider';
-import SelectImage from './components/SelectImage';
 import MyPlantsList from './components/MyPlantsList';
 
 const { LoginContext } = require('./auth');
@@ -84,27 +82,12 @@ function MyPlantsScreen(obj) {
   const { navigation } = obj;
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button status="primary" onPress={() => { navigation.navigate('Camera'); }}>
-        Go to Camera
-      </Button>
-      <Button status="primary" onPress={() => { navigation.navigate('Gallery'); }}>
-        Select Image
-      </Button>
       <MyPlantsList onPressItem={(plant) => {
         navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
       }}
       />
-      <Text />
     </Layout>
   );
-}
-
-function CameraScreen() {
-  return (<Cam />);
-}
-
-function GalleryScreen() {
-  return (<SelectImage />);
 }
 
 /**
@@ -248,8 +231,6 @@ function App() {
                 <Stack.Screen name="Tips" component={TipScreen} />
                 <Stack.Screen name="Recommend" component={RecommendScreen} />
                 <Stack.Screen name="Search" component={SearchScreen} />
-                <Stack.Screen name="Camera" component={CameraScreen} />
-                <Stack.Screen name="Gallery" component={GalleryScreen} />
                 <Stack.Screen name="Login" component={LoginScreen} />
                 <Stack.Screen name="Register" component={RegisterScreen} />
               </Stack.Navigator>
