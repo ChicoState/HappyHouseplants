@@ -32,6 +32,7 @@ class AddMyPlantDialog extends React.Component {
       locationIndex: 0,
       customImage: undefined,
       customImageMode: 'default',
+      uploading: false,
     };
 
     this.updateLocations = this.updateLocations.bind(this);
@@ -95,13 +96,14 @@ class AddMyPlantDialog extends React.Component {
       };
     }
 
+    this.setState({ uploading: true });
     authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
       plantID: plant.plantID,
       plantName: plant.plantName,
       location: locations[locationIndex - 1],
       image,
     }).then(() => {
-      this.setState({ locationIndex: 0 });
+      this.setState({ locationIndex: 0, uploading: false });
       onSubmit();
     }).catch((error) => {
       Alert.alert(
@@ -112,6 +114,7 @@ class AddMyPlantDialog extends React.Component {
         ],
       );
       console.error(`Failed to add a plant due to an error: ${error}`);
+      this.setState({ uploading: false });
     });
   }
 
@@ -187,6 +190,7 @@ class AddMyPlantDialog extends React.Component {
       showCustomLocationPrompt,
       customImage,
       customImageMode,
+      uploading,
     } = this.state;
     const { visible, plant } = this.props;
 
@@ -273,8 +277,9 @@ class AddMyPlantDialog extends React.Component {
               <Button
                 onPress={() => this.submit()}
                 disabled={locationIndex < 1 || locationIndex > locations.length}
+                accessoryLeft={uploading ? () => (<Spinner />) : undefined}
+                appearance={uploading ? 'outline' : 'filled'}
               >
-                {/* TODO: Add spinner while submitting POST */}
                 Add
               </Button>
               <Button
