@@ -3,7 +3,6 @@
 import React from 'react';
 import {
   Alert,
-  Image,
   ViewPropTypes,
   View,
 } from 'react-native';
