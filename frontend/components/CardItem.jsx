@@ -8,8 +8,9 @@ import {
 } from 'react-native';
 import { PropTypes } from 'prop-types';
 import {
-  Button, Card, Icon, Layout, Text,
+  Button, Card, Icon, Layout, Spinner, Text,
 } from '@ui-kitten/components';
+import * as ImagePicker from 'expo-image-picker';
 import AddMyPlantDialog from './AddMyPlantDialog';
 import { SERVER_ADDR } from '../server';
 import PlantImage from './PlantImage';
@@ -38,6 +39,8 @@ class CardItem extends React.Component {
       saved: undefined,
       owned: undefined,
       showAddDialog: false,
+      imageRefreshCounter: 0,
+      imageUploading: false,
     };
 
     this.startChangePicture = this.startChangePicture.bind(this);
@@ -67,8 +70,49 @@ class CardItem extends React.Component {
 
   startChangePicture() {
     const { plant } = this.props;
-    // TODO: Implement
-    console.log(`Changing the picture for plant ID ${plant.plantID}...`);
+    const { imageRefreshCounter } = this.state;
+
+    const idProp = '_id';
+    ImagePicker.requestCameraPermissionsAsync().then((permissionResult) => {
+      if (permissionResult.status !== 'granted') {
+        Alert.alert('Sorry, you need to grant permissions before capturing a custom picture.');
+      } else {
+        ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          quality: 1,
+          base64: true,
+        }).then((imageResult) => {
+          if (!imageResult.cancelled) {
+            this.setState({ imageUploading: true });
+            authFetch(`${SERVER_ADDR}/myplants/${plant[idProp]}/image.jpg`, 'PUT', {
+              image: { base64: imageResult.base64 },
+            }).then(() => {
+              this.setState({
+                imageUploading: false,
+                imageRefreshCounter: imageRefreshCounter + 1,
+              });
+            }).catch((error) => {
+              Alert.alert(
+                'Network Error',
+                'Failed to change this plant\'s picture.',
+                [
+                  { text: 'OK' },
+                ],
+              );
+              console.error(`Failed to add a plant due to an error: ${error}`);
+              this.setState({ imageUploading: false });
+            });
+          }
+        }).catch((error) => {
+          console.error(`Failed to select image from camera due to error: ${error}`);
+          this.setState({ imageUploading: false });
+        });
+      }
+    }).catch((error) => {
+      console.error(`Failed to request permissions for camera due to error: ${error}`);
+      this.setState({ imageUploading: false });
+    });
   }
 
   toggleSaveEntry() {
@@ -151,7 +195,13 @@ class CardItem extends React.Component {
       allowChangePicture,
       onRemoveFromOwned,
     } = this.props;
-    const { saved, owned, showAddDialog } = this.state;
+    const {
+      saved,
+      owned,
+      showAddDialog,
+      imageUploading,
+      imageRefreshCounter,
+    } = this.state;
 
     const saveIcon = (info) => (
       <Icon {...info} name={saved ? 'heart' : 'heart-outline'} />
@@ -224,11 +274,16 @@ class CardItem extends React.Component {
           footer={renderItemFooter}
           onPress={() => { onPressItem(plant); }}
         >
-          <PlantImage
-            sourceURL={plant.image.sourceURL}
-            authenticationRequired={plant.image.authenticationRequired}
-            style={styles.image}
-          />
+          {imageUploading
+            ? (<Spinner />)
+            : (
+              <PlantImage
+                sourceURL={plant.image.sourceURL}
+                authenticationRequired={plant.image.authenticationRequired}
+                style={styles.image}
+                imageRefreshCounter={imageRefreshCounter}
+              />
+            )}
         </Card>
       </View>
     );

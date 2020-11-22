@@ -147,6 +147,40 @@ app.get('/myplants/:plantID/image.jpg', (req, res) => {
   });
 });
 
+app.put('/myplants/:plantID/image.jpg', (req, res) => {
+  authenticateUserRequest(req, res).then((userId) => {
+    if (userId) {
+      const { plantID } = req.params;
+      const { base64 } = req.body.image;
+      findOneDocument('Users', { userId }).then((userDoc) => {
+        let myPlantsByID = [];
+        if (userDoc.myPlantsByID) {
+          myPlantsByID = userDoc.myPlantsByID;
+        }
+
+        const idProp = '_id';
+        const idx = myPlantsByID.findIndex((cur) => cur[idProp].toString() === plantID.toString());
+        if (idx !== -1) {
+          myPlantsByID[idx].image = {
+            base64,
+          };
+
+          USERS.updateOne({ userId }, { myPlantsByID }).then(() => {
+            res.status(200).json({});
+          }).catch((saveError) => {
+            console.error(`Failed to update a plant picture for user ID ${userId}. Reason: ${saveError}`);
+            res.status(500).json({});
+          });
+        } else {
+          res.status(404).send();
+        }
+      });
+    } else {
+      res.status(403).json({});
+    }
+  });
+});
+
 app.get('/savedplants', (req, res) => {
   authenticateUserRequest(req, res).then((userId) => {
     if (userId) {
