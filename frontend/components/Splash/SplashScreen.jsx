@@ -4,7 +4,7 @@ import { View, Alert } from 'react-native';
 import { Spinner, Text, Button } from '@ui-kitten/components';
 import { PropTypes } from 'prop-types';
 
-const { autoLogin } = require('../auth/auth-react');
+const { autoLogin } = require('../Profile/auth-react');
 
 class SplashScreen extends React.Component {
   constructor(props) {

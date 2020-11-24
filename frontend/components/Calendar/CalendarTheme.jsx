@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const colorTheme = require('../colorTheme.json');
+const colorTheme = require('../Util/colorTheme.json');
 
 const calendarThemeLight = {
   'stylesheet.day.basic': {
