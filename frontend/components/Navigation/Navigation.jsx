@@ -129,8 +129,25 @@ function Navigation() {
     },
   ];
 
+  const tabScreens = screens.filter((cur) => cur.tab);
+  const routeIndexRef = React.useRef();
+  const [tabIndex, setTabIndex] = React.useState(0);
+
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer
+      ref={navigationRef}
+      onStateChange={(nav) => {
+        if (routeIndexRef.current !== nav.index) {
+          const routeName = nav.routes[nav.index].name;
+          let dstIndex = tabScreens.findIndex((cur) => cur.name === routeName);
+          if (dstIndex < 0) {
+            dstIndex = undefined;
+          }
+          setTabIndex(dstIndex);
+        }
+        routeIndexRef.current = nav.index;
+      }}
+    >
       <Stack.Navigator
         initialRouteName={screens.find((screen) => screen.isIntialRoute).name}
       >
@@ -141,6 +158,7 @@ function Navigation() {
       <BottomNavi
         screens={screens}
         onRequestNavigate={(routeName) => navigationRef.current.navigate(routeName)}
+        selectedIndex={tabIndex}
       />
     </NavigationContainer>
   );
