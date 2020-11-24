@@ -129,9 +129,10 @@ function Navigation() {
     },
   ];
 
+  const initialScreen = screens.find((cur) => cur.isIntialRoute);
   const tabScreens = screens.filter((cur) => cur.tab);
   const routeIndexRef = React.useRef();
-  const [tabIndex, setTabIndex] = React.useState(0);
+  const [tabIndex, setTabIndex] = React.useState(tabScreens.indexOf(initialScreen));
 
   return (
     <NavigationContainer

@@ -12,12 +12,7 @@ const styles = StyleSheet.create({
 });
 
 function BottomNavi(screenProps) {
-  const { screens, onRequestNavigate } = screenProps;
-  const [selectedIndex, setSelectedIndex] = React.useState(
-    screens.filter((screen) => screen.tab).findIndex(
-      (screen) => screen.isIntialRoute,
-    ),
-  );
+  const { screens, onRequestNavigate, selectedIndex } = screenProps;
 
   return (
     <>
@@ -25,7 +20,6 @@ function BottomNavi(screenProps) {
         style={styles.bottomNavigation}
         selectedIndex={selectedIndex}
         onSelect={(newIndex) => {
-          setSelectedIndex(newIndex);
           onRequestNavigate(screens.filter((screen) => screen.tab)[newIndex].name);
         }}
       >
