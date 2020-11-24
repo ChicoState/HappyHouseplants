@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import * as eva from '@eva-design/eva';
 import {
   ApplicationProvider, Button, IconRegistry, Layout, Text,
@@ -21,6 +21,7 @@ import LoginView from './components/auth/LoginView';
 import RegisterView from './components/auth/RegisterView';
 import AccountProvider from './components/auth/AccountProvider';
 import MyPlantsList from './components/MyPlantsList';
+import SplashScreen from './components/splash/SplashScreen';
 
 const { LoginContext } = require('./components/auth/auth-react');
 
@@ -152,6 +153,17 @@ function HomeScreen(obj) {
   const { navigation, route } = obj;
   const { tab } = route.params;
   const tabView = (tab === 'Recommendations') ? RecommendScreen(obj) : TipScreen(obj);
+  const [showSplash, setShowSplash] = useState(true);
+
+  if (showSplash) {
+    return (
+      <SplashScreen
+        onLoginRequested={() => navigation.navigate('Login')}
+        onRegisterRequested={() => navigation.navigate('Register')}
+        onLoginCompleted={() => setShowSplash(false)}
+      />
+    );
+  }
 
   return (
     <Layout style={{ flex: 1 }}>
