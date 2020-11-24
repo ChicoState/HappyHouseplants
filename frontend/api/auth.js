@@ -82,13 +82,16 @@ function login(username, password) {
 
 function loginByToken(authToken) {
   return new Promise((statusResolved, rejected) => {
+    global.auth.token = authToken;
     if (authToken) {
       authFetch(`${SERVER_ADDR}/login_info`)
         .then((res) => {
-          if (res) {
+          if (res && res !== null) {
             global.auth.token = authToken;
+            statusResolved(true);
+          } else {
+            statusResolved(false);
           }
-          statusResolved(true);
         })
         .catch((reason) => {
           rejected(reason);
