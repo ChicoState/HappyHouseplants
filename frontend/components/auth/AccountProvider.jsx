@@ -2,39 +2,38 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const { getLoginInfo } = require('../../api/auth');
-const { LoginContext, logout } = require('./auth-react');
+const { LoginContext } = require('./auth-react');
 
 class AccountProvider extends React.Component {
   constructor() {
     super();
-    this.logout = this.logout.bind(this);
+    this.afterLogout = this.afterLogout.bind(this);
     this.afterLogin = this.afterLogin.bind(this);
     this.state = {
       login: {
         loading: true,
         loginInfo: null,
-        onLogout: this.logout,
-        onLogin: this.afterLogin,
       },
     };
   }
 
   componentDidMount() {
     this.afterLogin();
+    global.afterLogin = this.afterLogin;
+    global.afterLogout = this.afterLogout;
   }
 
-  logout() {
-    logout().then(() => {
-      this.setState({
-        login: {
-          loginInfo: null,
-          loading: false,
-          onLogout: this.logout,
-          onLogin: this.afterLogin,
-        },
-      });
-    }).catch((error) => {
-      console.error(`Failed to logout due to an error: ${error}`);
+  componentWillUnmount() {
+    global.afterLogin = undefined;
+    global.afterLogout = undefined;
+  }
+
+  afterLogout() {
+    this.setState({
+      login: {
+        loginInfo: null,
+        loading: false,
+      },
     });
   }
 
@@ -44,8 +43,6 @@ class AccountProvider extends React.Component {
         login: {
           loginInfo: li,
           loading: false,
-          onLogout: this.logout,
-          onLogin: this.afterLogin,
         },
       });
     });

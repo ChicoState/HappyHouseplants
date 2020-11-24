@@ -23,7 +23,7 @@ import AccountProvider from './components/auth/AccountProvider';
 import MyPlantsList from './components/MyPlantsList';
 import SplashScreen from './components/splash/SplashScreen';
 
-const { LoginContext } = require('./components/auth/auth-react');
+const { LoginContext, logout } = require('./components/auth/auth-react');
 
 const Stack = createStackNavigator();
 
@@ -43,7 +43,7 @@ function AccountButtons(props) {
 
         return (
           <View>
-            <Button onPress={() => { loginState.onLogout(); }}>
+            <Button onPress={() => { logout(); }}>
               Logout
             </Button>
           </View>
@@ -60,14 +60,7 @@ AccountButtons.propTypes = {
 
 function LoginScreen(obj) {
   const { navigation } = obj;
-  return (
-    <LoginContext.Consumer>
-      {
-        (loginState) => (
-          <LoginView onLogin={() => { loginState.onLogin(); navigation.navigate('Home'); }} />)
-      }
-    </LoginContext.Consumer>
-  );
+  return (<LoginView onLogin={() => { navigation.navigate('Home'); }} />);
 }
 
 function RegisterScreen(obj) {
@@ -153,54 +146,53 @@ function HomeScreen(obj) {
   const { navigation, route } = obj;
   const { tab } = route.params;
   const tabView = (tab === 'Recommendations') ? RecommendScreen(obj) : TipScreen(obj);
-  const [showSplash, setShowSplash] = useState(true);
-
-  if (showSplash) {
-    return (
-      <SplashScreen
-        onLoginRequested={() => navigation.navigate('Login')}
-        onRegisterRequested={() => navigation.navigate('Register')}
-        onLoginCompleted={() => setShowSplash(false)}
-      />
-    );
-  }
 
   return (
-    <Layout style={{ flex: 1 }}>
-      <LoginContext.Consumer>
-        {(loginState) => (
-          <Text>
-            Welcome
-            {loginState.loginInfo != null ? ` ${loginState.loginInfo.username}` : ', Please login'}
-          </Text>
-        )}
-      </LoginContext.Consumer>
-      {tabView}
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('My Plants'); }}>
-        Go to My Plants
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Calendar'); }}>
-        Go to Calendar
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Tips'); }}>
-        Go to Tips
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Recommend'); }}>
-        Go to Recommendations
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Search'); }}>
-        Go to Search
-      </Button>
-      <AccountButtons
-        onRequestLogin={() => { navigation.navigate('Login'); }}
-        onRequestRegister={() => { navigation.navigate('Register'); }}
-      />
-    </Layout>
+    <LoginContext.Consumer>
+      {(loginState) => {
+        if (!loginState.loginInfo) {
+          return (
+            <SplashScreen
+              navigation={navigation}
+            />
+          );
+        }
+
+        return (
+          <Layout style={{ flex: 1 }}>
+            <Text>
+              Welcome
+              {loginState.loginInfo != null ? ` ${loginState.loginInfo.username}` : ', Please login'}
+            </Text>
+            {tabView}
+            <Text />
+            <Button status="primary" onPress={() => { navigation.navigate('My Plants'); }}>
+              Go to My Plants
+            </Button>
+            <Text />
+            <Button status="primary" onPress={() => { navigation.navigate('Calendar'); }}>
+              Go to Calendar
+            </Button>
+            <Text />
+            <Button status="primary" onPress={() => { navigation.navigate('Tips'); }}>
+              Go to Tips
+            </Button>
+            <Text />
+            <Button status="primary" onPress={() => { navigation.navigate('Recommend'); }}>
+              Go to Recommendations
+            </Button>
+            <Text />
+            <Button status="primary" onPress={() => { navigation.navigate('Search'); }}>
+              Go to Search
+            </Button>
+            <AccountButtons
+              onRequestLogin={() => { navigation.navigate('Login'); }}
+              onRequestRegister={() => { navigation.navigate('Register'); }}
+            />
+          </Layout>
+        );
+      }}
+    </LoginContext.Consumer>
   );
 }
 

@@ -6,31 +6,40 @@ import { PropTypes } from 'prop-types';
 const { autoLogin } = require('../auth/auth-react');
 
 class SplashScreen extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       loadingLoginInfo: true,
       loginRequired: true,
     };
+
+    this.tryAutoLogin = this.tryAutoLogin.bind(this);
+    this.loginRequested = this.loginRequested.bind(this);
+    this.registerRequested = this.registerRequested.bind(this);
   }
 
   componentDidMount() {
     this.tryAutoLogin();
   }
 
+  loginRequested() {
+    const { navigation } = this.props;
+    navigation.navigate('Login');
+  }
+
+  registerRequested() {
+    const { navigation } = this.props;
+    navigation.navigate('Register');
+  }
+
   tryAutoLogin() {
-    const { onLoginCompleted } = this.props;
     autoLogin()
       .then((status) => {
         this.setState({
           loginRequired: !status,
           loadingLoginInfo: false,
         });
-
-        if (status) {
-          onLoginCompleted();
-        }
       })
       .catch((error) => {
         console.error(`Failed to auto-login due to an error: ${error}`);
@@ -50,13 +59,12 @@ class SplashScreen extends React.Component {
 
   render() {
     const { loadingLoginInfo, loginRequired } = this.state;
-    const { onLoginRequested, onRegisterRequested } = this.props;
     if (loginRequired && !loadingLoginInfo) {
       return (
         <View>
           <Text>Welcome, please login or create an account.</Text>
-          <Button onPress={onLoginRequested}>Login</Button>
-          <Button onPress={onRegisterRequested}>Create account</Button>
+          <Button onPress={this.loginRequested}>Login</Button>
+          <Button onPress={this.registerRequested}>Create account</Button>
         </View>
       );
     }
@@ -66,9 +74,7 @@ class SplashScreen extends React.Component {
 }
 
 SplashScreen.propTypes = {
-  onLoginRequested: PropTypes.func.isRequired,
-  onRegisterRequested: PropTypes.func.isRequired,
-  onLoginCompleted: PropTypes.func.isRequired,
+  navigation: PropTypes.object.isRequired,
 };
 
 export default SplashScreen;

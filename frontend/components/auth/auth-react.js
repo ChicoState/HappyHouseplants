@@ -23,6 +23,9 @@ function autoLogin() {
       .then((authToken) => {
         AuthBase.loginByToken(authToken)
           .then((status) => {
+            if (status) {
+              global.afterLogin();
+            }
             statusResolved(status);
           })
           .catch((error) => {
@@ -44,6 +47,7 @@ function login(username, password) {
         if (status.success) {
           setAuthToken(status.sessionAuthToken)
             .then(() => {
+              global.afterLogin();
               statusResolved(status);
             })
             .catch((error) => {
@@ -66,6 +70,7 @@ function logout() {
     removeAuthToken()
       .then(() => {
         AuthBase.logout();
+        global.afterLogout();
         resolved();
       })
       .catch((error) => {
