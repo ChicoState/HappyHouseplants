@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {
-  Button, Layout, Text,
+  Layout, Text,
 } from '@ui-kitten/components';
 import 'react-native-gesture-handler';
 import RecommendScreen from './RecommendScreen';
@@ -25,26 +25,6 @@ function HomeScreen(obj) {
         )}
       </LoginContext.Consumer>
       {tabView}
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('My Plants'); }}>
-        Go to My Plants
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Calendar'); }}>
-        Go to Calendar
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Tips'); }}>
-        Go to Tips
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Recommend'); }}>
-        Go to Recommendations
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Search'); }}>
-        Go to Search
-      </Button>
       <AccountButtons
         onRequestLogin={() => { navigation.navigate('Login'); }}
         onRequestRegister={() => { navigation.navigate('Register'); }}
