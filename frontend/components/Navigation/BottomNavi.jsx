@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { Fragment } from 'react';
 import { StyleSheet } from 'react-native';
 import {
@@ -14,7 +15,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function BottomNavi(props) {
+function BottomNavi() {
   const useBottomNavigationState = (initialState = 0) => {
     const [selectedIndex, setSelectedIndex] = React.useState(initialState);
     return { selectedIndex, onSelect: setSelectedIndex };

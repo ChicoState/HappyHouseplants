@@ -15,9 +15,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flex: 1,
   },
-  titleText: {
-    fontWeight: 'bold',
-  },
   card: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -180,6 +177,82 @@ class SearchBar extends Component {
         ),
         });
       }
+    } else if (Filter.section === 5) {
+      if (Filter.row === 0) {
+        this.setState({
+          Results:
+        Alldata.filter(
+          (x) => {
+            if (x.environment.climate.hot !== null) {
+              return x.environment.climate.hot.toString().includes('true');
+            }
+            return null;
+          },
+        ),
+        });
+      } else if (Filter.row === 1) {
+        this.setState({
+          Results:
+        Alldata.filter(
+          (x) => {
+            if (x.environment.climate.cold !== null) {
+              return x.environment.climate.cold.toString().includes('true');
+            }
+            return null;
+          },
+        ),
+        });
+      }
+    } else if (Filter.section === 6) {
+      if (Filter.row === 0) {
+        this.setState({
+          Results:
+        Alldata.filter(
+          (x) => {
+            const len = x.toxicity.harmfulTo.length;
+            let i = 0;
+            for (i = 0; i < len; i += 1) {
+              if (x.toxicity.harmfulTo[i] === 'dogs') {
+                return x.toxicity.harmfulTo[i].toString().includes('dogs');
+              }
+            }
+            return null;
+          },
+        ),
+        });
+      } else if (Filter.row === 1) {
+        this.setState({
+          Results:
+        Alldata.filter(
+          (x) => {
+            const len = x.toxicity.harmfulTo.length;
+            let i = 0;
+            for (i = 0; i < len; i += 1) {
+              if (x.toxicity.harmfulTo[i] === 'cats') {
+                return x.toxicity.harmfulTo[i].toString().includes('cats');
+              }
+            }
+            return null;
+          },
+        ),
+        });
+      } else if (Filter.row === 2) {
+        this.setState({
+          Results:
+        Alldata.filter(
+          (x) => {
+            const len = x.toxicity.harmfulTo.length;
+            let i = 0;
+            for (i = 0; i < len; i += 1) {
+              if (x.toxicity.harmfulTo[i] === 'horses') {
+                return x.toxicity.harmfulTo[i].toString().includes('horses');
+              }
+            }
+            return null;
+          },
+        ),
+        });
+      }
     }
   }
 
@@ -248,10 +321,14 @@ class SearchBar extends Component {
               <SelectItem title="Indoor" />
               <SelectItem title="Outdoor" />
             </SelectGroup>
-            <SelectGroup title="Climate">
-              <SelectItem title="Cold" />
-              <SelectItem title="Warm" />
+            <SelectGroup title="Climate Tolerance">
               <SelectItem title="Hot" />
+              <SelectItem title="Cold" />
+            </SelectGroup>
+            <SelectGroup title="Harmful To...">
+              <SelectItem title="Dogs" />
+              <SelectItem title="Cats" />
+              <SelectItem title="Horses" />
             </SelectGroup>
           </Select>
         </Layout>

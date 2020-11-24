@@ -25,6 +25,10 @@
         "pests": ["Mealybugs", "Spider Mites", "Aphids", "Scales", "Nematodes" ]
       },
       "comment": "The temperature should be between 65 and 80 degrees farenheit. Keep the himidity medium or high, otherwise the leaves will become dry.",
+      "climate": {
+        "hot": false,
+        "cold": true
+      },
       "temperature": {
         "min": 18,
         "max": 27
@@ -66,6 +70,10 @@
         "pests": ["Mealybugs", "Spider Mites"]
       },
       "comment": null,
+      "climate": {
+        "hot": true,
+        "cold": false
+      },
       "temperature": {
           "min": 18,
           "max": 24
@@ -79,6 +87,96 @@
     "image": {
       "sourceURL": "https://www.gardeningknowhow.com/wp-content/uploads/2010/01/jade-plant-1-400x300.jpg",
       "credit": "Gardening Know How"
+    }
+  },
+  {
+    "plantID": "3",
+    "plantName": "Zanzibar Gem",
+    "plantSummary": "Characterized by their shiny, oval-shaped deep green leaves, ZZ plants make excellent additions to any home or office.",
+    "maintenance": {
+      "level": 1,
+      "comment": "ZZ plants are notorious for being low-maintenance, easy-to-care-for houseplants that even gardeners with the blackest of thumbs can keep alive."
+    },
+    "watering": {
+      "frequency": null,
+      "comment": "Don’t worry too much about forgetting to water your ZZ plant, ZZ plants grow from rhizomes which help them to store water under the soil, making them a ‘drought-tolerant’ plant."
+    },
+    "lighting": {
+      "level": 2,
+      "comment": " All they need to thrive is adequate light",
+      "directSunlight": false
+    },
+    "environment": {
+      "humidity": 2,
+      "indoor": null,
+      "outdoor": null,
+      "commonPests": {
+        "sourceURL": "https://www.thespruce.com/zz-zanzibar-gem-plant-profile-4796783",
+        "pests": ["Mealybugs", "Scale", "Fungus gnats", "Aphids"]
+      },
+      "comment": "The temperature should be between 65 and 75 degrees farenheit. Keep the humidity does not require humid condition but if place in normally dry condition consider a humidifer.",
+      "climate": {
+        "hot": true,
+        "cold": false
+      },
+      "temperature": {
+        "min": 18,
+        "max": 23
+      }
+    },
+    "toxicity": {
+      "harmfulTo": ["cats", "dogs"],
+      "comment": "Keep out of reach of kids, dogs and cats. indegestion of the leave and or sap can cause upset stomach, diarhea and vomitting"
+    },
+    "sourceURL": "https://www.gardeningknowhow.com/houseplants/zz-plant/propagating-zz-plants-2.htm",
+    "image": {
+      "sourceURL": "https://www.gardeningknowhow.com/wp-content/uploads/2019/07/zz-plant-400x457.jpg",
+      "credit": "Getty Images/iStockphoto"
+    }
+  },
+  {
+    "plantID": "4",
+    "plantName": "Aloe Vera",
+    "plantSummary": "Renowned for a medicinal ability to heal wounds, they are tough plants that can withstand many different environments",
+    "maintenance": {
+      "level": 1,
+      "comment": "Aloe Vera is very low maintence, simply leave your plant in direct sunlight, water it every now and then and you’ll have one healthy aloe vera!"
+    },
+    "watering": {
+      "frequency": null,
+      "comment": "Water about every 3 weeks, to discourage rot, allow the soil to dry at least 1 to 2 inches deep between waterings."
+    },
+    "lighting": {
+      "level": 3,
+      "comment": " They love direct sunlight but be catious as to moving one from shade to directly under the sun as it can cause the plant to sunburn.",
+      "directSunlight": true
+    },
+    "environment": {
+      "humidity": 1,
+      "indoor": true,
+      "outdoor": true,
+      "commonPests": {
+        "sourceURL": "https://hscactus.org/resources/digest/plant-care/aloe-pests-and-diseases/",
+        "pests": ["Spider Mites", "Snout Beetles", "Gall Mites", "Fungus Gnats"]
+      },
+      "comment": "The temperature should be between 65 and 85 degrees farenheit. KThis plant does not require any extra humidity and can handle dry air.",
+      "climate": {
+        "hot": true,
+        "cold": true
+      },
+      "temperature": {
+        "min": 18,
+        "max": 29
+      }
+    },
+    "toxicity": {
+      "harmfulTo": ["cats", "dogs"],
+      "comment": "Although considered a medicinal plant for humans, aloe vera's level of toxicity is mild to moderate for cats and dogs."
+    },
+    "sourceURL": "https://www.gardeningknowhow.com/houseplants/aloe-vera/aloe-plant-propagation.htm",
+    "image": {
+      "sourceURL": "https://www.gardeningknowhow.com/wp-content/uploads/2010/12/image-e1405541898924-768x1024-400x533.jpg",
+      "credit": "Getty Images/iStockphoto"
     }
   }
 ]
