@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const { LoginContext, getLoginInfo, logout } = require('../auth');
+const { getLoginInfo } = require('../../api/auth');
+const { LoginContext, logout } = require('./auth-react');
 
 class AccountProvider extends React.Component {
   constructor() {

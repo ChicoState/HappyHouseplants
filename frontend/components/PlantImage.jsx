@@ -4,7 +4,7 @@ import { Image } from 'react-native';
 import { Icon, Spinner } from '@ui-kitten/components';
 import { PropTypes } from 'prop-types';
 
-const { authFetch } = require('../auth');
+const { authFetch } = require('../api/auth');
 
 class PlantImage extends React.Component {
   constructor(props) {

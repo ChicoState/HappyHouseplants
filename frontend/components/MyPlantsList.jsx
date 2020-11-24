@@ -6,7 +6,7 @@ import { SERVER_ADDR } from '../server';
 import CardItem from './CardItem';
 import CollapsibleDrawer from './CollapsibleDrawer';
 
-const { authFetch } = require('../auth');
+const { authFetch } = require('../api/auth');
 
 const styles = StyleSheet.create({
   container: {

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { SERVER_ADDR } from '../server';
 import CardItem from './CardItem';
 
-const { authFetch } = require('../auth');
+const { authFetch } = require('../api/auth');
 
 const styles = StyleSheet.create({
   container: {

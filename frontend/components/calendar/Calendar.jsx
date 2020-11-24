@@ -21,7 +21,7 @@ const {
   calendarThemeLight,
 } = require('./CalendarTheme');
 const colorTheme = require('../colorTheme.json');
-const { authFetch } = require('../../auth');
+const { authFetch } = require('../../api/auth');
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 

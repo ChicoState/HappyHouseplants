@@ -17,12 +17,12 @@ import SearchBar from './components/Search';
 import Recommend from './components/RecList';
 import TipList from './components/TipList';
 import PlantProfile from './components/PlantProfile';
-import LoginView from './components/LoginView';
-import RegisterView from './components/RegisterView';
-import AccountProvider from './components/AccountProvider';
+import LoginView from './components/auth/LoginView';
+import RegisterView from './components/auth/RegisterView';
+import AccountProvider from './components/auth/AccountProvider';
 import MyPlantsList from './components/MyPlantsList';
 
-const { LoginContext } = require('./auth');
+const { LoginContext } = require('./components/auth/auth-react');
 
 const Stack = createStackNavigator();
 
