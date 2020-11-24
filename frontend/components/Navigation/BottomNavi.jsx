@@ -31,7 +31,7 @@ function BottomNavi(screenProps) {
       >
         {
           screens.filter((screen) => (screen.tab)).map((screen) => (
-            <BottomNavigationTab {...screen.tab} />))
+            <BottomNavigationTab {...screen.tab} key={screen.name} />))
         }
       </BottomNavigation>
     </>

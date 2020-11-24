@@ -135,7 +135,7 @@ function Navigation() {
         initialRouteName={screens.find((screen) => screen.isIntialRoute).name}
       >
         {
-          screens.map((screen) => (<Stack.Screen {...screen} />))
+          screens.map((screen) => (<Stack.Screen {...screen} key={screen.name} />))
         }
       </Stack.Navigator>
       <BottomNavi
