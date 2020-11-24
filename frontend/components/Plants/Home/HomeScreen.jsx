@@ -20,8 +20,6 @@ function HomeScreen(obj) {
         {(loginState) => (
           <Text>
             Welcome
-            {console.log('HomeScreen obj: ')}
-            {console.log(JSON.stringify(obj))}
             {loginState.loginInfo != null ? ` ${loginState.loginInfo.username}` : ', Please login'}
           </Text>
         )}
