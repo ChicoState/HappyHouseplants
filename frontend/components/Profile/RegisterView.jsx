@@ -5,7 +5,7 @@ import {
   Button, View, Text, Alert,
 } from 'react-native';
 
-const { register } = require('../auth');
+const { register } = require('../../auth');
 
 class RegisterView extends React.Component {
   constructor() {

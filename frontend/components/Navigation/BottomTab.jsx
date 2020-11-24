@@ -18,7 +18,6 @@ import BottomNavi from './BottomNavi';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
-
 function BottomTabs() {
   return (
     <Navigator>

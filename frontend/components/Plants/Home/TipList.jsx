@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, ScrollView, Text } from 'react-native';
-import { SERVER_ADDR } from '../server';
+import { SERVER_ADDR } from '../../../server';
 import FloatingTip from './FloatingTip';
 
 class TipList extends Component {

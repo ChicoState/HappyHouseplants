@@ -11,7 +11,7 @@ import {
 } from '@ui-kitten/components';
 import { Icon } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
-import { SERVER_ADDR } from '../server';
+import { SERVER_ADDR } from '../../server';
 
 const {
   getCalendarTheme,
@@ -20,7 +20,7 @@ const {
   calendarThemeLight,
 } = require('./CalendarTheme');
 
-const { authFetch } = require('../auth');
+const { authFetch } = require('../../auth');
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 
@@ -52,7 +52,7 @@ function getNotes() {
   });
 }
 
-class CalendarView extends React.Component {
+class CalendarController extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -264,4 +264,4 @@ class CalendarView extends React.Component {
   }
 }
 
-export default CalendarView;
+export default CalendarController;

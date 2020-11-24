@@ -4,9 +4,9 @@ import {
   BottomNavigation, BottomNavigationTab, Icon,
 } from '@ui-kitten/components';
 
-import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { EvaIconsPack } from '@ui-kitten/eva-icons';
+// import { NavigationContainer } from '@react-navigation/native';
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const styles = StyleSheet.create({
   bottomNavigation: {
@@ -42,19 +42,19 @@ function BottomNavi(props) {
 
   const navState = useBottomNavigationState();
 
-  const BottomTabBar = ({ navigation, state }) => (
-    <BottomNavigation 
-      style={styles.bottomNavigation} 
-      selectedIndex={state.index}
-      onSelect={index => navigation.navigate(state.routeNames[index])}
-    >
-      <BottomNavigationTab title="EXPLORE" icon={exploreIcon} />
-      <BottomNavigationTab title="SEARCH" icon={searchIcon} />
-      <BottomNavigationTab title="CALENDAR" icon={calendarIcon} />
-      <BottomNavigationTab title="SAVED" icon={collectionIcon} />
-      <BottomNavigationTab title="USER" icon={personIcon} />
-    </BottomNavigation>
-  );
+  // const BottomTabBar = ({ navigation, state }) => (
+  //   <BottomNavigation
+  //     style={styles.bottomNavigation}
+  //     selectedIndex={state.index}
+  //     onSelect={index => navigation.navigate(state.routeNames[index])}
+  //   >
+  //     <BottomNavigationTab title="EXPLORE" icon={exploreIcon} />
+  //     <BottomNavigationTab title="SEARCH" icon={searchIcon} />
+  //     <BottomNavigationTab title="CALENDAR" icon={calendarIcon} />
+  //     <BottomNavigationTab title="SAVED" icon={collectionIcon} />
+  //     <BottomNavigationTab title="USER" icon={personIcon} />
+  //   </BottomNavigation>
+  // );
 
   return (
     <>

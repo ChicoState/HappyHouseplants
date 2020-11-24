@@ -6,8 +6,8 @@ import {
   Input, Button, Layout, Select, SelectItem, IndexPath, SelectGroup,
 } from '@ui-kitten/components';
 import PropTypes from 'prop-types';
-import { SERVER_ADDR } from '../server';
-import CardItem from './CardItem';
+import { SERVER_ADDR } from '../../../server';
+import CardItem from '../CardItem';
 
 const styles = StyleSheet.create({
   searchResultsContainer: {

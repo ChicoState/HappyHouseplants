@@ -3,7 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import { Layout, Text } from '@ui-kitten/components';
 import { Camera } from 'expo-camera';
 
-export default function Cam() {
+export default function CameraContoller() {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
 

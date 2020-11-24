@@ -5,7 +5,7 @@ import {
   Button, View, Text, Alert,
 } from 'react-native';
 
-const { login } = require('../auth');
+const { login } = require('../../auth');
 
 class LoginView extends React.Component {
   constructor() {

@@ -1,198 +1,27 @@
 import * as React from 'react';
 import * as eva from '@eva-design/eva';
 import {
-  ApplicationProvider, Button, IconRegistry, Layout, Text,
+  ApplicationProvider, IconRegistry,
 } from '@ui-kitten/components';
-import { View } from 'react-native';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import PropTypes from 'prop-types';
 import 'react-native-gesture-handler';
-import Cam from './components/Camera';
+import CameraScreen from './components/Camera/Camera';
 import theme from './components/colorTheme.json';
-import HeaderButtons from './components/HeaderButtons';
-import CalendarView from './components/Calendar';
-import SearchBar from './components/Search';
-import Recommend from './components/RecList';
-import TipList from './components/TipList';
-import PlantProfile from './components/PlantProfile';
-import LoginView from './components/LoginView';
-import RegisterView from './components/RegisterView';
-import AccountProvider from './components/AccountProvider';
-
-const { LoginContext } = require('./auth');
+import HomeScreen from './components/Plants/Home/HomeScreen';
+import HeaderButtons from './components/Plants/HeaderButtons';
+import CalendarScreen from './components/Calendar/CalendarScreen';
+import SearchScreen from './components/Plants/Search/SearchScreen';
+import RecommendScreen from './components/Plants/Home/RecommendScreen';
+import TipScreen from './components/Plants/Home/TipScreen';
+import MyPlantsScreen from './components/Plants/Collection/MyPlantsScreen';
+import PlantProfileScreen from './components/Plants/PlantProfileScreen';
+import LoginScreen from './components/Profile/LoginScreen';
+import RegisterScreen from './components/Profile/RegisterScreen';
+import AccountProvider from './components/Profile/AccountProvider';
 
 const Stack = createStackNavigator();
-
-function AccountButtons(props) {
-  const { onRequestLogin, onRequestRegister } = props;
-  return (
-    <LoginContext.Consumer>
-      {(loginState) => {
-        if (!loginState.loginInfo) {
-          return (
-            <View>
-              <Button onPress={onRequestLogin}>Login</Button>
-              <Button onPress={onRequestRegister}>Register</Button>
-            </View>
-          );
-        }
-
-        return (
-          <View>
-            <Button onPress={() => { loginState.onLogout(); }}>
-              Logout
-            </Button>
-          </View>
-        );
-      }}
-    </LoginContext.Consumer>
-  );
-}
-
-AccountButtons.propTypes = {
-  onRequestLogin: PropTypes.func.isRequired,
-  onRequestRegister: PropTypes.func.isRequired,
-};
-
-function LoginScreen(obj) {
-  const { navigation } = obj;
-  return (
-    <LoginContext.Consumer>
-      {
-        (loginState) => (
-          <LoginView onLogin={() => { loginState.onLogin(); navigation.navigate('Home'); }} />)
-      }
-    </LoginContext.Consumer>
-  );
-}
-
-function RegisterScreen(obj) {
-  const { navigation } = obj;
-  return (
-    <RegisterView
-      onRegister={() => { navigation.navigate('Login'); }}
-    />
-  );
-}
-
-function MyPlantsScreen(obj) {
-  const { navigation } = obj;
-  return (
-    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button status="primary" onPress={() => { navigation.navigate('Camera'); }}>
-        Go to Camera
-      </Button>
-    </Layout>
-  );
-}
-
-function CameraScreen() {
-  return (<Cam />);
-}
-
-/**
- * Plant Profile Screen
- * @param {*} navContext
- */
-function PlantProfileScreen(navContext) {
-  const { route } = navContext;
-  const { params } = route;
-  return (<PlantProfile plantID={params.plantID} hideTitle={params.plantName !== undefined} />);
-}
-
-function CalendarScreen() {
-  return (
-    <Layout style={{ flex: 1 }}>
-      <CalendarView />
-    </Layout>
-  );
-}
-
-/**
- * Tip Screen
- */
-function TipScreen() {
-  return (
-    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text />
-      <TipList />
-    </Layout>
-  );
-}
-
-function RecommendScreen(obj) {
-  const { navigation } = obj;
-  return (
-    <>
-      <IconRegistry icons={EvaIconsPack} />
-      <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Recommend onPressItem={(plant) => {
-          navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
-        }}
-        />
-      </Layout>
-    </>
-  );
-}
-
-function SearchScreen(obj) {
-  /* 2. Get the param */
-  const { navigation } = obj;
-  return (
-    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <SearchBar onPressItem={(plant) => {
-        navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
-      }}
-      />
-    </Layout>
-  );
-}
-
-function HomeScreen(obj) {
-  const { navigation, route } = obj;
-  const { tab } = route.params;
-  const tabView = (tab === 'Recommendations') ? RecommendScreen(obj) : TipScreen(obj);
-
-  return (
-    <Layout style={{ flex: 1 }}>
-      <LoginContext.Consumer>
-        {(loginState) => (
-          <Text>
-            Welcome
-            {loginState.loginInfo != null ? ` ${loginState.loginInfo.username}` : ', Please login'}
-          </Text>
-        )}
-      </LoginContext.Consumer>
-      {tabView}
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('My Plants'); }}>
-        Go to My Plants
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Calendar'); }}>
-        Go to Calendar
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Tips'); }}>
-        Go to Tips
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Recommend'); }}>
-        Go to Recommendations
-      </Button>
-      <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('Search'); }}>
-        Go to Search
-      </Button>
-      <AccountButtons
-        onRequestLogin={() => { navigation.navigate('Login'); }}
-        onRequestRegister={() => { navigation.navigate('Register'); }}
-      />
-    </Layout>
-  );
-}
 
 const navigationRef = React.createRef();
 
