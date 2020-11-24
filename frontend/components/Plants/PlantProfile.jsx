@@ -7,7 +7,7 @@ import {
   View, Image,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { SERVER_ADDR } from '../server';
+import { SERVER_ADDR } from '../../server';
 
 class PlantProfile extends Component {
   constructor() {

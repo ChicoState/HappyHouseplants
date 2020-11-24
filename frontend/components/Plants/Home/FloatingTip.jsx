@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
-import { SERVER_ADDR } from '../server';
+import { SERVER_ADDR } from '../../../server';
 
 class FloatingTip extends Component {
   constructor() {

@@ -12,10 +12,10 @@ import {
 } from '@ui-kitten/components';
 import * as ImagePicker from 'expo-image-picker';
 import AddMyPlantDialog from './AddMyPlantDialog';
-import { SERVER_ADDR } from '../server';
+import { SERVER_ADDR } from '../../server';
 import PlantImage from './PlantImage';
 
-const { authFetch } = require('../auth');
+const { authFetch } = require('../../api/auth');
 
 class CardItem extends React.Component {
   constructor(props) {

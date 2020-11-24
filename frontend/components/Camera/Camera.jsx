@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Cam() {
+export default function CameraContoller() {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [isPreview, setIsPreview] = useState(false);

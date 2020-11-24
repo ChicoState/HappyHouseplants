@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { Layout, Spinner, Text } from '@ui-kitten/components';
 import PropTypes from 'prop-types';
-import { SERVER_ADDR } from '../server';
-import CardItem from './CardItem';
-import CollapsibleDrawer from './CollapsibleDrawer';
+import { SERVER_ADDR } from '../../../server';
+import CardItem from '../CardItem';
+import CollapsibleDrawer from '../../Util/CollapsibleDrawer';
 
-const { authFetch } = require('../auth');
+const { authFetch } = require('../../../api/auth');
 
 const styles = StyleSheet.create({
   container: {

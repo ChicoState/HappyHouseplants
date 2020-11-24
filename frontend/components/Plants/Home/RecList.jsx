@@ -4,8 +4,8 @@ import React, { Component } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { Layout, Text } from '@ui-kitten/components';
 import PropTypes from 'prop-types';
-import { SERVER_ADDR } from '../server';
-import CardItem from './CardItem';
+import { SERVER_ADDR } from '../../../server';
+import CardItem from '../CardItem';
 
 const styles = StyleSheet.create({
   container: {

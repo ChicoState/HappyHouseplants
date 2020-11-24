@@ -20,8 +20,9 @@ const {
   calendarThemeDark,
   calendarThemeLight,
 } = require('./CalendarTheme');
-const colorTheme = require('../colorTheme.json');
-const { authFetch } = require('../../auth');
+
+const colorTheme = require('../Util/colorTheme.json');
+const { authFetch } = require('../../api/auth');
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
 
@@ -30,7 +31,6 @@ const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
  * @param { text } The text of the note to store.
  * @return { Promise } A Promise that resolves to nothing when the note is successfully saved. */
 function saveNote(when, text, color) {
-  // TODO: Update to allow multiple dots on one day, may need to fetch current dots first
   return authFetch(`${SERVER_ADDR}/mycalendar/notes`, 'POST', { [when]: { note: text, dots: color } });
 }
 
@@ -52,9 +52,6 @@ function getNotes() {
       });
   });
 }
-
-// TODO: add getMyLabels for custom label select, and update labels
-// TODO add getMyDotColors() fetch
 
 class CalendarView extends React.Component {
   constructor() {
