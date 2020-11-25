@@ -25,7 +25,11 @@ function authFetchRaw(url, method = 'GET', body) {
     };
     fetch(url, request)
       .then((res) => {
-        response(res);
+        if (res.ok) {
+          response(res);
+        } else {
+          rejected(Error(`The fetch returned status ${res.status}`));
+        }
       })
       .catch((reason) => {
         rejected(reason);
@@ -50,9 +54,17 @@ function authFetch(url, method = 'GET', body) {
       headers: { AuthToken: authToken, 'Content-Type': 'application/json' },
     };
     fetch(url, request)
-      .then((resRaw) => resRaw.json())
-      .then((res) => {
-        response(res);
+      .then((resRaw) => {
+        if (resRaw.ok) {
+          resRaw.json().then((res) => {
+            response(res);
+          })
+            .catch((reason) => {
+              rejected(reason);
+            });
+        } else {
+          rejected(Error(`The fetch returned status ${resRaw.status}`));
+        }
       })
       .catch((reason) => {
         rejected(reason);

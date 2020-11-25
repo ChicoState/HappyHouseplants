@@ -1,4 +1,4 @@
-import { SERVER_ADDR } from '../server';
+const { SERVER_ADDR } = require('../../server');
 
 const { authFetch } = require('../auth');
 
@@ -31,7 +31,6 @@ function getMyPlants() {
       .then((data) => {
         plantsLoaded(data);
       }).catch((error) => {
-        console.log(`Failed to load my plants due to a network error: ${error}`);
         rejected(error);
       });
   });
@@ -83,7 +82,6 @@ function getMyPlantLocations(includeUnusedDefaults = false) {
         locationsLoaded(ret);
       })
       .catch((error) => {
-        console.error(`Failed to get plant locations because getMyPlants failed: ${error}`);
         rejected(error);
       });
   });
@@ -92,7 +90,7 @@ function getMyPlantLocations(includeUnusedDefaults = false) {
 /**
  * Adds a new plant to the user's collection of owned plants.
  * @param {string} plantID The ID of the general plant type.
- * @param {string} plantName The user-defined name of the plant.
+ * @param {string} name The user-defined name of the plant.
  * @param {string} location The user-defined location where the plant is stored.
  * If the location does not already exist, then it will be created.
  * @param {*} image Object that contains the image. There are two possible
@@ -100,14 +98,14 @@ function getMyPlantLocations(includeUnusedDefaults = false) {
  * an object with a `sourceURL` property. Or you can upload an image by
  * passing an object with a `base64` property, which will contain the base64-encoded
  * JPEG image.
- * @returns {Promise} A Promise that resolves to the instance ID of the owned plant.
+ * @returns {Promise<string>} A Promise that resolves to the instance ID of the owned plant.
  * The Promise will be rejected if any argument is invalid, or if there is a network error. */
-function addToMyPlants(plantID, plantName, location, image) {
+function addToMyPlants(plantID, name, location, image) {
   return new Promise((plantAdded, rejected) => {
     if (!plantID) {
       rejected(Error('The plantID argument cannot be falsey.'));
-    } else if (!plantName) {
-      rejected(Error('The plantName argument cannot be falsey.'));
+    } else if (!name) {
+      rejected(Error('The name argument cannot be falsey.'));
     } else if (!location) {
       rejected(Error('The location argument cannot be falsey.'));
     } else if (!image) {
@@ -117,18 +115,16 @@ function addToMyPlants(plantID, plantName, location, image) {
     } else {
       authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
         plantID,
-        plantName,
+        name,
         location,
         image,
       }).then((response) => {
         if (response.error) {
-          console.error(`Failed to add a plant due to server rejection: ${response.error}`);
           rejected(Error(response.error));
         } else {
           plantAdded(response.instanceID);
         }
       }).catch((error) => {
-        console.error(`Failed to add a plant due to a network error: ${error}`);
         rejected(error);
       });
     }
@@ -148,7 +144,6 @@ function removeFromMyPlants(instanceID) {
       authFetch(`${SERVER_ADDR}/myplants/${instanceID}`, 'DELETE').then(() => {
         plantRemoved();
       }).catch((error) => {
-        console.error(`Failed to remove a plant due to a network error: ${error}`);
         rejected(error);
       });
     }
@@ -171,7 +166,7 @@ function removeFromMyPlants(instanceID) {
  *           Or you can upload an image by passing an object with a `base64` property, which will
  *           contain the base64-encoded JPEG image.
  *
- * @returns {Promise} A Promise that resolves to the instance ID of the owned plant.
+ * @returns {Promise} A Promise that resolves to the new state of the plant.
  * The Promise will be rejected if any argument is invalid, or if there is a network error. */
 function updateMyPlant(instanceID, plant) {
   return new Promise((plantUpdated, rejected) => {
@@ -185,13 +180,11 @@ function updateMyPlant(instanceID, plant) {
     } else {
       authFetch(`${SERVER_ADDR}/myplants/${instanceID}`, 'PUT', plant).then((response) => {
         if (response.error) {
-          console.error(`Failed to update a plant due to server rejection: ${response.error}`);
           rejected(Error(response.error));
         } else {
-          plantUpdated(response.instanceID);
+          plantUpdated(response);
         }
       }).catch((error) => {
-        console.error(`Failed to update a plant due to a network error: ${error}`);
         rejected(error);
       });
     }

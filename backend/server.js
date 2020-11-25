@@ -112,6 +112,11 @@ app.get('/myplants', (req, res) => {
             plant.image.sourceURL = `${req.protocol}://${req.get('host')}${req.originalUrl}${plant[idProp]}/image.jpg`;
             plant.image.authenticationRequired = true;
           }
+
+          // Rename '_id' to 'instanceID'
+          plant.instanceID = plant[idProp];
+          delete plant[idProp];
+
           imageMappedPlants.push(plant);
         }
 
@@ -199,12 +204,13 @@ app.get('/savedplants', (req, res) => {
 });
 
 app.post('/myplants', (req, res) => {
+  const idProp = '_id';
   authenticateUserRequest(req, res).then((userId) => {
     if (userId) {
       const query = { userId };
       const {
         plantID,
-        plantName,
+        name,
         location,
         image,
       } = req.body;
@@ -217,15 +223,27 @@ app.post('/myplants', (req, res) => {
         // Only store known properties (don't allow client to store arbitrary data)
         const plant = {
           plantID,
-          plantName,
+          name,
           location,
           image,
         };
         myPlantsByID.push(plant);
 
         USERS.updateOne(query, { myPlantsByID }).then(() => {
-          console.log(`Added plant ${plantID} to user ID ${userId}'s owned plants`);
-          res.status(201).json({});
+        // Refresh to find the instanceID
+        // TODO: Optimize this. We need the _id that was assigned to the added plant.
+          findOneDocument('Users', query)
+            .then((newUserDoc) => {
+              const addedPlant = newUserDoc.myPlantsByID[newUserDoc.myPlantsByID.length - 1];
+              addedPlant.instanceID = addedPlant[idProp];
+              delete addedPlant[idProp];
+              console.log(`Added plant ${plantID} to user ID ${userId}'s owned plants`);
+              res.status(201).json(addedPlant);
+            })
+            .catch((refreshError) => {
+              console.error(`Failed to add a plant to 'myplants' for user ID ${userId}. Reason: ${refreshError}`);
+              res.status(500).json({});
+            });
         }).catch((saveError) => {
           console.error(`Failed to add a plant to 'myplants' for user ID ${userId}. Reason: ${saveError}`);
           res.status(500).json({});
@@ -274,12 +292,12 @@ app.post('/savedplants', (req, res) => {
   });
 });
 
-app.delete('/myplants', (req, res) => {
+app.delete('/myplants/:instanceID', (req, res) => {
   const idProp = '_id';
   authenticateUserRequest(req, res).then((userId) => {
     if (userId) {
       const query = { userId };
-      const id = req.body[idProp];
+      const { instanceID } = req.params;
       findOneDocument('Users', query).then((userDoc) => {
         let myPlantsByID = [];
         if (userDoc.myPlantsByID) {
@@ -287,16 +305,80 @@ app.delete('/myplants', (req, res) => {
         }
 
         const newMyPlantsByID = myPlantsByID.filter(
-          (cur) => cur[idProp].toString() !== id.toString(),
+          (cur) => cur[idProp].toString() !== instanceID.toString(),
         );
 
-        USERS.updateOne(query, { myPlantsByID: newMyPlantsByID }).then(() => {
-          console.log(`Removed plant with _id=${id} from user ID ${userId}'s owned plants.`);
-          res.status(201).json({});
-        }).catch((saveError) => {
-          console.error(`Failed to remove a plant from 'myplants' for user ID ${userId}. Reason: ${saveError}`);
-          res.status(500).json({});
-        });
+        if (newMyPlantsByID.length !== myPlantsByID.length) {
+          USERS.updateOne(query, { myPlantsByID: newMyPlantsByID }).then(() => {
+            console.log(`Removed plant with instanceID=${instanceID} from user ID ${userId}'s owned plants.`);
+            res.status(201).json({});
+          }).catch((saveError) => {
+            console.error(`Failed to remove a plant from 'myplants' for user ID ${userId}. Reason: ${saveError}`);
+            res.status(500).json({});
+          });
+        } else {
+          console.log(`Failed to remove plant with instanceID=${instanceID} from user ID ${userId}'s owned plants because the instanceID was not recognized.`);
+          res.status(404).json({});
+        }
+      });
+    } else {
+      res.status(403).json({});
+    }
+  });
+});
+
+app.put('/myplants/:instanceID', (req, res) => {
+  const idProp = '_id';
+  authenticateUserRequest(req, res).then((userId) => {
+    if (userId) {
+      const query = { userId };
+      const { instanceID } = req.params;
+      const newPlantProps = req.body;
+      findOneDocument('Users', query).then((userDoc) => {
+        let myPlantsByID = [];
+        if (userDoc.myPlantsByID) {
+          myPlantsByID = userDoc.myPlantsByID;
+        }
+
+        const plantIndex = myPlantsByID.findIndex((cur) => cur[idProp].toString() === instanceID);
+
+        if (plantIndex !== -1) {
+          // Copy all valid properties in request body
+          if (newPlantProps.name) {
+            myPlantsByID[plantIndex].name = newPlantProps.name;
+          }
+          if (newPlantProps.location) {
+            myPlantsByID[plantIndex].location = newPlantProps.location;
+          }
+          if (newPlantProps.image) {
+            myPlantsByID[plantIndex].image = newPlantProps.image;
+          }
+
+          USERS.updateOne(query, { myPlantsByID }).then(() => {
+            console.log(`Updated plant with instanceID=${instanceID} for user ID ${userId}.`);
+
+            const responseObj = myPlantsByID[plantIndex];
+            // Convert base64 image (if it is) to URL
+            if (responseObj.image.base64) {
+              // Rewrite plant to refer to server image URL
+              delete responseObj.image.base64;
+              responseObj.image.sourceURL = `${req.protocol}://${req.get('host')}${req.originalUrl}/image.jpg`;
+              responseObj.image.authenticationRequired = true;
+            } // TODO: This really needs refactored!
+
+            // Rename '_id' to 'instanceID' in the response
+            responseObj.instanceID = responseObj[idProp];
+            delete responseObj[idProp];
+
+            res.status(201).json(responseObj);
+          }).catch((saveError) => {
+            console.error(`Failed to update a plant in 'myplants' for user ID ${userId}. Reason: ${saveError}`);
+            res.status(500).json({});
+          });
+        } else {
+          console.error(`Failed to update plant with instanceID=${instanceID} for user ID ${userId}.`);
+          res.status(404).json({});
+        }
       });
     } else {
       res.status(403).json({});

@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   savedPlantsByID: [
     {
       plantID: String,
-      plantName: String,
+      name: String,
       image: {
         sourceURL: String,
       },
@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
   myPlantsByID: [
     {
       plantID: String,
-      plantName: String,
+      name: String,
       location: String,
       image: {
         sourceURL: String,
