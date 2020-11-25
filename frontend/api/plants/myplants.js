@@ -60,7 +60,7 @@ function groupPlantsByLocation(plants) {
 
 /**
  * Gets the locations into which a user's plants may be stored.
- * @param {boolean} includeUnusedDefaults Should DefaultPlantLocations
+ * @param {boolean} includeUnusedDefaults Should `DefaultPlantLocations`
  * be included in the resolved array, even if none of the user's plants
  * are stored in such room?
  * @returns {Promise<string[]>} A Promise that resolves to an array of location names.
