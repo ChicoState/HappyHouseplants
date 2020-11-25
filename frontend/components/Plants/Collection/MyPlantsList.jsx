@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import CardItem from '../CardItem';
 import CollapsibleDrawer from '../../Util/CollapsibleDrawer';
 
-const { getMyPlants, groupPlantsByLocation } = require('../../../api/plants/myplants');
+const { getMyPlants, groupPlantsByLocation } = require('../../../api/myplants');
 
 const styles = StyleSheet.create({
   container: {

@@ -6,11 +6,11 @@ const {
   getMyPlantLocations,
   DefaultPlantLocations,
   groupPlantsByLocation,
-} = require('./myplants');
+} = require('../myplants');
 const {
   authFetch,
 } = require('../auth');
-const { registerAndLogin } = require('../testutil');
+const { registerAndLogin } = require('./testutil');
 
 beforeEach((done) => {
   registerAndLogin()

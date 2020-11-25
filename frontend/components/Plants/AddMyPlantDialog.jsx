@@ -20,7 +20,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Prompt from 'react-native-input-prompt';
 import { PropTypes } from 'prop-types';
 
-const { getMyPlantLocations, addToMyPlants } = require('../../api/plants/myplants');
+const { getMyPlantLocations, addToMyPlants } = require('../../api/myplants');
 
 class AddMyPlantDialog extends React.Component {
   constructor(props) {

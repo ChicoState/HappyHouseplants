@@ -16,7 +16,7 @@ import { SERVER_ADDR } from '../../server';
 import PlantImage from './PlantImage';
 
 const { authFetch } = require('../../api/auth');
-const { getMyPlants, updateMyPlant, removeFromMyPlants } = require('../../api/plants/myplants');
+const { getMyPlants, updateMyPlant, removeFromMyPlants } = require('../../api/myplants');
 
 class CardItem extends React.Component {
   constructor(props) {

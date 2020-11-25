@@ -1,5 +1,5 @@
 global.fetch = require('node-fetch');
-const { register, login } = require('./auth');
+const { register, login } = require('../auth');
 
 let incrementalUserSuffix = 0;
 

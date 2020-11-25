@@ -4,7 +4,7 @@ const {
   loginByToken,
   getLoginInfo,
   logout,
-} = require('./auth');
+} = require('../auth');
 
 const {
   generateUsername,

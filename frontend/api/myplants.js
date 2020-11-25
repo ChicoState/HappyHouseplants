@@ -1,6 +1,6 @@
-const { SERVER_ADDR } = require('../../server');
+const { SERVER_ADDR } = require('../server');
 
-const { authFetch } = require('../auth');
+const { authFetch } = require('./auth');
 
 /**
  * Array of default plant locations. */
