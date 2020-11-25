@@ -1,4 +1,4 @@
-import { SERVER_ADDR } from '../server';
+const { SERVER_ADDR } = require('../server');
 
 global.auth = {
   token: undefined,
@@ -10,7 +10,7 @@ function authFetchRaw(url, method = 'GET', body) {
     const request = {
       method,
       body: JSON.stringify(body),
-      headers: new Headers({ AuthToken: authToken, 'Content-Type': 'application/json' }),
+      headers: { AuthToken: authToken, 'Content-Type': 'application/json' },
     };
     fetch(url, request)
       .then((res) => {
@@ -28,7 +28,7 @@ function authFetch(url, method = 'GET', body) {
     const request = {
       method,
       body: JSON.stringify(body),
-      headers: new Headers({ AuthToken: authToken, 'Content-Type': 'application/json' }),
+      headers: { AuthToken: authToken, 'Content-Type': 'application/json' },
     };
     fetch(url, request)
       .then((resRaw) => resRaw.json())
