@@ -12,11 +12,10 @@ import {
 } from '@ui-kitten/components';
 import * as ImagePicker from 'expo-image-picker';
 import AddMyPlantDialog from './AddMyPlantDialog';
-import { SERVER_ADDR } from '../../server';
 import PlantImage from './PlantImage';
 
-const { authFetch } = require('../../api/auth');
 const { getMyPlants, updateMyPlant, removeFromMyPlants } = require('../../api/myplants');
+const { isFavorite, addToFavorites, removeFromFavorites } = require('../../api/favoritePlants');
 
 class CardItem extends React.Component {
   constructor(props) {
@@ -37,7 +36,7 @@ class CardItem extends React.Component {
     }
 
     this.state = {
-      saved: undefined,
+      favorited: undefined,
       owned: undefined,
       showAddDialog: false,
       imageRefreshCounter: 0,
@@ -46,17 +45,17 @@ class CardItem extends React.Component {
 
     this.startChangePicture = this.startChangePicture.bind(this);
     this.toggleOwned = this.toggleOwned.bind(this);
-    this.toggleSaveEntry = this.toggleSaveEntry.bind(this);
+    this.toggleFavorited = this.toggleFavorited.bind(this);
   }
 
   componentDidMount() {
     const { plant } = this.props;
     const itemThis = this;
-    authFetch(`${SERVER_ADDR}/savedplants`)
-      .then((savedPlantIDs) => {
-        itemThis.setState({ saved: savedPlantIDs.find((cur) => cur.plantID === plant.plantID) });
+    isFavorite(plant.plantID)
+      .then((isFavResult) => {
+        itemThis.setState({ favorited: isFavResult });
       }).catch((error) => {
-        console.error(`Failed to determine save status of plant ID ${plant.plantID} due to an error: ${error}.`);
+        console.error(`Failed to determine favorite status of plant ID ${plant.plantID} due to an error: ${error}.`);
       });
 
     getMyPlants()
@@ -113,48 +112,44 @@ class CardItem extends React.Component {
     });
   }
 
-  toggleSaveEntry() {
-    const { saved } = this.state;
+  toggleFavorited() {
+    const { favorited } = this.state;
     const { plant, onRemoveFromFavorites } = this.props;
-    if (!saved) {
-      authFetch(`${SERVER_ADDR}/savedplants`, 'POST', {
-        plantID: plant.plantID,
-        name: plant.name,
-        image: plant.image,
-      }).then(() => {
-        this.setState({
-          saved: true,
+    if (!favorited) {
+      addToFavorites(plant)
+        .then(() => {
+          this.setState({
+            favorited: true,
+          });
+        }).catch((error) => {
+          Alert.alert(
+            'Network Error',
+            'Failed to favorite this plant',
+            [
+              { text: 'OK' },
+            ],
+          );
+          console.error(`Failed to favorite a plant due to an error: ${error}`);
         });
-      }).catch((error) => {
-        Alert.alert(
-          'Network Error',
-          'Failed to save this plant',
-          [
-            { text: 'OK' },
-          ],
-        );
-        console.error(`Failed to save a plant due to an error: ${error}`);
-      });
     } else {
-      authFetch(`${SERVER_ADDR}/savedplants`, 'DELETE', {
-        plantID: plant.plantID,
-      }).then(() => {
-        this.setState({
-          saved: false,
+      removeFromFavorites()
+        .then(() => {
+          this.setState({
+            favorited: false,
+          });
+          if (onRemoveFromFavorites) {
+            onRemoveFromFavorites(plant);
+          }
+        }).catch((error) => {
+          Alert.alert(
+            'Network Error',
+            'Failed to remove this plant',
+            [
+              { text: 'OK' },
+            ],
+          );
+          console.error(`Failed to remove a plant from favorites due to an error: ${error}`);
         });
-        if (onRemoveFromFavorites) {
-          onRemoveFromFavorites(plant);
-        }
-      }).catch((error) => {
-        Alert.alert(
-          'Network Error',
-          'Failed to remove this plant',
-          [
-            { text: 'OK' },
-          ],
-        );
-        console.error(`Failed to remove a plant due to an error: ${error}`);
-      });
     }
   }
 
@@ -192,7 +187,7 @@ class CardItem extends React.Component {
       onRemoveFromOwned,
     } = this.props;
     const {
-      saved,
+      favorited,
       owned,
       showAddDialog,
       imageUploading,
@@ -200,7 +195,7 @@ class CardItem extends React.Component {
     } = this.state;
 
     const saveIcon = (info) => (
-      <Icon {...info} name={saved ? 'heart' : 'heart-outline'} />
+      <Icon {...info} name={favorited ? 'heart' : 'heart-outline'} />
     );
 
     const collectionIcon = (info) => (
@@ -237,9 +232,9 @@ class CardItem extends React.Component {
         <Button
           style={styles.button}
           status="primary"
-          appearance={saved ? 'filled' : 'outline'}
+          appearance={favorited ? 'filled' : 'outline'}
           accessoryLeft={saveIcon}
-          onPress={this.toggleSaveEntry}
+          onPress={this.toggleFavorited}
         />
         <Button
           style={styles.button}

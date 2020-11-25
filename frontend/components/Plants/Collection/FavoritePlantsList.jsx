@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { Layout, Spinner, Text } from '@ui-kitten/components';
 import PropTypes from 'prop-types';
-import { SERVER_ADDR } from '../../../server';
 import CardItem from '../CardItem';
 
-const { authFetch } = require('../../../api/auth');
+const {
+  getFavorites,
+} = require('../../../api/favoritePlants');
 
 const styles = StyleSheet.create({
   container: {
@@ -27,11 +28,11 @@ class FavoritePlantsList extends Component {
 
   componentDidMount() {
     const listThis = this;
-    authFetch(`${SERVER_ADDR}/savedplants/`)
-      .then((data) => {
+    getFavorites()
+      .then((plants) => {
         listThis.setState({
           loaded: true,
-          plants: data,
+          plants,
           error: null,
         });
       }, (error) => {
@@ -42,8 +43,7 @@ class FavoritePlantsList extends Component {
 
   removeFavoritePlant(plant) {
     const { plants } = this.state;
-    const idProp = '_id';
-    const newPlants = plants.filter((cur) => cur[idProp].toString() !== plant[idProp].toString());
+    const newPlants = plants.filter((cur) => cur.plantID !== plant.plantID);
     this.setState({
       plants: newPlants,
     });
@@ -61,11 +61,9 @@ class FavoritePlantsList extends Component {
       return (<Spinner />);
     }
 
-    const idProp = '_id'; // to prevent linter issues
-
     const cards = plants.map((plant) => (
       <CardItem
-        key={plant[idProp]}
+        key={plant.plantID}
         plant={plant}
         styles={styles}
         onPressItem={onPressItem}
