@@ -3,6 +3,9 @@ const {
   addToMyPlants,
   removeFromMyPlants,
   updateMyPlant,
+  getMyPlantLocations,
+  DefaultPlantLocations,
+  groupPlantsByLocation,
 } = require('./myplants');
 const {
   authFetch,
@@ -267,6 +270,46 @@ it('Can update plant image by URL', (done) => {
     });
 });
 
+it('Can update multiple plant properties simultaneously', (done) => {
+  // Add the plant
+  addToMyPlants('MyPlantID', 'My Plant Name', 'Kitchen', { sourceURL: 'testURL' })
+    .then((instanceID) => {
+      expect(instanceID).toBeTruthy();
+
+      // Update the plant's properties all at once
+      updateMyPlant(instanceID, {
+        name: 'My New Plant Name',
+        location: 'Porch',
+        image: { sourceURL: 'newURL' },
+      })
+        .then((newPlantState) => {
+          // Ensure that the resolved plant matches what's expected
+          expect(newPlantState).toStrictEqual({
+            plantID: 'MyPlantID',
+            instanceID,
+            name: 'My New Plant Name',
+            location: 'Porch',
+            image: { sourceURL: 'newURL' },
+          });
+
+          // Ensure that it is now updated in 'myplants'
+          getMyPlants()
+            .then((myPlants) => {
+              expect(myPlants).toBeTruthy();
+              expect(myPlants).toHaveLength(1);
+              expect(myPlants[0]).toStrictEqual(newPlantState);
+              done();
+            });
+        })
+        .catch((error) => {
+          done(error);
+        });
+    })
+    .catch((error) => {
+      done(error);
+    });
+});
+
 it('Can update plant image by base64', (done) => {
   // Add the plant
   addToMyPlants('MyPlantID', 'My Plant Name', 'Kitchen', { sourceURL: 'testURL' })
@@ -309,4 +352,165 @@ it('Can update plant image by base64', (done) => {
     .catch((error) => {
       done(error);
     });
+});
+
+it('Plant locations are empty by default', () => {
+  expect(getMyPlantLocations(false)).resolves.toStrictEqual([]);
+});
+
+it('Plant locations optionally include defaults when empty', () => {
+  expect(getMyPlantLocations(true)).resolves.toStrictEqual(DefaultPlantLocations.sort());
+});
+
+it('Single default plant location works', (done) => {
+  // Add the plant
+  const location = DefaultPlantLocations[1];
+  addToMyPlants('MyPlantID', 'My Plant Name', location, { sourceURL: 'testURL' })
+    .then((instanceID) => {
+      expect(instanceID).toBeTruthy();
+
+      // Check that the plant's location is recognized
+      getMyPlantLocations()
+        .then((locations) => {
+          expect(locations).toHaveLength(1);
+          expect(locations[0]).toStrictEqual(location);
+          done();
+        })
+        .catch((error) => {
+          done(error);
+        });
+    })
+    .catch((error) => {
+      done(error);
+    });
+});
+
+it('Single custom plant location works', (done) => {
+  // Add the plant
+  const location = 'My custom location';
+  addToMyPlants('MyPlantID', 'My Plant Name', location, { sourceURL: 'testURL' })
+    .then((instanceID) => {
+      expect(instanceID).toBeTruthy();
+
+      // Check that the plant's location is recognized
+      getMyPlantLocations(false)
+        .then((locations) => {
+          expect(locations).toHaveLength(1);
+          expect(locations[0]).toStrictEqual(location);
+          done();
+        })
+        .catch((error) => {
+          done(error);
+        });
+    })
+    .catch((error) => {
+      done(error);
+    });
+});
+
+it('Mix custom and default plant locations works', (done) => {
+  // Add the plant
+  const location = 'My custom location';
+  addToMyPlants('MyPlantID', 'My Plant Name', location, { sourceURL: 'testURL' })
+    .then((instanceID) => {
+      expect(instanceID).toBeTruthy();
+
+      // Check that the plant's location is recognized in addition to defaults
+      getMyPlantLocations(true)
+        .then((locations) => {
+          expect(locations).toHaveLength(DefaultPlantLocations.length + 1);
+          expect(locations.sort()).toStrictEqual(DefaultPlantLocations.concat(location).sort());
+          done();
+        })
+        .catch((error) => {
+          done(error);
+        });
+    })
+    .catch((error) => {
+      done(error);
+    });
+});
+
+it('Owning plants in default locations will not cause duplicate rooms', (done) => {
+  // Add the plant
+  const location = DefaultPlantLocations[2];
+  addToMyPlants('MyPlantID', 'My Plant Name', location, { sourceURL: 'testURL' })
+    .then((instanceID) => {
+      expect(instanceID).toBeTruthy();
+
+      // Check that the plant's location is recognized in addition to defaults
+      getMyPlantLocations(true)
+        .then((locations) => {
+          expect(locations).toHaveLength(DefaultPlantLocations.length);
+          expect(locations.sort()).toStrictEqual(DefaultPlantLocations.sort());
+          done();
+        })
+        .catch((error) => {
+          done(error);
+        });
+    })
+    .catch((error) => {
+      done(error);
+    });
+});
+
+it('Group plants by location works', () => {
+  const plants = [
+    {
+      instanceID: 'Instance1',
+      plantID: 'MyID1',
+      name: 'My First Plant',
+      location: 'Location A',
+      image: { sourceURL: 'testURL' },
+    },
+    {
+      instanceID: 'Instance2',
+      plantID: 'MyID2',
+      name: 'My Second Plant',
+      location: 'Location B',
+      image: { sourceURL: 'testURL' },
+    },
+    {
+      instanceID: 'Instance3',
+      plantID: 'MyID3',
+      name: 'My Third Plant',
+      location: 'Location C',
+      image: { sourceURL: 'testURL' },
+    },
+    {
+      instanceID: 'Instance4',
+      plantID: 'MyID4',
+      name: 'My Fourth Plant',
+      location: 'Location C',
+      image: { sourceURL: 'testURL' },
+    },
+    {
+      instanceID: 'Instance5',
+      plantID: 'MyID5',
+      name: 'My Fifth Plant',
+      location: 'Location A',
+      image: { sourceURL: 'testURL' },
+    },
+    {
+      instanceID: 'Instance6',
+      plantID: 'MyID6',
+      name: 'My Sixth Plant',
+      location: 'Location B',
+      image: { sourceURL: 'testURL' },
+    },
+  ];
+
+  const byLocation = groupPlantsByLocation(plants);
+  const expectedLocations = ['Location A', 'Location B', 'Location C'].sort();
+
+  expect(Object.keys(byLocation).sort()).toStrictEqual(expectedLocations);
+  for (let i = 0; i < expectedLocations.length; i += 1) {
+    const location = expectedLocations[i];
+    expect(byLocation[location].sort())
+      .toStrictEqual(plants.filter((cur) => cur.location === location).sort());
+  }
+});
+
+it('Group empty set of plants by location works', () => {
+  expect(groupPlantsByLocation([])).toStrictEqual({});
 });
