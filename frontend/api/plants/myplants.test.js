@@ -5,7 +5,7 @@ const {
   updateMyPlant,
 } = require('./myplants');
 const {
-  authFetch
+  authFetch,
 } = require('../auth');
 const { registerAndLogin } = require('../testutil');
 
