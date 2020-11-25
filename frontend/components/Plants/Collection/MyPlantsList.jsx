@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { Layout, Spinner, Text } from '@ui-kitten/components';
 import PropTypes from 'prop-types';
-import { SERVER_ADDR } from '../../../server';
 import CardItem from '../CardItem';
 import CollapsibleDrawer from '../../Util/CollapsibleDrawer';
 
-const { authFetch } = require('../../../api/auth');
+const { getMyPlants, groupPlantsByLocation } = require('../../../api/plants/myplants');
 
 const styles = StyleSheet.create({
   container: {
@@ -28,11 +27,11 @@ class MyPlantsList extends Component {
 
   componentDidMount() {
     const listThis = this;
-    authFetch(`${SERVER_ADDR}/myplants/`)
-      .then((data) => {
+    getMyPlants()
+      .then((plants) => {
         listThis.setState({
           loaded: true,
-          plants: data,
+          plants,
           error: null,
         });
       }, (error) => {
@@ -43,8 +42,9 @@ class MyPlantsList extends Component {
 
   removePlant(plant) {
     const { plants } = this.state;
-    const idProp = '_id';
-    const newPlants = plants.filter((cur) => cur[idProp].toString() !== plant[idProp].toString());
+    const newPlants = plants.filter(
+      (cur) => cur.instanceID.toString() !== plant.instanceID.toString(),
+    );
     this.setState({
       plants: newPlants,
     });
@@ -62,37 +62,25 @@ class MyPlantsList extends Component {
       return (<Spinner />);
     }
 
-    const idProp = '_id'; // to prevent linter issues
-
-    const cardsByLocation = [];
-    for (let i = 0; i < plants.length; i += 1) {
-      const plant = plants[i];
-      const plantCard = (
+    const plantsByLocation = groupPlantsByLocation(plants);
+    const cardsAndHeaders = [];
+    const locations = Object.keys(plantsByLocation);
+    for (let i = 0; i < locations.length; i += 1) {
+      const location = locations[i];
+      const plantsInThisLocation = plantsByLocation[location];
+      const cardsInThisLocation = plantsInThisLocation.map((plant) => (
         <CardItem
-          key={plant[idProp]}
+          key={plant.instanceID}
           plant={plant}
           styles={styles}
           onPressItem={onPressItem}
           onRemoveFromOwned={this.removePlant}
           allowChangePicture
         />
-      );
-
-      if (!cardsByLocation[plant.location]) {
-        cardsByLocation[plant.location] = [plantCard];
-      } else {
-        cardsByLocation[plant.location].push(plantCard);
-      }
-    }
-
-    const cardsAndHeaders = [];
-    const locations = Object.keys(cardsByLocation);
-    for (let i = 0; i < locations.length; i += 1) {
-      const location = locations[i];
-      const cards = cardsByLocation[location];
+      ));
       cardsAndHeaders.push((
         <CollapsibleDrawer title={location} collapsed={false} key={location}>
-          {cards}
+          {cardsInThisLocation}
         </CollapsibleDrawer>
       ));
     }

@@ -9,7 +9,7 @@ function MyPlantsScreen(obj) {
   return (
     <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <MyPlantsList onPressItem={(plant) => {
-        navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
+        navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.name });
       }}
       />
     </Layout>

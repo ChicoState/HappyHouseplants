@@ -16,6 +16,7 @@ import { SERVER_ADDR } from '../../server';
 import PlantImage from './PlantImage';
 
 const { authFetch } = require('../../api/auth');
+const { getMyPlants, updateMyPlant, removeFromMyPlants } = require('../../api/plants/myplants');
 
 class CardItem extends React.Component {
   constructor(props) {
@@ -58,10 +59,10 @@ class CardItem extends React.Component {
         console.error(`Failed to determine save status of plant ID ${plant.plantID} due to an error: ${error}.`);
       });
 
-    authFetch(`${SERVER_ADDR}/myplants`)
-      .then((myPlantIDs) => {
+    getMyPlants()
+      .then((myPlants) => {
         itemThis.setState({
-          owned: myPlantIDs.filter((cur) => cur.plantID === plant.plantID).length,
+          owned: myPlants.filter((cur) => cur.plantID === plant.plantID).length,
         });
       }).catch((error) => {
         console.error(`Failed to determine ownership status of plant ID ${plant.plantID} due to an error: ${error}.`);
@@ -71,8 +72,6 @@ class CardItem extends React.Component {
   startChangePicture() {
     const { plant } = this.props;
     const { imageRefreshCounter } = this.state;
-
-    const idProp = '_id';
     ImagePicker.requestCameraPermissionsAsync().then((permissionResult) => {
       if (permissionResult.status !== 'granted') {
         Alert.alert('Sorry, you need to grant permissions before capturing a custom picture.');
@@ -85,24 +84,23 @@ class CardItem extends React.Component {
         }).then((imageResult) => {
           if (!imageResult.cancelled) {
             this.setState({ imageUploading: true });
-            authFetch(`${SERVER_ADDR}/myplants/${plant[idProp]}/image.jpg`, 'PUT', {
-              image: { base64: imageResult.base64 },
-            }).then(() => {
-              this.setState({
-                imageUploading: false,
-                imageRefreshCounter: imageRefreshCounter + 1,
+            updateMyPlant(plant.instanceID, { image: { base64: imageResult.base64 } })
+              .then(() => {
+                this.setState({
+                  imageUploading: false,
+                  imageRefreshCounter: imageRefreshCounter + 1,
+                });
+              }).catch((error) => {
+                Alert.alert(
+                  'Error',
+                  'Failed to change this plant\'s picture.',
+                  [
+                    { text: 'OK' },
+                  ],
+                );
+                console.error(`Failed to add a plant due to an error: ${error}`);
+                this.setState({ imageUploading: false });
               });
-            }).catch((error) => {
-              Alert.alert(
-                'Network Error',
-                'Failed to change this plant\'s picture.',
-                [
-                  { text: 'OK' },
-                ],
-              );
-              console.error(`Failed to add a plant due to an error: ${error}`);
-              this.setState({ imageUploading: false });
-            });
           }
         }).catch((error) => {
           console.error(`Failed to select image from camera due to error: ${error}`);
@@ -121,7 +119,7 @@ class CardItem extends React.Component {
     if (!saved) {
       authFetch(`${SERVER_ADDR}/savedplants`, 'POST', {
         plantID: plant.plantID,
-        plantName: plant.plantName,
+        name: plant.name,
         image: plant.image,
       }).then(() => {
         this.setState({
@@ -163,27 +161,25 @@ class CardItem extends React.Component {
   toggleOwned() {
     const { owned } = this.state;
     const { plant, onRemoveFromOwned } = this.props;
-    const idProp = '_id';
     if (!owned || onRemoveFromOwned === undefined) {
       this.setState({ showAddDialog: true });
     } else {
-      authFetch(`${SERVER_ADDR}/myplants`, 'DELETE', {
-        [idProp]: plant[idProp],
-      }).then(() => {
-        this.setState({
-          owned: owned - 1,
+      removeFromMyPlants(plant.instanceID)
+        .then(() => {
+          this.setState({
+            owned: owned - 1,
+          });
+          onRemoveFromOwned(plant);
+        }).catch((error) => {
+          Alert.alert(
+            'Network Error',
+            'Failed to remove this plant',
+            [
+              { text: 'OK' },
+            ],
+          );
+          console.error(`Failed to remove a plant due to an error: ${error}`);
         });
-        onRemoveFromOwned(plant);
-      }).catch((error) => {
-        Alert.alert(
-          'Network Error',
-          'Failed to remove this plant',
-          [
-            { text: 'OK' },
-          ],
-        );
-        console.error(`Failed to remove a plant due to an error: ${error}`);
-      });
     }
   }
 
@@ -256,12 +252,13 @@ class CardItem extends React.Component {
       </Layout>
     );
 
+    const name = plant.name ?? plant.plantName; // TODO: Pick a consistent prop name
     return (
       <View>
         <AddMyPlantDialog
           visible={showAddDialog}
           plant={plant}
-          plantName={plant.plantName}
+          name={name}
           plantID={plant.plantID}
           onSubmit={() => this.setState({ showAddDialog: false })}
           onCancel={() => this.setState({ showAddDialog: false })}
@@ -270,7 +267,7 @@ class CardItem extends React.Component {
           key={plant.plantID}
           style={styles.card}
           status="success"
-          header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
+          header={(headerProps) => renderItemHeader(headerProps, name)}
           footer={renderItemFooter}
           onPress={() => { onPressItem(plant); }}
         >

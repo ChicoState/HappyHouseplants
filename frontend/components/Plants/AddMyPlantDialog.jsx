@@ -19,9 +19,8 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import Prompt from 'react-native-input-prompt';
 import { PropTypes } from 'prop-types';
-import { SERVER_ADDR } from '../../server';
 
-const { authFetch } = require('../../api/auth');
+const { getMyPlantLocations, addToMyPlants } = require('../../api/plants/myplants');
 
 class AddMyPlantDialog extends React.Component {
   constructor(props) {
@@ -57,19 +56,14 @@ class AddMyPlantDialog extends React.Component {
   }
 
   updateLocations() {
-    const distinctFilter = (cur, idx, arr) => arr.indexOf(cur) === idx;
-
     const listDialog = this;
-    authFetch(`${SERVER_ADDR}/myplants/`)
-      .then((data) => {
-        const defaultLocations = ['Living room', 'Kitchen', 'Bedroom', 'Porch'];
-        const newLocations = data.map((cur) => cur.location)
-          .concat(defaultLocations).filter(distinctFilter);
-
+    getMyPlantLocations(true)
+      .then((locations) => {
         listDialog.setState({
-          locations: newLocations,
+          locations,
         });
-      }, (error) => {
+      })
+      .catch((error) => {
         Alert.alert(
           'Network Error',
           'Failed to load plant location data',
@@ -77,7 +71,7 @@ class AddMyPlantDialog extends React.Component {
             { text: 'OK', onPress: listDialog.onCancel },
           ],
         );
-        console.log(`Failed to find plant locations. Reason: ${error}`);
+        console.error(`Failed to find plant locations. Reason: ${error}`);
       });
   }
 
@@ -96,26 +90,24 @@ class AddMyPlantDialog extends React.Component {
       };
     }
 
+    const name = plant.name ?? plant.plantName; // TODO: Pick a consistent name
     this.setState({ uploading: true });
-    authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
-      plantID: plant.plantID,
-      plantName: plant.plantName,
-      location: locations[locationIndex - 1],
-      image,
-    }).then(() => {
-      this.setState({ locationIndex: 0, uploading: false });
-      onSubmit();
-    }).catch((error) => {
-      Alert.alert(
-        'Network Error',
-        'Failed to add this plant',
-        [
-          { text: 'OK', onPress: onCancel },
-        ],
-      );
-      console.error(`Failed to add a plant due to an error: ${error}`);
-      this.setState({ uploading: false });
-    });
+    addToMyPlants(plant.plantID, name, locations[locationIndex - 1], image)
+      .then(() => {
+        // Reset state for future use
+        this.setState({ locationIndex: 0, uploading: false });
+        onSubmit();
+      }).catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'Failed to add this plant',
+          [
+            { text: 'OK', onPress: onCancel },
+          ],
+        );
+        console.error(`Failed to add a plant due to an error: ${error}`);
+        this.setState({ uploading: false });
+      });
   }
 
   cancel() {
@@ -234,12 +226,14 @@ class AddMyPlantDialog extends React.Component {
     const galleryIcon = (info) => (<Icon {...info} name={customImageMode === 'gallery' ? 'image-outline' : 'image'} />);
     const pictureButtonStyle = { width: 25, height: 25, marginRight: '5%' };
 
+    const name = plant.name ?? plant.plantName; // TODO: Pick a consistent name
+
     return (
       <View>
         <Portal>
           {customLocationPrompt}
           <Dialog visible={visible} onDismiss={() => this.cancel()}>
-            <Dialog.Title>{`Add ${plant.plantName}`}</Dialog.Title>
+            <Dialog.Title>{`Add ${name}`}</Dialog.Title>
             <Dialog.Content>
               <Text>Location</Text>
               {locationSelection}
