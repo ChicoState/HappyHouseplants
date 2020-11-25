@@ -61,25 +61,6 @@ app.get('/tips/:tipID', (req, res) => {
   });
 });
 
-app.get('/users/:userId', (req, res) => {
-  const userQuery = { userId: req.params.userId };
-  findDocuments('Users', userQuery).then((docs) => {
-    if (docs.length < 1) {
-      res.status(404).json({});
-    } else {
-      // Don't send the whole 'user' document, that'll contain sensitive information!
-      const user = docs[0];
-      const publicUserInfo = {
-        userId: user.userId,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        username: user.username,
-      };
-      res.json(publicUserInfo);
-    }
-  });
-});
-
 app.get('/mytips', (req, res) => {
   authenticateUserRequest(req, res).then((userId) => {
     if (userId) {
