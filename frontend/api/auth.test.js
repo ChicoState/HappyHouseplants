@@ -1,6 +1,7 @@
 const {
   register,
   login,
+  loginByToken,
   getLoginInfo,
   logout,
 } = require('./auth');
@@ -12,6 +13,10 @@ function generateUsername() {
   incrementalUserSuffix += 1;
   return `_Test_${new Date().getTime()}_${incrementalUserSuffix}`;
 }
+
+afterEach(() => {
+  logout();
+});
 
 it('Can register a new account', () => {
   const username = generateUsername();
@@ -81,6 +86,72 @@ it('Can register then login', (done) => {
             expect(loginInfo.username).toStrictEqual(username);
             expect(loginInfo.firstName).toStrictEqual('Hello');
             expect(loginInfo.lastName).toStrictEqual('World');
+            done();
+          })
+            .catch((error) => {
+              done(error);
+            });
+        })
+        .catch((error) => {
+          done(error);
+        });
+    })
+    .catch((error) => {
+      done(error);
+    });
+});
+
+it('Login is case-insensitive', (done) => {
+  // Register
+  const usernameUpper = generateUsername().toUpperCase();
+  const usernameLower = usernameUpper.toLowerCase();
+  register(usernameUpper, 'MyPassword', 'Hello', 'World')
+    .then((registerStatus) => {
+      expect(registerStatus).toStrictEqual({ success: true });
+
+      // Login with a different case
+      login(usernameLower, 'MyPassword')
+        .then((loginStatus) => {
+          expect(loginStatus.success).toBe(true);
+          expect(loginStatus.sessionAuthToken).toBeTruthy();
+
+          // Prove login by getting account info
+          getLoginInfo().then((loginInfo) => {
+            expect(loginInfo).toBeTruthy();
+            expect(loginInfo.username).toStrictEqual(usernameUpper);
+            expect(loginInfo.firstName).toStrictEqual('Hello');
+            expect(loginInfo.lastName).toStrictEqual('World');
+            done();
+          })
+            .catch((error) => {
+              done(error);
+            });
+        })
+        .catch((error) => {
+          done(error);
+        });
+    })
+    .catch((error) => {
+      done(error);
+    });
+});
+
+it('Cannot login with wrong password', (done) => {
+  // Register
+  const username = generateUsername();
+  register(username, 'MyPassword', 'Hello', 'World')
+    .then((registerStatus) => {
+      expect(registerStatus).toStrictEqual({ success: true });
+
+      // Login with the wrong password
+      login(username, 'WrongPassword')
+        .then((loginStatus) => {
+          expect(loginStatus.success).toBe(false);
+          expect(loginStatus.sessionAuthToken).toBeUndefined();
+
+          // Ensure that login really did fail by getting loginInfo
+          getLoginInfo().then((loginInfo) => {
+            expect(loginInfo).toBeNull();
             done();
           })
             .catch((error) => {
@@ -181,5 +252,95 @@ it('Can switch accounts', (done) => {
         .catch((error) => {
           done(error);
         });
+    });
+});
+
+it('Can login by authentication token', (done) => {
+  // Register
+  const username = generateUsername();
+  register(username, 'MyPassword', 'Hello', 'World')
+    .then((registerStatus) => {
+      expect(registerStatus).toStrictEqual({ success: true });
+
+      // Login once to obtain the authentication token
+      login(username, 'MyPassword')
+        .then((loginStatus1) => {
+          expect(loginStatus1.success).toBe(true);
+          expect(loginStatus1.sessionAuthToken).toBeTruthy();
+          const authToken = loginStatus1.sessionAuthToken;
+
+          // Logout
+          logout();
+
+          // Now re-login using the auth token
+          loginByToken(authToken)
+            .then((loginStatus2) => {
+              expect(loginStatus2).toBe(true);
+
+              // Prove login by getting account info
+              getLoginInfo().then((loginInfo) => {
+                expect(loginInfo).toBeTruthy();
+                expect(loginInfo.username).toStrictEqual(username);
+                expect(loginInfo.firstName).toStrictEqual('Hello');
+                expect(loginInfo.lastName).toStrictEqual('World');
+                done();
+              })
+                .catch((error) => {
+                  done(error);
+                });
+            })
+            .catch((error) => {
+              done(error);
+            });
+        })
+        .catch((error) => {
+          done(error);
+        });
+    })
+    .catch((error) => {
+      done(error);
+    });
+});
+
+it('Cannot login with wrong authentication token', (done) => {
+  // Register
+  const username = generateUsername();
+  register(username, 'MyPassword', 'Hello', 'World')
+    .then((registerStatus) => {
+      expect(registerStatus).toStrictEqual({ success: true });
+
+      // Login once to obtain the authentication token
+      login(username, 'MyPassword')
+        .then((loginStatus1) => {
+          expect(loginStatus1.success).toBe(true);
+          expect(loginStatus1.sessionAuthToken).toBeTruthy();
+
+          // Logout
+          logout();
+
+          // Now re-login using the wrong auth token
+          loginByToken('WrongAuthToken')
+            .then((loginStatus2) => {
+              expect(loginStatus2).toBe(false);
+
+              // Prove login failed by getting account info
+              getLoginInfo().then((loginInfo) => {
+                expect(loginInfo).toBeNull();
+                done();
+              })
+                .catch((error) => {
+                  done(error);
+                });
+            })
+            .catch((error) => {
+              done(error);
+            });
+        })
+        .catch((error) => {
+          done(error);
+        });
+    })
+    .catch((error) => {
+      done(error);
     });
 });
