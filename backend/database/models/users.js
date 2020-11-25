@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   userId: { type: String, index: true },
   password: String, // Salted+Hashed
   savedTipsByID: Array,
-  savedPlantsByID: [
+  favoritePlants: [
     {
       plantID: String,
       name: String,

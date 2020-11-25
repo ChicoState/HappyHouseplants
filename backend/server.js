@@ -25,7 +25,7 @@ app.use(bodyParser.json({
 })); // Needed so we can read the body of POSTs
 
 require('./routes/tips')(app);
-require('./routes/savedplants')(app);
+require('./routes/favoritePlants')(app);
 require('./routes/myplants')(app);
 require('./routes/mycalendar')(app);
 require('./routes/plants')(app);

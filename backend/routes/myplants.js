@@ -120,34 +120,6 @@ module.exports = (app) => {
     });
   }, true);
 
-  authPost(app, '/savedplants', (req, res, userDoc) => {
-    const {
-      plantID,
-      plantName,
-      image,
-    } = req.body;
-    let savedPlantsByID = [];
-    if (userDoc.savedPlantsByID) {
-      savedPlantsByID = userDoc.savedPlantsByID;
-    }
-
-    // Only store known properties (don't allow client to store arbitrary data)
-    const plant = {
-      plantID,
-      plantName,
-      image,
-    };
-    savedPlantsByID.push(plant);
-
-    updateUserDocument(userDoc.userId, { savedPlantsByID }).then(() => {
-      console.log(`Added plant ${plantID} to user ID ${userDoc.userId}'s saved plants.`);
-      res.status(201).json({});
-    }).catch((saveError) => {
-      console.error(`Failed to add a plant to 'savedplants' for user ID ${userDoc.userId}. Reason: ${saveError}`);
-      res.status(500).json({});
-    });
-  }, true);
-
   authDelete(app, '/myplants/:instanceID', (req, res, userDoc) => {
     const idProp = '_id';
     const { instanceID } = req.params;
