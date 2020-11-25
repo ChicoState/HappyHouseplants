@@ -8,8 +8,7 @@ const PORT = '8080';
 const { databaseConnection } = require('./database/mongooseConnect.js');
 const { findDocuments, findOneDocument } = require('./database/findDocuments');
 const { insertTestData } = require('./database/mockData/mockDatabase');
-const { register, login, authenticateUserRequest } = require('./api/auth.js');
-const { USERS } = require('./database/models/users.js');
+const { authenticateUserRequest } = require('./api/auth.js');
 
 function main() {
   console.log('Server starting...');
@@ -93,53 +92,7 @@ app.get('/mytips', (req, res) => {
   });
 });
 
-
-
-app.get('/savedplants', (req, res) => {
-  authenticateUserRequest(req, res).then((userId) => {
-    if (userId) {
-      findOneDocument('Users', { userId }).then((userDoc) => {
-        let savedPlantsByID = [];
-        if (userDoc.savedPlantsByID) {
-          savedPlantsByID = userDoc.savedPlantsByID;
-        }
-
-        res.json(savedPlantsByID);
-      });
-    } else {
-      res.status(403).json({});
-    }
-  });
-});
-
-app.delete('/savedplants', (req, res) => {
-  authenticateUserRequest(req, res).then((userId) => {
-    if (userId) {
-      const query = { userId };
-      const { plantID } = req.body;
-      findOneDocument('Users', query).then((userDoc) => {
-        let savedPlantsByID = [];
-        if (userDoc.savedPlantsByID) {
-          savedPlantsByID = userDoc.savedPlantsByID;
-        }
-
-        const newSavedPlantsByID = savedPlantsByID.filter((plant) => plant.plantID !== plantID);
-
-        USERS.updateOne(query, { savedPlantsByID: newSavedPlantsByID }).then(() => {
-          console.log(`Removed plant ${plantID} from user ID ${userId}'s saved plants.`);
-          res.status(201).json({});
-        }).catch((saveError) => {
-          console.error(`Failed to remove a plant from 'savedplants' for user ID ${userId}. Reason: ${saveError}`);
-          res.status(500).json({});
-        });
-      });
-    } else {
-      res.status(403).json({});
-    }
-  });
-});
-
-
+require('./routes/savedplants')(app);
 require('./routes/myplants')(app);
 require('./routes/mycalendar')(app);
 require('./routes/plants')(app);
