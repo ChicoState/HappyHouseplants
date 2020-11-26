@@ -29,4 +29,8 @@ jobs:
         - npm ci
       script:
         - npm run lint
-script: echo "npm test temporarily disabled"
+    - stage: Run Tests
+      install:
+        - nom ci
+      script:
+        - npm run test
