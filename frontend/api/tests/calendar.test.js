@@ -159,4 +159,27 @@ it('Can remove a calendar note from a day with multiple notes', (done) => {
     });
 });
 
-// TODO: Test removing one note from a day with multiple notes
+it('Removing a note that does not exist has no effect', (done) => {
+  addCalendarNote('1-2-2021', 'Hello world 2', 'green')
+    .then(() => {
+      // Remove a non-existing note
+      removeCalendarNote('1-1-2021', { note: 'Hello world 2', dots: 'red' })
+        .then((removed) => {
+          expect(removed).toBe(false);
+          // Check that the note was actually removed
+          expect(getCalendarNotes()).resolves.toStrictEqual({
+            '1-2-2021': [{
+              note: 'Hello world 2',
+              dots: 'green',
+            }],
+          });
+          done();
+        })
+        .catch((error) => {
+          done(error);
+        });
+    })
+    .catch((error) => {
+      done(error);
+    });
+});
