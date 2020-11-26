@@ -7,6 +7,31 @@ const {
 } = require('../api/auth');
 const { findOneDocument } = require('../database/findDocuments');
 
+/**
+ * Rewrites a Plant object so it is readable by the client. This involves renaming the
+ * `_id` property to `instanceID`, and changing base64 images to a URL instead (so we
+ * don't waste bandwidth sending the image when it may not be needed).
+ * @param {*} plant The raw owned Plant instance, directly from the database.
+ * @param {*} req The Request object.
+ * @returns {*} The plant, but in a format that is expected by the client.
+ */
+function rewritePlantForRequest(plant, req) {
+  const ret = plant;
+  const idProp = '_id';
+  if (ret.image.base64) {
+    // Rewrite plant to refer to server image URL instead of sending the whole image now
+    delete ret.image.base64;
+    ret.image.sourceURL = `${req.protocol}://${req.get('host')}/myplants/${ret[idProp]}/image.jpg`;
+    ret.image.authenticationRequired = true;
+  }
+
+  // Rename '_id' to 'instanceID'
+  ret.instanceID = plant[idProp];
+  delete ret[idProp];
+
+  return ret;
+}
+
 module.exports = (app) => {
   authGet(app, '/myplants', (req, res, userDoc) => {
     let myPlantsByID = [];
@@ -14,36 +39,18 @@ module.exports = (app) => {
       myPlantsByID = userDoc.myPlantsByID;
     }
 
-    const idProp = '_id';
-    const imageMappedPlants = [];
-    for (let i = 0; i < myPlantsByID.length; i += 1) {
-      const plant = myPlantsByID[i];
-      if (plant.image.base64) {
-        // Rewrite plant to refer to server image URL
-        delete plant.image.base64;
-        plant.image.sourceURL = `${req.protocol}://${req.get('host')}${req.originalUrl}${plant[idProp]}/image.jpg`;
-        plant.image.authenticationRequired = true;
-      } // TODO: Refactor
-
-      // Rename '_id' to 'instanceID'
-      plant.instanceID = plant[idProp];
-      delete plant[idProp];
-
-      imageMappedPlants.push(plant);
-    }
-
-    res.json(imageMappedPlants);
+    res.json(myPlantsByID.map((rawPlant) => rewritePlantForRequest(rawPlant, req)));
   }, true);
 
-  authGet(app, '/myplants/:plantID/image.jpg', (req, res, userDoc) => {
-    const { plantID } = req.params;
+  authGet(app, '/myplants/:instanceID/image.jpg', (req, res, userDoc) => {
+    const { instanceID } = req.params;
     let myPlantsByID = [];
     if (userDoc.myPlantsByID) {
       myPlantsByID = userDoc.myPlantsByID;
     }
 
     const idProp = '_id';
-    const plant = myPlantsByID.find((cur) => cur[idProp].toString() === plantID.toString());
+    const plant = myPlantsByID.find((cur) => cur[idProp].toString() === instanceID.toString());
     if (plant && plant.image.base64) {
       res.json(plant.image.base64);
     } else {
@@ -51,8 +58,8 @@ module.exports = (app) => {
     }
   }, true);
 
-  authPut(app, '/myplants/:plantID/image.jpg', (req, res, userDoc) => {
-    const { plantID } = req.params;
+  authPut(app, '/myplants/:instanceID/image.jpg', (req, res, userDoc) => {
+    const { instanceID } = req.params;
     const { base64 } = req.body.image;
     let myPlantsByID = [];
     if (userDoc.myPlantsByID) {
@@ -60,7 +67,7 @@ module.exports = (app) => {
     }
 
     const idProp = '_id';
-    const idx = myPlantsByID.findIndex((cur) => cur[idProp].toString() === plantID.toString());
+    const idx = myPlantsByID.findIndex((cur) => cur[idProp].toString() === instanceID.toString());
     if (idx !== -1) {
       myPlantsByID[idx].image = {
         base64,
@@ -84,7 +91,6 @@ module.exports = (app) => {
       location,
       image,
     } = req.body;
-    const idProp = '_id';
     let myPlantsByID = [];
     if (userDoc.myPlantsByID) {
       myPlantsByID = userDoc.myPlantsByID;
@@ -100,15 +106,12 @@ module.exports = (app) => {
     myPlantsByID.push(plant);
 
     updateUserDocument(userDoc.userId, { myPlantsByID }).then(() => {
-    // Refresh to find the instanceID
-    // TODO: Optimize this. We need the _id that was assigned to the added plant.
+    // Need to refresh so the returned Plant object will include the assigned instanceID (_id).
       findOneDocument('Users', { userId: userDoc.userId })
         .then((newUserDoc) => {
           const addedPlant = newUserDoc.myPlantsByID[newUserDoc.myPlantsByID.length - 1];
-          addedPlant.instanceID = addedPlant[idProp];
-          delete addedPlant[idProp];
           console.log(`Added plant ${plantID} to user ID ${userDoc.userId}'s owned plants`);
-          res.status(201).json(addedPlant);
+          res.status(201).json(rewritePlantForRequest(addedPlant, req));
         })
         .catch((refreshError) => {
           console.error(`Failed to add a plant to 'myplants' for user ID ${userDoc.userId}. Reason: ${refreshError}`);
@@ -172,19 +175,7 @@ module.exports = (app) => {
       updateUserDocument(userDoc.userId, { myPlantsByID }).then(() => {
         console.log(`Updated plant with instanceID=${instanceID} for user ID ${userDoc.userId}.`);
 
-        const responseObj = myPlantsByID[plantIndex];
-        // Convert base64 image (if it is) to URL
-        if (responseObj.image.base64) {
-          // Rewrite plant to refer to server image URL
-          delete responseObj.image.base64;
-          responseObj.image.sourceURL = `${req.protocol}://${req.get('host')}${req.originalUrl}/image.jpg`;
-          responseObj.image.authenticationRequired = true;
-        } // TODO: This really needs refactored!
-
-        // Rename '_id' to 'instanceID' in the response
-        responseObj.instanceID = responseObj[idProp];
-        delete responseObj[idProp];
-
+        const responseObj = rewritePlantForRequest(myPlantsByID[plantIndex], req);
         res.status(201).json(responseObj);
       }).catch((saveError) => {
         console.error(`Failed to update a plant in 'myplants' for user ID ${userDoc.userId}. Reason: ${saveError}`);
