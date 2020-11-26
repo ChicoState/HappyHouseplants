@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { View, ScrollView, Text } from 'react-native';
-import { SERVER_ADDR } from '../../../server';
 import FloatingTip from './FloatingTip';
+
+const { getRandomTips } = require('../../../api/tips');
 
 class TipList extends Component {
   constructor() {
@@ -15,8 +16,7 @@ class TipList extends Component {
 
   componentDidMount() {
     const listThis = this;
-    fetch(`${SERVER_ADDR}/random_tips/`)
-      .then((response) => response.json())
+    getRandomTips()
       .then((data) => {
         listThis.setState({
           loaded: true,

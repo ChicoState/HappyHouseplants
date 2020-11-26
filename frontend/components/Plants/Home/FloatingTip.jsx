@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import PropTypes from 'prop-types';
-import { SERVER_ADDR } from '../../../server';
+import { getTip } from '../../../api/tips';
 
 class FloatingTip extends Component {
   constructor() {
@@ -43,8 +43,7 @@ class FloatingTip extends Component {
   componentDidMount() {
     const floatThis = this;
     const { tipID } = this.props;
-    fetch(`${SERVER_ADDR}/tips/${tipID}`)
-      .then((response) => response.json())
+    getTip(tipID)
       .then((data) => {
         floatThis.setState({
           visible: true,
