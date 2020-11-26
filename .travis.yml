@@ -30,6 +30,12 @@ jobs:
       script:
         - npm run lint
     - stage: Run Tests
+      before_install:
+        - cd ./backend
+        - npm ci
+        - docker-compose build
+        - docker-compose up -d
+        - cd ..
       install:
         - npm ci
       script:
