@@ -33,10 +33,13 @@ jobs:
       before_install:
         - cd ./backend
         - npm ci
-        - docker-compose build
-        - docker-compose up -d
         - cd ..
       install:
         - npm ci
       script:
+        - cd ./backend
+        - docker-compose build
+        - docker-compose up -d
+        - cd ..
+        - sleep 15
         - npm run test
