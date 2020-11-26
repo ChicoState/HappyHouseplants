@@ -90,9 +90,8 @@ class AddMyPlantDialog extends React.Component {
       };
     }
 
-    const name = plant.name ?? plant.plantName; // TODO: Pick a consistent name
     this.setState({ uploading: true });
-    addToMyPlants(plant.plantID, name, locations[locationIndex - 1], image)
+    addToMyPlants(plant.plantID, plant.name, locations[locationIndex - 1], image)
       .then(() => {
         // Reset state for future use
         this.setState({ locationIndex: 0, uploading: false });
