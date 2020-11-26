@@ -279,9 +279,8 @@ class SearchBar extends Component {
       return (<Text>Loading search...</Text>);
     }
     const { Results, selectedIndex } = this.state;
-    const id = '_id';
     const myCards = Results.map((plant) => (
-      <CardItem key={plant[id]} plant={plant} styles={styles} onPressItem={onPressItem} />
+      <CardItem key={plant.plantID} plant={plant} styles={styles} onPressItem={onPressItem} />
     ));
     return (
 
