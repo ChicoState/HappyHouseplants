@@ -4,6 +4,8 @@ node_js:
 cache:
   directories:
   - "$HOME/.npm"
+services:
+  - docker
 jobs:
   fast_finish: true
   include:
