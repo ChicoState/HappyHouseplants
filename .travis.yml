@@ -31,6 +31,6 @@ jobs:
         - npm run lint
     - stage: Run Tests
       install:
-        - nom ci
+        - npm ci
       script:
         - npm run test
