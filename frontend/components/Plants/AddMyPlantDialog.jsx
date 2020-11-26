@@ -226,14 +226,12 @@ class AddMyPlantDialog extends React.Component {
     const galleryIcon = (info) => (<Icon {...info} name={customImageMode === 'gallery' ? 'image-outline' : 'image'} />);
     const pictureButtonStyle = { width: 25, height: 25, marginRight: '5%' };
 
-    const name = plant.name ?? plant.plantName; // TODO: Pick a consistent name
-
     return (
       <View>
         <Portal>
           {customLocationPrompt}
           <Dialog visible={visible} onDismiss={() => this.cancel()}>
-            <Dialog.Title>{`Add ${name}`}</Dialog.Title>
+            <Dialog.Title>{`Add ${plant.name}`}</Dialog.Title>
             <Dialog.Content>
               <Text>Location</Text>
               {locationSelection}

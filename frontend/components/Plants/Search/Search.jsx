@@ -261,7 +261,7 @@ class SearchBar extends Component {
       this.setState({
         Results:
         Alldata.filter(
-          (x) => x.plantName.toLowerCase().includes(searchString.toLowerCase()),
+          (x) => x.name.toLowerCase().includes(searchString.toLowerCase()),
         ),
       });
     }

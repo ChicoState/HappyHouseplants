@@ -247,13 +247,12 @@ class CardItem extends React.Component {
       </Layout>
     );
 
-    const name = plant.name ?? plant.plantName; // TODO: Pick a consistent prop name
     return (
       <View>
         <AddMyPlantDialog
           visible={showAddDialog}
           plant={plant}
-          name={name}
+          name={plant.name}
           plantID={plant.plantID}
           onSubmit={() => this.setState({ showAddDialog: false })}
           onCancel={() => this.setState({ showAddDialog: false })}
@@ -262,7 +261,7 @@ class CardItem extends React.Component {
           key={plant.plantID}
           style={styles.card}
           status="success"
-          header={(headerProps) => renderItemHeader(headerProps, name)}
+          header={(headerProps) => renderItemHeader(headerProps, plant.name)}
           footer={renderItemFooter}
           onPress={() => { onPressItem(plant); }}
         >
