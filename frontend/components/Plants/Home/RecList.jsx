@@ -4,8 +4,8 @@ import React, { Component } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { Layout, Text } from '@ui-kitten/components';
 import PropTypes from 'prop-types';
-import { SERVER_ADDR } from '../../../server';
 import CardItem from '../CardItem';
+import { getPlants } from '../../../api/plants';
 
 const styles = StyleSheet.create({
   container: {
@@ -26,8 +26,7 @@ class RecList extends Component {
 
   componentDidMount() {
     const listThis = this;
-    fetch(`${SERVER_ADDR}/plants/`)
-      .then((response) => response.json())
+    getPlants()
       .then((data) => {
         console.log(data);
         listThis.setState({
@@ -53,11 +52,8 @@ class RecList extends Component {
       return (<Text>Loading Recommendations...</Text>);
     }
 
-    const id = '_id'; // to prevent linter issues
     const myCards = recList.map((plant) => (
-
-      <CardItem key={plant[id]} plant={plant} styles={styles} onPressItem={onPressItem} />
-
+      <CardItem key={plant.plantID} plant={plant} styles={styles} onPressItem={onPressItem} />
     ));
 
     return (
