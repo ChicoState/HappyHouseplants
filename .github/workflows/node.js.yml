@@ -37,6 +37,11 @@ jobs:
     - name: NPM Setup Backend
       run: |
         cd ./backend
+        echo "CONNECT_URL=mongodb://localhost:27017/" >> .env
+        echo "CONTAINER_URL=mongodb://happyplant-db:27017/" >> .env
+        echo "DB_NAME=happyplants" >> .env
+        echo "DB_USER=happystorage" >> .env
+        echo "DB_PASSWORD=ActionsPass" >> .env
         npm ci
 
     - name: Run Lint
