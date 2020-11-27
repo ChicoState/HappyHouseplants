@@ -20,17 +20,29 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Checkout code
+    - name: Setup Node
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: cd ./backend
-    - run: npm ci
-    - run: docker-compose build
-    - run: docker-compose up -d
-    - run: cd ../frontend
-    - run: npm ci
-    - run: cd ..
+
+    - name: NPM Setup Frontend
+    - run: |
+        cd ./frontend
+        npm ci
+    - name: NPM Setup Backend
+    - run: |
+        cd ./backend
+        npm ci
+        
+    - name: Run Lint
     - run: npm run lint
-    - run: npm run test
+    
+    - name: Run Tests
+    - run: |
+        cd ./backend
+        docker-compose build
+        docker-compose up -d
+        sleep 10
+        cd ..
+        npm run test
