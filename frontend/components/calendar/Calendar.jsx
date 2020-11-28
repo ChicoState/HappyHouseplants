@@ -55,6 +55,7 @@ function getNotes() {
 
 // TODO: add getMyLabels for custom label select, and update labels
 // TODO add getMyDotColors() fetch
+const todaysDate = new Date();
 
 class CalendarView extends React.Component {
   constructor() {
@@ -68,22 +69,10 @@ class CalendarView extends React.Component {
       noteTag: 'water',
       tagColor: 'blue',
       customLabel: '',
-      currentMonthView: new Date(),
+      currentMonthView: '11',
+      currentYearView: '2020',
     };
-
-    this.updateNotes = () => {
-      getNotes().then((downloadedNotes) => { this.setState({ notes: downloadedNotes }); })
-        .catch((error) => {
-          Alert.alert(
-            'Network Error',
-            'An error occured while trying to fetch calendar notes',
-            [
-              { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ],
-          );
-          console.error(`Error while fetching calendar notes: ${error}`);
-        });
-    };
+    this.updateNotes = this.updateNotes.bind(this);
   }
 
   componentDidMount() {
@@ -121,9 +110,38 @@ class CalendarView extends React.Component {
     return ret;
   }
 
+  updateNotes() {
+    getNotes().then((downloadedNotes) => {
+      // console.log(`Downloaded Notes: ${JSON.stringify(downloadedNotes)}`);
+      let currentNotes = {};
+      Object.keys(downloadedNotes).forEach((note) => {
+        const months = note.split('-');
+        console.log(`months[1]: ${months[1]}, this.currentMonthView: ${this.currentMonthView}`);
+        if (months[1] === 11) {
+          currentNotes = { currentNotes, note };
+          console.log(`currentNotes1: ${JSON.stringify(currentNotes)}`);
+        }
+      });
+      console.log(`currentNotes2: ${JSON.stringify(currentNotes)}`);
+      this.setState({ notes: currentNotes });
+    })
+      .catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'An error occured while trying to fetch calendar notes',
+          [
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ],
+        );
+        console.error(`Error while fetching calendar notes: ${error}`);
+      });
+  }
+
   render() {
     const {
-      notes, tempNote, selectedDate, showInputView, toggleTheme, customLabel, currentMonthView,
+      notes, tempNote, selectedDate,
+      showInputView, toggleTheme, customLabel, currentMonthView,
+      currentYearView
     } = this.state;
     // For each property in notes (key is date, value is array of notes), create a ListItem
     const noteViews = [];
@@ -300,10 +318,11 @@ class CalendarView extends React.Component {
               markedDates={
                 this.getCalendarMarkInfo(notes)
               }
-              current={currentMonthView}
+              current={todaysDate}
               minDate={firstDayOfYear}
               onMonthChange={(month) => {
-                this.setState({ currentMonthView: month });
+                console.log(`on month change ${JSON.stringify(month)}`);
+                this.setState({ currentMonthView: month.month, currentYearView: month.year });
               }}
               onDayPress={(day) => {
                 this.setState({ selectedDate: day.dateString });
