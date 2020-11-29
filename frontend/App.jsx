@@ -10,7 +10,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-native-paper';
 import PropTypes from 'prop-types';
 import 'react-native-gesture-handler';
-import Cam from './components/Camera';
 import theme from './components/colorTheme.json';
 import HeaderButtons from './components/HeaderButtons';
 import CalendarView from './components/calendar/Calendar';
@@ -87,13 +86,8 @@ function MyPlantsScreen(obj) {
         navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
       }}
       />
-      <Text />
     </Layout>
   );
-}
-
-function CameraScreen() {
-  return (<Cam />);
 }
 
 /**
@@ -237,7 +231,6 @@ function App() {
                 <Stack.Screen name="Tips" component={TipScreen} />
                 <Stack.Screen name="Recommend" component={RecommendScreen} />
                 <Stack.Screen name="Search" component={SearchScreen} />
-                <Stack.Screen name="Camera" component={CameraScreen} />
                 <Stack.Screen name="Login" component={LoginScreen} />
                 <Stack.Screen name="Register" component={RegisterScreen} />
               </Stack.Navigator>

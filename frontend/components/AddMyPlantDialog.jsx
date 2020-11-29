@@ -1,13 +1,22 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
-import { Alert, Text, View } from 'react-native';
+import {
+  Alert,
+  Text,
+  View,
+  Image,
+} from 'react-native';
 import { Portal, Dialog } from 'react-native-paper';
 import {
   Select,
   SelectItem,
   Button,
   Spinner,
+  Layout,
+  Icon,
 } from '@ui-kitten/components';
+import * as ImagePicker from 'expo-image-picker';
 import Prompt from 'react-native-input-prompt';
 import { PropTypes } from 'prop-types';
 import { SERVER_ADDR } from '../server';
@@ -21,11 +30,17 @@ class AddMyPlantDialog extends React.Component {
       showCustomLocationPrompt: false,
       locations: undefined, // Initialized from fetch
       locationIndex: 0,
+      customImage: undefined,
+      customImageMode: 'default',
+      uploading: false,
     };
 
     this.updateLocations = this.updateLocations.bind(this);
     this.submit = this.submit.bind(this);
     this.cancel = this.cancel.bind(this);
+    this.requestDefaultImage = this.requestDefaultImage.bind(this);
+    this.requestCameraImage = this.requestCameraImage.bind(this);
+    this.requestGalleryImage = this.requestGalleryImage.bind(this);
     this.prevVisible = false;
   }
 
@@ -68,15 +83,27 @@ class AddMyPlantDialog extends React.Component {
 
   submit() {
     const { plant, onSubmit, onCancel } = this.props;
-    const { locations, locationIndex } = this.state;
+    const { locations, locationIndex, customImage } = this.state;
 
+    let image;
+    if (customImage) {
+      image = {
+        base64: customImage,
+      };
+    } else {
+      image = {
+        sourceURL: plant.image.sourceURL,
+      };
+    }
+
+    this.setState({ uploading: true });
     authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
       plantID: plant.plantID,
       plantName: plant.plantName,
       location: locations[locationIndex - 1],
-      image: plant.image, // TODO: Use custom image if provided
+      image,
     }).then(() => {
-      this.setState({ locationIndex: 0 });
+      this.setState({ locationIndex: 0, uploading: false });
       onSubmit();
     }).catch((error) => {
       Alert.alert(
@@ -87,6 +114,7 @@ class AddMyPlantDialog extends React.Component {
         ],
       );
       console.error(`Failed to add a plant due to an error: ${error}`);
+      this.setState({ uploading: false });
     });
   }
 
@@ -96,8 +124,74 @@ class AddMyPlantDialog extends React.Component {
     onCancel();
   }
 
+  requestDefaultImage() {
+    this.setState({
+      customImage: undefined,
+      customImageMode: 'default',
+    });
+  }
+
+  requestCameraImage() {
+    ImagePicker.requestCameraPermissionsAsync().then((permissionResult) => {
+      if (permissionResult.status !== 'granted') {
+        Alert.alert('Sorry, you need to grant permissions before capturing a custom picture.');
+      } else {
+        ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          quality: 1,
+          base64: true,
+        }).then((imageResult) => {
+          if (!imageResult.cancelled) {
+            this.setState({
+              customImage: imageResult.base64,
+              customImageMode: 'camera',
+            });
+          }
+        }).catch((error) => {
+          console.error(`Failed to select image from camera due to error: ${error}`);
+        });
+      }
+    }).catch((error) => {
+      console.error(`Failed to request permissions for camera due to error: ${error}`);
+    });
+  }
+
+  requestGalleryImage() {
+    ImagePicker.requestCameraRollPermissionsAsync().then((permissionResult) => {
+      if (permissionResult.status !== 'granted') {
+        Alert.alert('Sorry, you need to grant permissions before uploading a custom picture.');
+      } else {
+        ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          quality: 1,
+          base64: true,
+        }).then((imageResult) => {
+          if (!imageResult.cancelled) {
+            this.setState({
+              customImage: imageResult.base64,
+              customImageMode: 'gallery',
+            });
+          }
+        }).catch((error) => {
+          console.error(`Failed to select custom image from camera roll due to error: ${error}`);
+        });
+      }
+    }).catch((error) => {
+      console.error(`Failed to request permissions for camera roll due to error: ${error}`);
+    });
+  }
+
   render() {
-    const { locationIndex, locations, showCustomLocationPrompt } = this.state;
+    const {
+      locationIndex,
+      locations,
+      showCustomLocationPrompt,
+      customImage,
+      customImageMode,
+      uploading,
+    } = this.state;
     const { visible, plant } = this.props;
 
     const locationSelection = locations !== undefined ? (
@@ -135,6 +229,11 @@ class AddMyPlantDialog extends React.Component {
       />
     );
 
+    const clearIcon = (info) => (<Icon {...info} name={customImageMode === 'default' ? 'close-circle-outline' : 'close-circle'} />);
+    const cameraIcon = (info) => (<Icon {...info} name={customImageMode === 'camera' ? 'camera-outline' : 'camera'} />);
+    const galleryIcon = (info) => (<Icon {...info} name={customImageMode === 'gallery' ? 'image-outline' : 'image'} />);
+    const pictureButtonStyle = { width: 25, height: 25, marginRight: '5%' };
+
     return (
       <View>
         <Portal>
@@ -145,12 +244,41 @@ class AddMyPlantDialog extends React.Component {
               <Text>Location</Text>
               {locationSelection}
               <Text />
-              { /* TODO: Put 'custom image' form stuff here */ }
+              <Text>Picture</Text>
+              <Layout style={{ flexDirection: 'row' }}>
+                <Button
+                  style={pictureButtonStyle}
+                  appearance={customImageMode === 'default' ? 'filled' : 'outline'}
+                  accessoryLeft={clearIcon}
+                  onPress={this.requestDefaultImage}
+                />
+                <Button
+                  style={pictureButtonStyle}
+                  appearance={customImageMode === 'camera' ? 'filled' : 'outline'}
+                  accessoryLeft={cameraIcon}
+                  onPress={this.requestCameraImage}
+                />
+                <Button
+                  style={pictureButtonStyle}
+                  appearance={customImageMode === 'gallery' ? 'filled' : 'outline'}
+                  accessoryLeft={galleryIcon}
+                  onPress={this.requestGalleryImage}
+                />
+              </Layout>
+              <View style={{ maxWidth: '100%', height: 220, flex: 0 }}>
+                <Image
+                  source={{ uri: customImage ? `data:image/jpeg;base64,${customImage}` : plant.image.sourceURL }}
+                  style={{ maxWidth: '100%', flex: 1 }}
+                  resizeMode="cover"
+                />
+              </View>
             </Dialog.Content>
             <Dialog.Actions>
               <Button
                 onPress={() => this.submit()}
                 disabled={locationIndex < 1 || locationIndex > locations.length}
+                accessoryLeft={uploading ? () => (<Spinner />) : undefined}
+                appearance={uploading ? 'outline' : 'filled'}
               >
                 Add
               </Button>

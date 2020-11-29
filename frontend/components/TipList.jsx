@@ -15,10 +15,9 @@ class TipList extends Component {
 
   componentDidMount() {
     const listThis = this;
-    fetch(`${SERVER_ADDR}/random_tips/?t=1`)
+    fetch(`${SERVER_ADDR}/random_tips/`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         listThis.setState({
           loaded: true,
           tipIDs: data,
