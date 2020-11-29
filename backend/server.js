@@ -23,7 +23,9 @@ databaseConnection.once('open', () => {
   insertTestData();
 });
 
-app.use(bodyParser.json()); // Needed so we can read the body of POSTs
+app.use(bodyParser.json({
+  limit: '100mb', // Allow 100mb for image POSTs
+})); // Needed so we can read the body of POSTs
 
 app.get('/random_tips/', (req, res) => {
   const maxCount = req.query.count ? req.query.count : 10;
@@ -100,7 +102,78 @@ app.get('/myplants', (req, res) => {
           myPlantsByID = userDoc.myPlantsByID;
         }
 
-        res.json(myPlantsByID);
+        const idProp = '_id';
+        const imageMappedPlants = [];
+        for (let i = 0; i < myPlantsByID.length; i += 1) {
+          const plant = myPlantsByID[i];
+          if (plant.image.base64) {
+            // Rewrite plant to refer to server image URL
+            delete plant.image.base64;
+            plant.image.sourceURL = `${req.protocol}://${req.get('host')}${req.originalUrl}${plant[idProp]}/image.jpg`;
+            plant.image.authenticationRequired = true;
+          }
+          imageMappedPlants.push(plant);
+        }
+
+        res.json(imageMappedPlants);
+      });
+    } else {
+      res.status(403).json({});
+    }
+  });
+});
+
+app.get('/myplants/:plantID/image.jpg', (req, res) => {
+  authenticateUserRequest(req, res).then((userId) => {
+    if (userId) {
+      const { plantID } = req.params;
+      findOneDocument('Users', { userId }).then((userDoc) => {
+        let myPlantsByID = [];
+        if (userDoc.myPlantsByID) {
+          myPlantsByID = userDoc.myPlantsByID;
+        }
+
+        const idProp = '_id';
+        const plant = myPlantsByID.find((cur) => cur[idProp].toString() === plantID.toString());
+        if (plant && plant.image.base64) {
+          res.json(plant.image.base64);
+        } else {
+          res.status(404).send();
+        }
+      });
+    } else {
+      res.status(403).json({});
+    }
+  });
+});
+
+app.put('/myplants/:plantID/image.jpg', (req, res) => {
+  authenticateUserRequest(req, res).then((userId) => {
+    if (userId) {
+      const { plantID } = req.params;
+      const { base64 } = req.body.image;
+      findOneDocument('Users', { userId }).then((userDoc) => {
+        let myPlantsByID = [];
+        if (userDoc.myPlantsByID) {
+          myPlantsByID = userDoc.myPlantsByID;
+        }
+
+        const idProp = '_id';
+        const idx = myPlantsByID.findIndex((cur) => cur[idProp].toString() === plantID.toString());
+        if (idx !== -1) {
+          myPlantsByID[idx].image = {
+            base64,
+          };
+
+          USERS.updateOne({ userId }, { myPlantsByID }).then(() => {
+            res.status(200).json({});
+          }).catch((saveError) => {
+            console.error(`Failed to update a plant picture for user ID ${userId}. Reason: ${saveError}`);
+            res.status(500).json({});
+          });
+        } else {
+          res.status(404).send();
+        }
       });
     } else {
       res.status(403).json({});

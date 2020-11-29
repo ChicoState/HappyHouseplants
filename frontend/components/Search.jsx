@@ -41,6 +41,7 @@ class SearchBar extends Component {
       Results: [],
       Alldata: [],
       Filter: new IndexPath(0),
+      Selected: 'Filter',
     };
 
     this.searchPress = this.searchPress.bind(this);
@@ -70,6 +71,7 @@ class SearchBar extends Component {
     if (Filter.section === 1) {
       if (Filter.row === 0) {
         this.setState({
+          Selected: 'Maintenance: Easy',
           Results:
         Alldata.filter(
           (x) => x.maintenance.level.toString().includes('1'),
@@ -77,6 +79,7 @@ class SearchBar extends Component {
         });
       } else if (Filter.row === 1) {
         this.setState({
+          Selected: 'Maintenance: Medium',
           Results:
         Alldata.filter(
           (x) => x.maintenance.level.toString().includes('2'),
@@ -84,6 +87,7 @@ class SearchBar extends Component {
         });
       } else if (Filter.row === 2) {
         this.setState({
+          Selected: 'Maintenance: Hard',
           Results:
         Alldata.filter(
           (x) => x.maintenance.level.toString().includes('3'),
@@ -93,6 +97,7 @@ class SearchBar extends Component {
     } else if (Filter.section === 2) {
       if (Filter.row === 0) {
         this.setState({
+          Selected: 'Lighting: Low',
           Results:
         Alldata.filter(
           (x) => x.lighting.level.toString().includes('1'),
@@ -100,6 +105,7 @@ class SearchBar extends Component {
         });
       } else if (Filter.row === 1) {
         this.setState({
+          Selected: 'Lighting: Medium',
           Results:
         Alldata.filter(
           (x) => x.lighting.level.toString().includes('2'),
@@ -107,6 +113,7 @@ class SearchBar extends Component {
         });
       } else if (Filter.row === 2) {
         this.setState({
+          Selected: 'Lighting: High',
           Results:
         Alldata.filter(
           (x) => x.lighting.level.toString().includes('3'),
@@ -116,6 +123,7 @@ class SearchBar extends Component {
     } else if (Filter.section === 3) {
       if (Filter.row === 0) {
         this.setState({
+          Selected: 'Humidity: Low',
           Results:
         Alldata.filter(
           (x) => {
@@ -128,6 +136,7 @@ class SearchBar extends Component {
         });
       } else if (Filter.row === 1) {
         this.setState({
+          Selected: 'Humidity: Medium',
           Results:
         Alldata.filter(
           (x) => {
@@ -140,6 +149,7 @@ class SearchBar extends Component {
         });
       } else if (Filter.row === 2) {
         this.setState({
+          Selected: 'Humidity: High',
           Results:
         Alldata.filter(
           (x) => {
@@ -154,6 +164,7 @@ class SearchBar extends Component {
     } else if (Filter.section === 4) {
       if (Filter.row === 0) {
         this.setState({
+          Selected: 'Indoor',
           Results:
         Alldata.filter(
           (x) => {
@@ -166,6 +177,7 @@ class SearchBar extends Component {
         });
       } else if (Filter.row === 1) {
         this.setState({
+          Selected: 'Outdoor',
           Results:
         Alldata.filter(
           (x) => {
@@ -180,6 +192,7 @@ class SearchBar extends Component {
     } else if (Filter.section === 5) {
       if (Filter.row === 0) {
         this.setState({
+          Selected: 'Climate: Hot',
           Results:
         Alldata.filter(
           (x) => {
@@ -192,6 +205,7 @@ class SearchBar extends Component {
         });
       } else if (Filter.row === 1) {
         this.setState({
+          Selected: 'Climate: Cold',
           Results:
         Alldata.filter(
           (x) => {
@@ -206,6 +220,7 @@ class SearchBar extends Component {
     } else if (Filter.section === 6) {
       if (Filter.row === 0) {
         this.setState({
+          Selected: 'Harmful to: dogs',
           Results:
         Alldata.filter(
           (x) => {
@@ -222,6 +237,7 @@ class SearchBar extends Component {
         });
       } else if (Filter.row === 1) {
         this.setState({
+          Selected: 'Harmful to: cats',
           Results:
         Alldata.filter(
           (x) => {
@@ -238,6 +254,7 @@ class SearchBar extends Component {
         });
       } else if (Filter.row === 2) {
         this.setState({
+          Selected: 'Harmful to: horses',
           Results:
         Alldata.filter(
           (x) => {
@@ -260,6 +277,7 @@ class SearchBar extends Component {
     const { searchString, Alldata, Filter } = this.state;
     if (Filter.section === undefined) {
       this.setState({
+        Selected: 'Plant Name',
         Results:
         Alldata.filter(
           (x) => x.plantName.toLowerCase().includes(searchString.toLowerCase()),
@@ -279,7 +297,7 @@ class SearchBar extends Component {
     if (!loaded) {
       return (<Text>Loading search...</Text>);
     }
-    const { Results, selectedIndex } = this.state;
+    const { Results, selectedIndex, Selected } = this.state;
     const id = '_id';
     const myCards = Results.map((plant) => (
       <CardItem key={plant[id]} plant={plant} styles={styles} onPressItem={onPressItem} />
@@ -296,7 +314,7 @@ class SearchBar extends Component {
             Search
           </Button>
           <Select
-            placeholder="Filter"
+            placeholder={Selected}
             selectedIndex={selectedIndex}
             onSelect={(index) => this.setState({ Filter: index },
               () => this.setSelectedIndex())}
@@ -308,9 +326,9 @@ class SearchBar extends Component {
               <SelectItem title="Hard" />
             </SelectGroup>
             <SelectGroup title="Lighting">
-              <SelectItem title="Little" />
+              <SelectItem title="Low" />
               <SelectItem title="Medium" />
-              <SelectItem title="Alot" />
+              <SelectItem title="High" />
             </SelectGroup>
             <SelectGroup title="Humidity">
               <SelectItem title="Low" />
