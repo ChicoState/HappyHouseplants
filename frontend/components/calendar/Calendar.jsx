@@ -116,23 +116,17 @@ class CalendarView extends React.Component {
     const { currentMonthView, currentYearView } = this.state;
     const currentNotes = [];
     getNotes().then((downloadedNotes) => {
-      console.log(`downloadednotes: ${JSON.stringify(downloadedNotes)}`);
       // eslint-disable-next-line no-restricted-syntax
       for (const [date, note] of Object.entries(downloadedNotes)) {
         // get the month out of the current date
         const months = date.split('-');
-        console.log(`months[0]: ${months[0]}, this.currentYearView: ${currentYearView}`);
-        console.log(`months[1]: ${months[1]}, this.currentMonthView: ${currentMonthView}`);
         // if month in note date is the same as currently viewed month, display notes
-        console.log(currentYearView);
         if (Number(months[1]) === Number(currentMonthView) 
         && Number(months[0]) === Number(currentYearView)) {
-          console.log('TRUE')
           const temp = { [date]: note };
           currentNotes.push(temp);
         }
       }
-      console.log(`currentNotes: ${JSON.stringify(currentNotes)}`);
       this.setState({ currentMonthNotes: currentNotes, notes: downloadedNotes });
     })
       .catch((error) => {
@@ -150,12 +144,11 @@ class CalendarView extends React.Component {
   render() {
     const {
       notes, tempNote, selectedDate,
-      showInputView, toggleTheme, customLabel, currentMonthNotes, currentMonthView,
+      showInputView, toggleTheme, customLabel, currentMonthNotes,
       currentDate,
     } = this.state;
     // For each property in notes (key is date, value is array of notes), create a ListItem
     const noteViews = [];
-    console.log(`currentMonthNotes: ${JSON.stringify(currentMonthNotes)}`);
     Object.values(currentMonthNotes).forEach((dateNoteObject) => {
       let notesStr = '';
       let noteValuesPerDate = [];
@@ -312,7 +305,6 @@ class CalendarView extends React.Component {
             thumbColor={toggleTheme ? colorTheme['color-dark-background-400'] : colorTheme['color-primary-600']}
             value={toggleTheme}
             onValueChange={(value) => {
-              console.log(`Toggle theme: ${value}`);
               this.setState({ toggleTheme: value });
             }}
           />
@@ -331,16 +323,12 @@ class CalendarView extends React.Component {
               current={currentDate}
               minDate={firstDayOfYear}
               onMonthChange={(month) => {
-                console.log(`on month change ${JSON.stringify(month)}`);
-                console.log(`month: ${month.month}`);
-                console.log(`cmonth: ${currentMonthView}`);
                 this.setState({
                   currentMonthView: month.month,
                   currentYearView: month.year,
                   currentDate: month.dateString,
                 },
                 this.updateNotes);
-                // this.updateNotes();
               }}
               onDayPress={(day) => {
                 this.setState({ selectedDate: day.dateString });
