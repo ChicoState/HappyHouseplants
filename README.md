@@ -1,6 +1,6 @@
 The readme for HappyHouseplants
 
-[![Build Status](https://travis-ci.org/ChicoState/HappyHouseplants.svg?branch=main)](https://travis-ci.org/ChicoState/HappyHouseplants)
+[![Build Status](https://travis-ci.org/maklh899/HappyHouseplants.svg?branch=main)](https://travis-ci.org/maklh899/HappyHouseplants)
 
 # Getting Started
 ## Frameworks and tools:
