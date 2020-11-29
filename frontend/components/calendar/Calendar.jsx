@@ -69,8 +69,9 @@ class CalendarView extends React.Component {
       noteTag: 'water',
       tagColor: 'blue',
       customLabel: '',
-      currentMonthView: '11',
+      currentMonthView: String((todaysDate.getMonth() + 1)),
       currentYearView: '2020',
+      currentMonthNotes: [],
     };
     this.updateNotes = this.updateNotes.bind(this);
   }
@@ -111,19 +112,23 @@ class CalendarView extends React.Component {
   }
 
   updateNotes() {
+    const { currentMonthView, currentYearView } = this.state;
+    const currentNotes = [];
     getNotes().then((downloadedNotes) => {
-      // console.log(`Downloaded Notes: ${JSON.stringify(downloadedNotes)}`);
-      let currentNotes = {};
-      Object.keys(downloadedNotes).forEach((note) => {
-        const months = note.split('-');
-        console.log(`months[1]: ${months[1]}, this.currentMonthView: ${this.currentMonthView}`);
-        if (months[1] === 11) {
-          currentNotes = { currentNotes, note };
-          console.log(`currentNotes1: ${JSON.stringify(currentNotes)}`);
+      console.log(`downloadednotes: ${JSON.stringify(downloadedNotes)}`);
+      // eslint-disable-next-line no-restricted-syntax
+      for (const [date, note] of Object.entries(downloadedNotes)) {
+        // get the month out of the current date
+        const months = date.split('-');
+        console.log(`months[1]: ${months[1]}, this.currentMonthView: ${currentMonthView}`);
+        // if month in note date is the same as currently viewed month, display notes
+        if (months[1] === String(currentMonthView)) {
+          const temp = { [date]: note };
+          currentNotes.push(temp);
         }
-      });
-      console.log(`currentNotes2: ${JSON.stringify(currentNotes)}`);
-      this.setState({ notes: currentNotes });
+      }
+      console.log(`currentNotes: ${JSON.stringify(currentNotes)}`);
+      this.setState({ currentMonthNotes: currentNotes, notes: downloadedNotes });
     })
       .catch((error) => {
         Alert.alert(
@@ -140,19 +145,18 @@ class CalendarView extends React.Component {
   render() {
     const {
       notes, tempNote, selectedDate,
-      showInputView, toggleTheme, customLabel, currentMonthView,
-      currentYearView
+      showInputView, toggleTheme, customLabel, currentMonthNotes, currentMonthView,
     } = this.state;
     // For each property in notes (key is date, value is array of notes), create a ListItem
     const noteViews = [];
-    const dates = Object.keys(notes);
-    const notesPerDate = Object.values(notes);
-    for (let i = 0; i < notesPerDate.length; i += 1) {
-      const curDate = dates[i];
-      const notesOnThisDate = notesPerDate[i];
+    console.log(`currentMonthNotes: ${JSON.stringify(currentMonthNotes)}`);
+    Object.values(currentMonthNotes).forEach((dateNoteObject) => {
       let notesStr = '';
-      for (let j = 0; j < notesOnThisDate.length; j += 1) {
-        notesStr += `${notesOnThisDate[j].note}\n`;
+      let noteValuesPerDate = [];
+      const curDate = Object.keys(dateNoteObject);
+      noteValuesPerDate = Object.values(dateNoteObject).flat();
+      for (let i = 0; i < noteValuesPerDate.length; i += 1) {
+        notesStr += `${JSON.stringify(noteValuesPerDate[i].note)} \n`;
       }
       noteViews.push(
         <ListItem
@@ -162,7 +166,7 @@ class CalendarView extends React.Component {
           key={curDate}
         />,
       );
-    }
+    });
 
     if (showInputView) {
       const { noteTag } = this.state;
@@ -322,7 +326,11 @@ class CalendarView extends React.Component {
               minDate={firstDayOfYear}
               onMonthChange={(month) => {
                 console.log(`on month change ${JSON.stringify(month)}`);
-                this.setState({ currentMonthView: month.month, currentYearView: month.year });
+                console.log(`month: ${month.month}`);
+                console.log(`cmonth: ${currentMonthView}`);
+                this.setState({ currentMonthView: month.month, currentYearView: month.year },
+                  this.updateNotes);
+                // this.updateNotes();
               }}
               onDayPress={(day) => {
                 this.setState({ selectedDate: day.dateString });
