@@ -69,8 +69,8 @@ class CalendarView extends React.Component {
       noteTag: 'water',
       tagColor: 'blue',
       customLabel: '',
-      currentMonthView: String((todaysDate.getMonth() + 1)),
-      currentYearView: '2020',
+      currentMonthView: (todaysDate.getMonth() + 1),
+      currentYearView: todaysDate.getFullYear(),
       currentMonthNotes: [],
     };
     this.updateNotes = this.updateNotes.bind(this);
@@ -120,9 +120,13 @@ class CalendarView extends React.Component {
       for (const [date, note] of Object.entries(downloadedNotes)) {
         // get the month out of the current date
         const months = date.split('-');
+        console.log(`months[0]: ${months[0]}, this.currentYearView: ${currentYearView}`);
         console.log(`months[1]: ${months[1]}, this.currentMonthView: ${currentMonthView}`);
         // if month in note date is the same as currently viewed month, display notes
-        if (months[1] === String(currentMonthView)) {
+        console.log(currentYearView);
+        if (Number(months[1]) === Number(currentMonthView) 
+        && Number(months[0]) === Number(currentYearView)) {
+          console.log('TRUE')
           const temp = { [date]: note };
           currentNotes.push(temp);
         }
