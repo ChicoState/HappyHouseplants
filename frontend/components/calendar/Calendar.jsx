@@ -116,13 +116,15 @@ class CalendarView extends React.Component {
     const { currentMonthView, currentYearView } = this.state;
     const currentNotes = [];
     getNotes().then((downloadedNotes) => {
+      // TODO, sortNotes
+      // sortNotes(downloadedNotes);
       // eslint-disable-next-line no-restricted-syntax
       for (const [date, note] of Object.entries(downloadedNotes)) {
         // get the month out of the current date
-        const months = date.split('-');
+        const splitDate = date.split('-');
         // if month in note date is the same as currently viewed month, display notes
-        if (Number(months[1]) === Number(currentMonthView)
-        && Number(months[0]) === Number(currentYearView)) {
+        if (Number(splitDate[1]) === Number(currentMonthView)
+        && Number(splitDate[0]) === Number(currentYearView)) {
           const temp = { [date]: note };
           currentNotes.push(temp);
         }
