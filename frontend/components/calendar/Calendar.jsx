@@ -69,6 +69,7 @@ class CalendarView extends React.Component {
       noteTag: 'water',
       tagColor: 'blue',
       customLabel: '',
+      currentDate: todaysDate,
       currentMonthView: (todaysDate.getMonth() + 1),
       currentYearView: todaysDate.getFullYear(),
       currentMonthNotes: [],
@@ -150,6 +151,7 @@ class CalendarView extends React.Component {
     const {
       notes, tempNote, selectedDate,
       showInputView, toggleTheme, customLabel, currentMonthNotes, currentMonthView,
+      currentDate,
     } = this.state;
     // For each property in notes (key is date, value is array of notes), create a ListItem
     const noteViews = [];
@@ -326,14 +328,18 @@ class CalendarView extends React.Component {
               markedDates={
                 this.getCalendarMarkInfo(notes)
               }
-              current={todaysDate}
+              current={currentDate}
               minDate={firstDayOfYear}
               onMonthChange={(month) => {
                 console.log(`on month change ${JSON.stringify(month)}`);
                 console.log(`month: ${month.month}`);
                 console.log(`cmonth: ${currentMonthView}`);
-                this.setState({ currentMonthView: month.month, currentYearView: month.year },
-                  this.updateNotes);
+                this.setState({
+                  currentMonthView: month.month,
+                  currentYearView: month.year,
+                  currentDate: month.dateString,
+                },
+                this.updateNotes);
                 // this.updateNotes();
               }}
               onDayPress={(day) => {
