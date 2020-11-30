@@ -21,7 +21,7 @@ import Prompt from 'react-native-input-prompt';
 import { PropTypes } from 'prop-types';
 import { SERVER_ADDR } from '../server';
 
-const { authFetch } = require('../auth');
+const { authFetch } = require('../api/auth');
 
 class AddMyPlantDialog extends React.Component {
   constructor(props) {
