@@ -1,10 +1,15 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { Component } from 'react';
 import {
-  StyleSheet, View, Text, Linking,
+  StyleSheet, Linking,
 } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {
+  Button, Card, Icon, Layout, Text,
+} from '@ui-kitten/components';
 import PropTypes from 'prop-types';
 import { SERVER_ADDR } from '../../../server';
+
+//const colorTheme = require('../../Util/colorTheme.json');
 
 class FloatingTip extends Component {
   constructor() {
@@ -15,7 +20,7 @@ class FloatingTip extends Component {
     this.handlePress = this.handlePress.bind(this);
     this.styles = StyleSheet.create({
       background: {
-        backgroundColor: '#32a852',
+        //backgroundColor: colorTheme['color-primary-300'],
         width: '90%',
         marginLeft: '5%',
         marginRight: '5%',
@@ -25,17 +30,23 @@ class FloatingTip extends Component {
         marginBottom: '2.5%',
       },
       title: {
+        //backgroundColor: colorTheme['color-primary-300'],
         fontWeight: 'bold',
-        fontSize: 15,
+        // fontSize: 15,
         paddingLeft: 10,
         paddingRight: 10,
-        paddingTop: 10,
+        paddingTop: 5,
+        paddingBottom: 5,
         borderBottomColor: '#000000',
         borderBottomWidth: 1,
       },
+      main: {
+        //backgroundColor: colorTheme['color-primary-300'],
+        paddingTop: 1,
+      },
       message: {
-        fontSize: 12,
-        padding: 10,
+        fontSize: 15,
+        padding: 5,
       },
     });
   }
@@ -66,16 +77,38 @@ class FloatingTip extends Component {
   }
 
   render() {
-    const { visible, tipSubject, tipMessage } = this.state;
+    const {
+      visible,
+      tipID,
+      tipSubject,
+      tipMessage,
+    } = this.state;
+
+    const renderItemHeader = (headerProps, title) => (
+      // <Layout {...headerProps}>
+      <Layout>
+        <Text category="h5" style={this.styles.title}>
+          {title}
+        </Text>
+      </Layout>
+    );
+
     return (
       visible
       && (
-      <TouchableOpacity style={this.styles.background} onPress={this.handlePress}>
-        <View>
-          <Text style={this.styles.title}>{tipSubject}</Text>
-          <Text style={this.styles.message}>{tipMessage}</Text>
-        </View>
-      </TouchableOpacity>
+        <Layout>
+          <Card
+            key={tipID}
+            style={this.styles.background}
+            status="success"
+            header={(headerProps) => renderItemHeader(headerProps, tipSubject)}
+            onPress={this.handlePress}
+          >
+            {/* <Text style={this.styles.title}>{tipSubject}</Text> */}
+            {/* </Card><Layout style={this.styles.main}> */}
+            <Text style={this.styles.message}>{tipMessage}</Text>
+          </Card>
+        </Layout>
       )
     );
   }

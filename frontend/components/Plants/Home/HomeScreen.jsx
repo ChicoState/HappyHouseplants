@@ -26,7 +26,7 @@ function HomeScreen(obj) {
       </LoginContext.Consumer>
       {tabView}
       <Text />
-      <Button status="primary" onPress={() => { navigation.navigate('My Plants'); }}>
+      {/* <Button status="primary" onPress={() => { navigation.navigate('My Plants'); }}>
         Go to My Plants
       </Button>
       <Text />
@@ -44,7 +44,7 @@ function HomeScreen(obj) {
       <Text />
       <Button status="primary" onPress={() => { navigation.navigate('Search'); }}>
         Go to Search
-      </Button>
+      </Button> */}
       <AccountButtons
         onRequestLogin={() => { navigation.navigate('Login'); }}
         onRequestRegister={() => { navigation.navigate('Register'); }}
