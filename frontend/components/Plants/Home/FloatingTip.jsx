@@ -37,7 +37,7 @@ class FloatingTip extends Component {
         paddingBottom: 5,
       },
       line: {
-        borderBottomColor: '#000000',
+        borderBottomColor: colorTheme['color-primary-500'],
         borderBottomWidth: 1,
       },
       message: {
