@@ -19,7 +19,6 @@
     "dotenv": "^8.2.0",
     "expo": "~39.0.2",
     "expo-camera": "~9.0.0",
-    "expo-image-picker": "^9.1.1",
     "expo-splash-screen": "~0.6.0",
     "expo-status-bar": "~1.0.2",
     "expo-updates": "~0.3.2",
@@ -40,7 +39,10 @@
     "react-native-screens": "~2.10.1",
     "react-native-svg": "12.1.0",
     "react-native-unimodules": "~0.11.0",
-    "react-native-web": "~0.13.12"
+    "react-native-web": "~0.13.12",
+    "expo-image-picker": "~9.1.0",
+    "expo-permissions": "~9.3.0",
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
