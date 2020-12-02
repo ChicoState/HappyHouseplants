@@ -9,7 +9,7 @@ import {
 import PropTypes from 'prop-types';
 import { getTip } from '../../../api/tips';
 
-//const colorTheme = require('../../Util/colorTheme.json');
+const colorTheme = require('../../Util/colorTheme.json');
 
 class FloatingTip extends Component {
   constructor() {
@@ -20,7 +20,6 @@ class FloatingTip extends Component {
     this.handlePress = this.handlePress.bind(this);
     this.styles = StyleSheet.create({
       background: {
-        //backgroundColor: colorTheme['color-primary-300'],
         width: '90%',
         marginLeft: '5%',
         marginRight: '5%',
@@ -30,23 +29,20 @@ class FloatingTip extends Component {
         marginBottom: '2.5%',
       },
       title: {
-        //backgroundColor: colorTheme['color-primary-300'],
+        backgroundColor: colorTheme['color-primary-transparent-400'],
         fontWeight: 'bold',
-        // fontSize: 15,
         paddingLeft: 10,
         paddingRight: 10,
         paddingTop: 5,
         paddingBottom: 5,
+      },
+      line: {
         borderBottomColor: '#000000',
         borderBottomWidth: 1,
       },
-      main: {
-        //backgroundColor: colorTheme['color-primary-300'],
-        paddingTop: 1,
-      },
       message: {
-        fontSize: 15,
-        padding: 5,
+        fontSize: 16,
+        paddingTop: 1,
       },
     });
   }
@@ -85,7 +81,8 @@ class FloatingTip extends Component {
 
     const renderItemHeader = (headerProps, title) => (
       // <Layout {...headerProps}>
-      <Layout>
+      <Layout style={this.styles.line}>
+        {/* <Text category="h5" style={this.styles.title}> */}
         <Text category="h5" style={this.styles.title}>
           {title}
         </Text>
@@ -103,8 +100,6 @@ class FloatingTip extends Component {
             header={(headerProps) => renderItemHeader(headerProps, tipSubject)}
             onPress={this.handlePress}
           >
-            {/* <Text style={this.styles.title}>{tipSubject}</Text> */}
-            {/* </Card><Layout style={this.styles.main}> */}
             <Text style={this.styles.message}>{tipMessage}</Text>
           </Card>
         </Layout>
