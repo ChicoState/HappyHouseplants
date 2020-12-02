@@ -1,6 +1,7 @@
 The readme for HappyHouseplants
 
 ![Build Status](https://github.com/ChicoState/HappyHouseplants/workflows/Build/badge.svg)
+![Test Status](https://github.com/ChicoState/HappyHouseplants/workflows/Tests/badge.svg)
 
 # Getting Started
 ## Frameworks and tools:
