@@ -4,7 +4,7 @@ import {
   StyleSheet, Linking,
 } from 'react-native';
 import {
-  Button, Card, Icon, Layout, Text,
+  Card, Layout, Text,
 } from '@ui-kitten/components';
 import PropTypes from 'prop-types';
 import { getTip } from '../../../api/tips';
