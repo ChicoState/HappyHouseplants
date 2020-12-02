@@ -12,7 +12,6 @@ import {
 import { Icon } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Picker } from '@react-native-picker/picker';
-import { SERVER_ADDR } from '../../server';
 
 const {
   getCalendarTheme,
@@ -22,36 +21,15 @@ const {
 } = require('./CalendarTheme');
 
 const colorTheme = require('../Util/colorTheme.json');
-const { authFetch } = require('../../auth');
+const {
+  getCalendarNotes,
+  addCalendarNote,
+} = require('../../api/calendar');
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
-
-/* Saves a single note to the server.
- * @param { when } The Calendar-formatted string of the date. Example: 2020-10-29 (Oct 29, 2020).
- * @param { text } The text of the note to store.
- * @return { Promise } A Promise that resolves to nothing when the note is successfully saved. */
-function saveNote(when, text, color) {
-  return authFetch(`${SERVER_ADDR}/mycalendar/notes`, 'POST', { [when]: { note: text, dots: color } });
-}
-
-/* Gets a dictionary-form object of all notes that are stored
- * on the server for the current user.
- * @return { Promise } A Promise that resolves to a dictionary-form object
- * with all notes for the user. The keys are the Calendar-form dates associated
- * with each note, and the values are string arrays of each note per day.
- * For example:
- * {
- *   '2020-10-28': ['My first ever note on Oct 28, 2020'],
- *   '2020-10-29': ['My note on Oct 29, 2020', 'My second note on this day'],
- * } */
-function getNotes() {
-  return new Promise((resolve) => {
-    authFetch(`${SERVER_ADDR}/mycalendar/notes`)
-      .then((data) => {
-        resolve(data);
-      });
-  });
-}
+// TODO: add getMyLabels for custom label select, and update labels
+// TODO add getMyDotColors() fetch
+const todaysDate = new Date();
 
 class CalendarView extends React.Component {
   constructor() {
@@ -65,22 +43,12 @@ class CalendarView extends React.Component {
       noteTag: 'water',
       tagColor: 'blue',
       customLabel: '',
-      currentMonthView: new Date(),
+      currentDate: todaysDate,
+      currentMonthView: (todaysDate.getMonth() + 1),
+      currentYearView: todaysDate.getFullYear(),
+      currentMonthNotes: [],
     };
-
-    this.updateNotes = () => {
-      getNotes().then((downloadedNotes) => { this.setState({ notes: downloadedNotes }); })
-        .catch((error) => {
-          Alert.alert(
-            'Network Error',
-            'An error occured while trying to fetch calendar notes',
-            [
-              { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ],
-          );
-          console.error(`Error while fetching calendar notes: ${error}`);
-        });
-    };
+    this.updateNotes = this.updateNotes.bind(this);
   }
 
   componentDidMount() {
@@ -118,20 +86,52 @@ class CalendarView extends React.Component {
     return ret;
   }
 
+  updateNotes() {
+    const { currentMonthView, currentYearView } = this.state;
+    const currentNotes = [];
+    getCalendarNotes().then((downloadedNotes) => {
+      // TODO, sortNotes
+      // sortNotes(downloadedNotes);
+      // eslint-disable-next-line no-restricted-syntax
+      for (const [date, note] of Object.entries(downloadedNotes)) {
+        // get the month out of the current date
+        const splitDate = date.split('-');
+        // if month in note date is the same as currently viewed month, display notes
+        if (Number(splitDate[1]) === Number(currentMonthView)
+        && Number(splitDate[0]) === Number(currentYearView)) {
+          const temp = { [date]: note };
+          currentNotes.push(temp);
+        }
+      }
+      this.setState({ currentMonthNotes: currentNotes, notes: downloadedNotes });
+    })
+      .catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'An error occured while trying to fetch calendar notes',
+          [
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ],
+        );
+        console.error(`Error while fetching calendar notes: ${error}`);
+      });
+  }
+
   render() {
     const {
-      notes, tempNote, selectedDate, showInputView, toggleTheme, customLabel, currentMonthView,
+      notes, tempNote, selectedDate,
+      showInputView, toggleTheme, customLabel, currentMonthNotes,
+      currentDate,
     } = this.state;
     // For each property in notes (key is date, value is array of notes), create a ListItem
     const noteViews = [];
-    const dates = Object.keys(notes);
-    const notesPerDate = Object.values(notes);
-    for (let i = 0; i < notesPerDate.length; i += 1) {
-      const curDate = dates[i];
-      const notesOnThisDate = notesPerDate[i];
+    Object.values(currentMonthNotes).forEach((dateNoteObject) => {
       let notesStr = '';
-      for (let j = 0; j < notesOnThisDate.length; j += 1) {
-        notesStr += `${notesOnThisDate[j].note}\n`;
+      let noteValuesPerDate = [];
+      const curDate = Object.keys(dateNoteObject);
+      noteValuesPerDate = Object.values(dateNoteObject).flat();
+      for (let i = 0; i < noteValuesPerDate.length; i += 1) {
+        notesStr += `${JSON.stringify(noteValuesPerDate[i].note)} \n`;
       }
       noteViews.push(
         <ListItem
@@ -141,7 +141,7 @@ class CalendarView extends React.Component {
           key={curDate}
         />,
       );
-    }
+    });
 
     if (showInputView) {
       const { noteTag } = this.state;
@@ -238,7 +238,7 @@ class CalendarView extends React.Component {
               status="primary"
               onPress={() => {
                 if (tempNote !== '') {
-                  saveNote(selectedDate, tempNote, tagColor).then(() => {
+                  addCalendarNote(selectedDate, tempNote, tagColor).then(() => {
                     this.setState({ tagColor, showInputView: false });
                     this.updateNotes();
                   }).catch((error) => {
@@ -281,7 +281,6 @@ class CalendarView extends React.Component {
             thumbColor={toggleTheme ? colorTheme['color-dark-background-400'] : colorTheme['color-primary-600']}
             value={toggleTheme}
             onValueChange={(value) => {
-              console.log(`Toggle theme: ${value}`);
               this.setState({ toggleTheme: value });
             }}
           />
@@ -297,10 +296,15 @@ class CalendarView extends React.Component {
               markedDates={
                 this.getCalendarMarkInfo(notes)
               }
-              current={currentMonthView}
+              current={currentDate}
               minDate={firstDayOfYear}
               onMonthChange={(month) => {
-                this.setState({ currentMonthView: month });
+                this.setState({
+                  currentMonthView: month.month,
+                  currentYearView: month.year,
+                  currentDate: month.dateString,
+                },
+                this.updateNotes);
               }}
               onDayPress={(day) => {
                 this.setState({ selectedDate: day.dateString });

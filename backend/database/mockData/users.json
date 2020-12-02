@@ -1,7 +1,7 @@
 [
   {
     "savedTipsByID" : [ ],
-    "savedPlantsByID" : [ ],
+    "favoritePlants" : [ ],
     "userId" : "aleggett",
     "username" : "ALeggett",
     "password" : "$2b$12$Q9CJtawj9KFmffuWSFXHIONIbYJ1GaeAwnLHIze6fBtWNJT7QWczy",
@@ -11,7 +11,7 @@
   },
   {
     "savedTipsByID" : [ ],
-    "savedPlantsByID" : [ ],
+    "favoritePlants" : [ ],
     "userId" : "neodusk",
     "username" : "Neodusk",
     "password" : "$2b$12$ZEA7EUWfC.rvW5cn8/MCYuRQ19CV2pOGaqpTqCbI2JQtJMMGdaD7m",
@@ -21,7 +21,7 @@
   },
   {
     "savedTipsByID" : [ ],
-    "savedPlantsByID" : [ ],
+    "favoritePlants" : [ ],
     "userId" : "sick",
     "username" : "Sick",
     "password" : "$2b$12$EB0pk/l.0kbfi8XzDe3AXeIU4Hp6K6snV/aL/U5shBrgriVpaQ6Ju",
@@ -31,7 +31,7 @@
   },
   {
     "savedTipsByID" : [ ],
-    "savedPlantsByID" : [ ],
+    "favoritePlants" : [ ],
     "userId" : "wakeua",
     "username" : "wakeua",
     "password" : "$2b$12$OWFbkoPA69xr32sEZa3t2.y37G9OEJ3dVIfR1zevRteg8J5bTeGqa",
@@ -41,7 +41,7 @@
   },
   {
     "savedTipsByID" : [ ],
-    "savedPlantsByID" : [ ],
+    "favoritePlants" : [ ],
     "userId" : "myothra7777",
     "username" : "Myothra7777",
     "password" : "$2b$12$OWFbkoPA69xr32sEZa3t2.y37G9OEJ3dVIfR1zevRteg8J5bTeGqa",

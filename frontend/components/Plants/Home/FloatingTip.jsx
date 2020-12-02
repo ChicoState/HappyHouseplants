@@ -7,7 +7,7 @@ import {
   Button, Card, Icon, Layout, Text,
 } from '@ui-kitten/components';
 import PropTypes from 'prop-types';
-import { SERVER_ADDR } from '../../../server';
+import { getTip } from '../../../api/tips';
 
 //const colorTheme = require('../../Util/colorTheme.json');
 
@@ -54,8 +54,7 @@ class FloatingTip extends Component {
   componentDidMount() {
     const floatThis = this;
     const { tipID } = this.props;
-    fetch(`${SERVER_ADDR}/tips/${tipID}`)
-      .then((response) => response.json())
+    getTip(tipID)
       .then((data) => {
         floatThis.setState({
           visible: true,

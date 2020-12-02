@@ -1,8 +1,8 @@
 [
   {
     "plantID": "1",
-    "plantName": "Chinese Evergreen",
-    "plantSummary": "Chinese evergreens are popular indoor ornamental plants because they are easy to maintain.",
+    "name": "Chinese Evergreen",
+    "summary": "Chinese evergreens are popular indoor ornamental plants because they are easy to maintain.",
     "maintenance": {
       "level": 1,
       "comment": "These plants don't need much maintenance, just re-pot every two to three years."
@@ -46,8 +46,8 @@
   },
   {
     "plantID": "2",
-    "plantName": "Jade Plant",
-    "plantSummary": null,
+    "name": "Jade Plant",
+    "summary": null,
     "maintenance": {
       "level": 1,
       "comment": null
@@ -91,8 +91,8 @@
   },
   {
     "plantID": "3",
-    "plantName": "Zanzibar Gem",
-    "plantSummary": "Characterized by their shiny, oval-shaped deep green leaves, ZZ plants make excellent additions to any home or office.",
+    "name": "Zanzibar Gem",
+    "summary": "Characterized by their shiny, oval-shaped deep green leaves, ZZ plants make excellent additions to any home or office.",
     "maintenance": {
       "level": 1,
       "comment": "ZZ plants are notorious for being low-maintenance, easy-to-care-for houseplants that even gardeners with the blackest of thumbs can keep alive."
@@ -136,8 +136,8 @@
   },
   {
     "plantID": "4",
-    "plantName": "Aloe Vera",
-    "plantSummary": "Renowned for a medicinal ability to heal wounds, they are tough plants that can withstand many different environments",
+    "name": "Aloe Vera",
+    "summary": "Renowned for a medicinal ability to heal wounds, they are tough plants that can withstand many different environments",
     "maintenance": {
       "level": 1,
       "comment": "Aloe Vera is very low maintence, simply leave your plant in direct sunlight, water it every now and then and you’ll have one healthy aloe vera!"

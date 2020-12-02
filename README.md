@@ -1,13 +1,14 @@
 The readme for HappyHouseplants
 
-[![Build Status](https://travis-ci.org/maklh899/HappyHouseplants.svg?branch=main)](https://travis-ci.org/maklh899/HappyHouseplants)
+![Build Status](https://github.com/ChicoState/HappyHouseplants/workflows/Build/badge.svg)
+![Test Status](https://github.com/ChicoState/HappyHouseplants/workflows/Tests/badge.svg)
 
 # Getting Started
 ## Frameworks and tools:
 - React-Native
 - Node.js
 - ESLint - AirBnB Styleguide
-- Travis-CI
+- GitHub Actions
 
 
 # Contributions

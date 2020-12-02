@@ -3,18 +3,19 @@
 import React from 'react';
 import {
   Alert,
-  Image,
   ViewPropTypes,
   View,
 } from 'react-native';
 import { PropTypes } from 'prop-types';
 import {
-  Button, Card, Icon, Layout, Text,
+  Button, Card, Icon, Layout, Spinner, Text,
 } from '@ui-kitten/components';
+import * as ImagePicker from 'expo-image-picker';
 import AddMyPlantDialog from './AddMyPlantDialog';
-import { SERVER_ADDR } from '../../server';
+import PlantImage from './PlantImage';
 
-const { authFetch } = require('../../auth');
+const { getMyPlants, updateMyPlant, removeFromMyPlants } = require('../../api/myplants');
+const { isFavorite, addToFavorites, removeFromFavorites } = require('../../api/favoritePlants');
 
 class CardItem extends React.Component {
   constructor(props) {
@@ -35,30 +36,32 @@ class CardItem extends React.Component {
     }
 
     this.state = {
-      saved: undefined,
+      favorited: undefined,
       owned: undefined,
       showAddDialog: false,
+      imageRefreshCounter: 0,
+      imageUploading: false,
     };
 
     this.startChangePicture = this.startChangePicture.bind(this);
     this.toggleOwned = this.toggleOwned.bind(this);
-    this.toggleSaveEntry = this.toggleSaveEntry.bind(this);
+    this.toggleFavorited = this.toggleFavorited.bind(this);
   }
 
   componentDidMount() {
     const { plant } = this.props;
     const itemThis = this;
-    authFetch(`${SERVER_ADDR}/savedplants`)
-      .then((savedPlantIDs) => {
-        itemThis.setState({ saved: savedPlantIDs.find((cur) => cur.plantID === plant.plantID) });
+    isFavorite(plant.plantID)
+      .then((isFavResult) => {
+        itemThis.setState({ favorited: isFavResult });
       }).catch((error) => {
-        console.error(`Failed to determine save status of plant ID ${plant.plantID} due to an error: ${error}.`);
+        console.error(`Failed to determine favorite status of plant ID ${plant.plantID} due to an error: ${error}.`);
       });
 
-    authFetch(`${SERVER_ADDR}/myplants`)
-      .then((myPlantIDs) => {
+    getMyPlants()
+      .then((myPlants) => {
         itemThis.setState({
-          owned: myPlantIDs.filter((cur) => cur.plantID === plant.plantID).length,
+          owned: myPlants.filter((cur) => cur.plantID === plant.plantID).length,
         });
       }).catch((error) => {
         console.error(`Failed to determine ownership status of plant ID ${plant.plantID} due to an error: ${error}.`);
@@ -67,79 +70,111 @@ class CardItem extends React.Component {
 
   startChangePicture() {
     const { plant } = this.props;
-    // TODO: Implement
-    console.log(`Changing the picture for plant ID ${plant.plantID}...`);
+    const { imageRefreshCounter } = this.state;
+    ImagePicker.requestCameraPermissionsAsync().then((permissionResult) => {
+      if (permissionResult.status !== 'granted') {
+        Alert.alert('Sorry, you need to grant permissions before capturing a custom picture.');
+      } else {
+        ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          quality: 1,
+          base64: true,
+        }).then((imageResult) => {
+          if (!imageResult.cancelled) {
+            this.setState({ imageUploading: true });
+            updateMyPlant(plant.instanceID, { image: { base64: imageResult.base64 } })
+              .then(() => {
+                this.setState({
+                  imageUploading: false,
+                  imageRefreshCounter: imageRefreshCounter + 1,
+                });
+              }).catch((error) => {
+                Alert.alert(
+                  'Error',
+                  'Failed to change this plant\'s picture.',
+                  [
+                    { text: 'OK' },
+                  ],
+                );
+                console.error(`Failed to add a plant due to an error: ${error}`);
+                this.setState({ imageUploading: false });
+              });
+          }
+        }).catch((error) => {
+          console.error(`Failed to select image from camera due to error: ${error}`);
+          this.setState({ imageUploading: false });
+        });
+      }
+    }).catch((error) => {
+      console.error(`Failed to request permissions for camera due to error: ${error}`);
+      this.setState({ imageUploading: false });
+    });
   }
 
-  toggleSaveEntry() {
-    const { saved } = this.state;
+  toggleFavorited() {
+    const { favorited } = this.state;
     const { plant, onRemoveFromFavorites } = this.props;
-    if (!saved) {
-      authFetch(`${SERVER_ADDR}/savedplants`, 'POST', {
-        plantID: plant.plantID,
-        plantName: plant.plantName,
-        image: plant.image,
-      }).then(() => {
-        this.setState({
-          saved: true,
+    if (!favorited) {
+      addToFavorites(plant)
+        .then(() => {
+          this.setState({
+            favorited: true,
+          });
+        }).catch((error) => {
+          Alert.alert(
+            'Network Error',
+            'Failed to favorite this plant',
+            [
+              { text: 'OK' },
+            ],
+          );
+          console.error(`Failed to favorite a plant due to an error: ${error}`);
         });
-      }).catch((error) => {
-        Alert.alert(
-          'Network Error',
-          'Failed to save this plant',
-          [
-            { text: 'OK' },
-          ],
-        );
-        console.error(`Failed to save a plant due to an error: ${error}`);
-      });
     } else {
-      authFetch(`${SERVER_ADDR}/savedplants`, 'DELETE', {
-        plantID: plant.plantID,
-      }).then(() => {
-        this.setState({
-          saved: false,
+      removeFromFavorites()
+        .then(() => {
+          this.setState({
+            favorited: false,
+          });
+          if (onRemoveFromFavorites) {
+            onRemoveFromFavorites(plant);
+          }
+        }).catch((error) => {
+          Alert.alert(
+            'Network Error',
+            'Failed to remove this plant',
+            [
+              { text: 'OK' },
+            ],
+          );
+          console.error(`Failed to remove a plant from favorites due to an error: ${error}`);
         });
-        if (onRemoveFromFavorites) {
-          onRemoveFromFavorites(plant);
-        }
-      }).catch((error) => {
-        Alert.alert(
-          'Network Error',
-          'Failed to remove this plant',
-          [
-            { text: 'OK' },
-          ],
-        );
-        console.error(`Failed to remove a plant due to an error: ${error}`);
-      });
     }
   }
 
   toggleOwned() {
     const { owned } = this.state;
     const { plant, onRemoveFromOwned } = this.props;
-    const idProp = '_id';
     if (!owned || onRemoveFromOwned === undefined) {
       this.setState({ showAddDialog: true });
     } else {
-      authFetch(`${SERVER_ADDR}/myplants`, 'DELETE', {
-        [idProp]: plant[idProp],
-      }).then(() => {
-        this.setState({
-          owned: owned - 1,
+      removeFromMyPlants(plant.instanceID)
+        .then(() => {
+          this.setState({
+            owned: owned - 1,
+          });
+          onRemoveFromOwned(plant);
+        }).catch((error) => {
+          Alert.alert(
+            'Network Error',
+            'Failed to remove this plant',
+            [
+              { text: 'OK' },
+            ],
+          );
+          console.error(`Failed to remove a plant due to an error: ${error}`);
         });
-        onRemoveFromOwned(plant);
-      }).catch((error) => {
-        Alert.alert(
-          'Network Error',
-          'Failed to remove this plant',
-          [
-            { text: 'OK' },
-          ],
-        );
-        console.error(`Failed to remove a plant due to an error: ${error}`);
-      });
     }
   }
 
@@ -151,10 +186,16 @@ class CardItem extends React.Component {
       allowChangePicture,
       onRemoveFromOwned,
     } = this.props;
-    const { saved, owned, showAddDialog } = this.state;
+    const {
+      favorited,
+      owned,
+      showAddDialog,
+      imageUploading,
+      imageRefreshCounter,
+    } = this.state;
 
     const saveIcon = (info) => (
-      <Icon {...info} name={saved ? 'heart' : 'heart-outline'} />
+      <Icon {...info} name={favorited ? 'heart' : 'heart-outline'} />
     );
 
     const collectionIcon = (info) => (
@@ -191,9 +232,9 @@ class CardItem extends React.Component {
         <Button
           style={styles.button}
           status="primary"
-          appearance={saved ? 'filled' : 'outline'}
+          appearance={favorited ? 'filled' : 'outline'}
           accessoryLeft={saveIcon}
-          onPress={this.toggleSaveEntry}
+          onPress={this.toggleFavorited}
         />
         <Button
           style={styles.button}
@@ -211,7 +252,7 @@ class CardItem extends React.Component {
         <AddMyPlantDialog
           visible={showAddDialog}
           plant={plant}
-          plantName={plant.plantName}
+          name={plant.name}
           plantID={plant.plantID}
           onSubmit={() => this.setState({ showAddDialog: false })}
           onCancel={() => this.setState({ showAddDialog: false })}
@@ -220,14 +261,20 @@ class CardItem extends React.Component {
           key={plant.plantID}
           style={styles.card}
           status="success"
-          header={(headerProps) => renderItemHeader(headerProps, plant.plantName)}
+          header={(headerProps) => renderItemHeader(headerProps, plant.name)}
           footer={renderItemFooter}
           onPress={() => { onPressItem(plant); }}
         >
-          <Image
-            source={{ uri: plant.image.sourceURL }}
-            style={styles.image}
-          />
+          {imageUploading
+            ? (<Spinner />)
+            : (
+              <PlantImage
+                sourceURL={plant.image.sourceURL}
+                authenticationRequired={plant.image.authenticationRequired}
+                style={styles.image}
+                imageRefreshCounter={imageRefreshCounter}
+              />
+            )}
         </Card>
       </View>
     );

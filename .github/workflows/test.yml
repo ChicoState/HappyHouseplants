@@ -1,0 +1,53 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Tests
+
+on:
+  push:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: NPM Setup Root
+      run: npm ci
+
+    - name: NPM Setup Frontend
+      run: |
+        cd ./frontend
+        npm ci
+
+    - name: NPM Setup Backend
+      run: |
+        cd ./backend
+        echo "CONNECT_URL=mongodb://localhost:27017/" >> .env
+        echo "CONTAINER_URL=mongodb://happyplant-db:27017/" >> .env
+        echo "DB_NAME=happyplants" >> .env
+        echo "DB_USER=happystorage" >> .env
+        echo "DB_PASSWORD=ActionsPass" >> .env
+        npm ci
+
+    - name: Run Tests
+      run: |
+        cd ./backend
+        docker-compose build
+        docker-compose up -d
+        sleep 10
+        cd ..
+        npm run test

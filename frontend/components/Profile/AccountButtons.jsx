@@ -5,7 +5,7 @@ import {
 import PropTypes from 'prop-types';
 import 'react-native-gesture-handler';
 
-const { LoginContext } = require('../../auth');
+const { LoginContext, logout } = require('./auth-react');
 
 function AccountButtons(props) {
   const { onRequestLogin, onRequestRegister } = props;
@@ -23,7 +23,7 @@ function AccountButtons(props) {
 
         return (
           <Layout>
-            <Button onPress={() => { loginState.onLogout(); }}>
+            <Button onPress={() => { logout(); }}>
               Logout
             </Button>
           </Layout>
