@@ -29,7 +29,10 @@ const userSchema = new mongoose.Schema({
     },
   ],
   calendarNotes: mongoose.Schema.Types.Mixed,
-  customLabels: Array,
+  customLabels: [{
+    text: String,
+    color: String,
+  }],
 });
 
 const USERS = mongoose.model('Users', userSchema);
