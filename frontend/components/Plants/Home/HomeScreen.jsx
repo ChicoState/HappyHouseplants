@@ -24,7 +24,7 @@ function HomeScreen(obj) {
   const [currentTab, setCurrentTab] = React.useState('Recommendations');
 
   return (
-    <Layout style={{ flex: 1 }}>
+    <Layout style={{ flex: 1, marginTop: 25 }}>
       <LoginContext.Consumer>
         {(loginState) => {
           if (!loginState.loginInfo) {
