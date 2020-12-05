@@ -40,7 +40,8 @@ function getCalendarLabels() {
 
 /**
  * Adds a custom label for Calendar events.
- * @param { string } text The user-defined label text.
+ * @param { string } text The user-defined label text. If there is already a
+ *        label with the same text, it will be updated.
  * @param { string } color The color of the dot on the Calendar GUI that will
  *        represent this label.
  * @returns { Promise } A Promise that resolves when the label was successfully
