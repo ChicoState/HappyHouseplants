@@ -30,8 +30,39 @@ function removeCalendarNote(when, noteObj) {
   return authFetch(`${SERVER_ADDR}/mycalendar/notes`, 'DELETE', { [when]: noteObj });
 }
 
+/**
+ * Gets all custom user-defined labels for Calendar events.
+ * @returns { Promise } A Promise that resolves to an array of objects, each with
+ * a `text` and a `color` property. */
+function getCalendarLabels() {
+  return authFetch(`${SERVER_ADDR}/mycalendar/labels`, 'GET');
+}
+
+/**
+ * Adds a custom label for Calendar events.
+ * @param { string } text The user-defined label text.
+ * @param { string } color The color of the dot on the Calendar GUI that will
+ *        represent this label.
+ * @returns { Promise } A Promise that resolves when the label was successfully
+ * added or updated. */
+function addCalendarLabel(text, color) {
+  return authFetch(`${SERVER_ADDR}/mycalendar/labels`, 'PUT', { text, color });
+}
+
+/**
+ * Removes a custom Calendar label.
+ * @param { string } text The text of the label to remove.
+ * @returns { Promise } A Promise that resolves to `true` if the label was found and
+ *          removed. `False` indicates that the label was not found. */
+function removeCalendarLabel(text) {
+  return authFetch(`${SERVER_ADDR}/mycalendar/labels`, 'DELETE', { text });
+}
+
 module.exports = {
   getCalendarNotes,
   addCalendarNote,
   removeCalendarNote,
+  getCalendarLabels,
+  addCalendarLabel,
+  removeCalendarLabel,
 };
