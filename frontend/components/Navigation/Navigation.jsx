@@ -15,6 +15,8 @@ import LoginScreen from '../Profile/LoginScreen';
 import RegisterScreen from '../Profile/RegisterScreen';
 import BottomNavi from './BottomNavi';
 
+const { LoginContext } = require('../Profile/auth-react');
+
 const navigationRef = React.createRef();
 const Stack = createStackNavigator();
 
@@ -146,11 +148,24 @@ function Navigation() {
           screens.map((screen) => (<Stack.Screen {...screen} key={screen.name} />))
         }
       </Stack.Navigator>
-      <BottomNavi
-        screens={screens}
-        onRequestNavigate={(routeName) => navigationRef.current.navigate(routeName)}
-        selectedIndex={tabIndex}
-      />
+      <LoginContext.Consumer>
+        {
+          (loginState) => {
+            if (loginState.loginInfo) {
+              // Only show BottomNavi when logged in
+              return (
+                <BottomNavi
+                  screens={screens}
+                  onRequestNavigate={(routeName) => navigationRef.current.navigate(routeName)}
+                  selectedIndex={tabIndex}
+                />
+              );
+            }
+
+            return undefined;
+          }
+        }
+      </LoginContext.Consumer>
     </NavigationContainer>
   );
 }
