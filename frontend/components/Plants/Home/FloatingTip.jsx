@@ -80,9 +80,7 @@ class FloatingTip extends Component {
     } = this.state;
 
     const renderItemHeader = (headerProps, title) => (
-      // <Layout {...headerProps}>
       <Layout style={this.styles.line}>
-        {/* <Text category="h5" style={this.styles.title}> */}
         <Text category="h5" style={this.styles.title}>
           {title}
         </Text>
