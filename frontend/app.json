@@ -1,6 +1,11 @@
 {
   "android": {
     "package": "com.houseplants"
+  },
+  "expo": {
+    "android": {
+      "useNextNotificationsApi": true
+    }
   }
 }
 

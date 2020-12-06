@@ -48,7 +48,7 @@ class SplashScreen extends React.Component {
           [
             {
               text: 'Retry',
-              onPress: () => { this.tryAutoLogin.tryAutoLogin(); },
+              onPress: () => { this.tryAutoLogin(); },
             },
             {
               text: 'Cancel',

@@ -4,7 +4,9 @@ import PropTypes from 'prop-types';
 import {
   Button, View, Text, Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const { registerForPushNotificationsAsync } = require('../../Notifications');
 const { login } = require('./auth-react');
 
 class LoginView extends React.Component {
@@ -22,21 +24,34 @@ class LoginView extends React.Component {
   startLogin() {
     const { username, password } = this.state;
     const { onLogin } = this.props;
-    login(username, password).then((status) => {
-      if (status.success) {
-        onLogin();
-      } else {
-        this.setState({ errorMessage: status.userMessage });
+    const storeData = async (key, token) => {
+      try {
+        const jsonValue = JSON.stringify(token);
+        await AsyncStorage.setItem(key, jsonValue);
+        console.log('Key set');
+      } catch (error) {
+        console.log(`Error: ${error}`);
       }
-    }).catch((error) => {
-      Alert.alert(
-        'Network Error',
-        'Failed to connect to the server.',
-        [
-          { text: 'OK' },
-        ],
-      );
-      console.error(`Failed to login due to an error: ${error}`);
+    };
+    registerForPushNotificationsAsync().then((token) => {
+      console.log(`storing token: ${token}`);
+      storeData('@storage_Key', token);
+      login(username, password, token).then((status) => {
+        if (status.success) {
+          onLogin();
+        } else {
+          this.setState({ errorMessage: status.userMessage });
+        }
+      }).catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'Failed to connect to the server.',
+          [
+            { text: 'OK' },
+          ],
+        );
+        console.error(`Failed to login due to an error: ${error}`);
+      });
     });
   }
 

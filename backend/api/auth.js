@@ -4,6 +4,28 @@ const { SESSIONS } = require('../database/models/sessions');
 const { USERS } = require('../database/models/users');
 const { findDocuments, findOneDocument } = require('../database/findDocuments');
 
+/**
+ * Updates the state of a `User` document.
+ * @param {string} userId The userId of the `User` document to update.
+ * @param {*} state The new state of the `User` document.
+ * @returns {Promise} A Promise that resolves when the state has been saved.
+ */
+function updateUserDocument(userId, state) {
+  return new Promise((resolved, rejected) => {
+    if (!userId) {
+      rejected(Error('Invalid userId'));
+    } else {
+      const query = { userId };
+      USERS.updateOne(query, state).then(() => {
+        resolved();
+      }).catch((saveError) => {
+        console.error(`Failed to update the User document for ${userId} due to an error: ${saveError}`);
+        rejected(saveError);
+      });
+    }
+  });
+}
+
 const SALT_ROUNDS = 12;
 
 /** Updates the `lastLogin` property of a Session.
@@ -28,7 +50,7 @@ function keepaliveSession(session) {
  * @param { string } userId The ID of the user account for which to create the session.
  * @returns { Promise } A Promise that resolves to the session's authentication token,
  * which the user will need for future session logins. */
-function createSession(userId) {
+function createSession(userId, expoToken) {
   return new Promise((complete) => {
     const now = new Date();
     const crngToken = cryptoRandomHex(32);
@@ -37,6 +59,7 @@ function createSession(userId) {
       userId,
       creationDate: now,
       lastLoginDate: now,
+      expoToken,
     };
     SESSIONS.insertMany(session).then(() => {
       complete(session.authToken);
@@ -57,7 +80,7 @@ function createSession(userId) {
  * The Promise will resolve even if an incorrect password was supplied, so check the resolved
  * object's 'success' property to verify that login was successful.
  * The Promise will only be rejected due to server errors. */
-function login(username, password) {
+function login(username, password, expoPushToken) {
   return new Promise((complete, serverError) => {
     findDocuments('Users', { userId: username.toLowerCase() }).then((docs) => {
       if (docs.length === 0) {
@@ -68,9 +91,14 @@ function login(username, password) {
           if (passResult) {
             // The password was correct, so create a session
             createSession(user.userId).then((sessionAuthToken) => {
-              // Login successful
-              console.log(`User ID ${user.userId} has logged in.`);
-              complete({ success: true, userMessage: null, sessionAuthToken });
+              updateUserDocument(user.userId, { expoPushToken }).then(() => {
+                // Login successful
+                console.log(`User ID ${user.userId} has logged in.`);
+                complete({ success: true, userMessage: null, sessionAuthToken });
+              }).catch((error) => {
+                console.error(`Error: ${error}`);
+                serverError(error);
+              });
             }).catch((reason) => {
               // Failed to create a session due to server error
               console.error(`User ID ${user.userId} has successfully logged in, but the session could not be created due to an error: ${reason}`);
@@ -120,28 +148,6 @@ function register(username, password, firstName, lastName) {
         complete({ success: false, userMessage: 'The username already exists.' });
       }
     });
-  });
-}
-
-/**
- * Updates the state of a `User` document.
- * @param {string} userId The userId of the `User` document to update.
- * @param {*} state The new state of the `User` document.
- * @returns {Promise} A Promise that resolves when the state has been saved.
- */
-function updateUserDocument(userId, state) {
-  return new Promise((resolved, rejected) => {
-    if (!userId) {
-      rejected(Error('Invalid userId'));
-    } else {
-      const query = { userId };
-      USERS.updateOne(query, state).then(() => {
-        resolved();
-      }).catch((saveError) => {
-        console.error(`Failed to update the User document for ${userId} due to an error: ${saveError}`);
-        rejected(saveError);
-      });
-    }
   });
 }
 

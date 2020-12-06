@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema({
   ],
   calendarNotes: mongoose.Schema.Types.Mixed,
   customLabels: Array,
+  expoPushToken: String,
 });
 
 const USERS = mongoose.model('Users', userSchema);

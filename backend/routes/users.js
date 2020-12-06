@@ -18,8 +18,8 @@ module.exports = (app) => {
   });
 
   app.post('/login/', (req, res) => {
-    const { username, password } = req.body;
-    login(username, password).then((status) => {
+    const { username, password, expoToken } = req.body;
+    login(username, password, expoToken).then((status) => {
       res.json(status);
     }).catch((reason) => {
       console.error(`Failed to login a user due to an error: ${reason}`);
@@ -35,6 +35,7 @@ module.exports = (app) => {
         username: user.username,
         firstName: user.firstName,
         lastName: user.lastName,
+        expoPushToken: user.expoPushToken,
       });
     } else {
       // Not logged in, send null info
