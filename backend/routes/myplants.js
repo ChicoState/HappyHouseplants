@@ -83,7 +83,8 @@ module.exports = (app) => {
       });
 
       updateUserDocument(userDoc.userId, { myPlantsByID }).then(() => {
-        res.status(201).json({});
+        // Return the index of the new image
+        res.status(201).json(myPlantsByID[plantIdx].images.length - 1);
       }).catch((saveError) => {
         console.error(`Failed to update a plant picture for user ID ${userDoc.userId}. Reason: ${saveError}`);
         res.status(500).json({});
