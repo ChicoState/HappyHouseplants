@@ -10,11 +10,12 @@ import { PropTypes } from 'prop-types';
 import {
   Button, Card, Icon, Layout, Spinner, Text,
 } from '@ui-kitten/components';
+import { SliderBox } from 'react-native-image-slider-box';
 import * as ImagePicker from 'expo-image-picker';
 import AddMyPlantDialog from './AddMyPlantDialog';
 import PlantImage from './PlantImage';
 
-const { getMyPlants, updateMyPlant, removeFromMyPlants } = require('../../api/myplants');
+const { getMyPlants, updateMyPlant, removeFromMyPlants, addMyPlantImage } = require('../../api/myplants');
 const { isFavorite, addToFavorites, removeFromFavorites } = require('../../api/favoritePlants');
 
 class CardItem extends React.Component {
@@ -83,7 +84,7 @@ class CardItem extends React.Component {
         }).then((imageResult) => {
           if (!imageResult.cancelled) {
             this.setState({ imageUploading: true });
-            updateMyPlant(plant.instanceID, { image: { base64: imageResult.base64 } })
+            addMyPlantImage(plant.instanceID, imageResult.base64, new Date())
               .then(() => {
                 this.setState({
                   imageUploading: false,
@@ -247,6 +248,30 @@ class CardItem extends React.Component {
       </Layout>
     );
 
+    console.log(`Plant=${JSON.stringify(plant)}`);
+
+    let image = plant.image
+      ? (
+        <PlantImage
+          source={{
+            sourceURL: plant.image.sourceURL,
+            authenticationRequired: plant.image.authenticationRequired === true,
+          }}
+          style={styles.image}
+          imageRefreshCounter={imageRefreshCounter}
+        />
+      ) : (
+        <SliderBox
+          images={plant.images}
+          sliderBoxHeight={200}
+          ImageComponent={PlantImage}
+        />
+      );
+
+    if (imageUploading) {
+      image = undefined;
+    }
+
     return (
       <View>
         <AddMyPlantDialog
@@ -265,16 +290,7 @@ class CardItem extends React.Component {
           footer={renderItemFooter}
           onPress={() => { onPressItem(plant); }}
         >
-          {imageUploading
-            ? (<Spinner />)
-            : (
-              <PlantImage
-                sourceURL={plant.image.sourceURL}
-                authenticationRequired={plant.image.authenticationRequired}
-                style={styles.image}
-                imageRefreshCounter={imageRefreshCounter}
-              />
-            )}
+          {image}
         </Card>
       </View>
     );
