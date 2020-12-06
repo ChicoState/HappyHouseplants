@@ -16,7 +16,8 @@ class PlantImage extends React.Component {
   }
 
   componentDidMount() {
-    const { sourceURL, authenticationRequired } = this.props;
+    const { source } = this.props;
+    const { sourceURL, authenticationRequired } = source;
     if (authenticationRequired) {
       authFetch(sourceURL).then((res) => {
         this.setState({ base64: res });
@@ -29,8 +30,10 @@ class PlantImage extends React.Component {
 
   render() {
     const { base64, error } = this.state;
-    const { sourceURL, authenticationRequired } = this.props;
+    const { source } = this.props;
+    const { sourceURL, authenticationRequired } = source;
 
+    console.log(`Props are: ${JSON.stringify(this.props)}`);
     if (error) {
       return (<Icon name="alert-triangle-outline" fill="red" />);
     }
@@ -38,7 +41,7 @@ class PlantImage extends React.Component {
       return (<Image {...this.props} source={{ uri: `data:image/jpeg;base64,${base64}` }} />);
     }
     if (!authenticationRequired) {
-      return (<Image source={{ uri: sourceURL }} {...this.props} />);
+      return (<Image {...this.props} source={{ uri: sourceURL }} />);
     }
 
     return (<Spinner />);
@@ -46,12 +49,10 @@ class PlantImage extends React.Component {
 }
 
 PlantImage.propTypes = {
-  sourceURL: PropTypes.string.isRequired,
-  authenticationRequired: PropTypes.bool,
-};
-
-PlantImage.defaultProps = {
-  authenticationRequired: false,
+  source: PropTypes.shape({
+    sourceURL: PropTypes.string.isRequired,
+    authenticationRequired: PropTypes.bool,
+  }).isRequired,
 };
 
 export default PlantImage;
