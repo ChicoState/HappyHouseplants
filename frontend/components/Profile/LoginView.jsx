@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import {
   Button, View, Text, Alert,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { registerForPushNotificationsAsync } = require('../../Notifications');
 const { login } = require('./auth-react');
+const { storeData } = require('../../deviceAccess/saveLocalData');
 
 class LoginView extends React.Component {
   constructor() {
@@ -24,15 +24,6 @@ class LoginView extends React.Component {
   startLogin() {
     const { username, password } = this.state;
     const { onLogin } = this.props;
-    const storeData = async (key, token) => {
-      try {
-        const jsonValue = JSON.stringify(token);
-        await AsyncStorage.setItem(key, jsonValue);
-        console.log('Key set');
-      } catch (error) {
-        console.log(`Error: ${error}`);
-      }
-    };
     registerForPushNotificationsAsync().then((token) => {
       console.log(`storing token: ${token}`);
       storeData('@storage_Key', token);
