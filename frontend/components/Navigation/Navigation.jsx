@@ -97,6 +97,9 @@ function Navigation() {
     {
       name: 'My Plants',
       component: MyPlantsScreen,
+      options: {
+        headerShown: false,
+      },
       tab: {
         title: 'COLLECTION',
         icon: collectionIcon,
