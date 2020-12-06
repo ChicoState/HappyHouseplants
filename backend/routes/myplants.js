@@ -26,6 +26,9 @@ function rewritePlantForRequest(plant, req) {
       ret.images[i].sourceURL = `${req.protocol}://${req.get('host')}/myplants/${ret[idProp]}/image/${i}`;
       ret.images[i].authenticationRequired = true;
     }
+
+    // Remove the _id property
+    delete ret.images[i][idProp];
   }
 
   // Rename '_id' to 'instanceID'
