@@ -66,7 +66,7 @@ module.exports = (app) => {
 
   authPost(app, '/myplants/:instanceID/image/', (req, res, userDoc) => {
     const { instanceID } = req.params;
-    const { base64, date } = req.body.image;
+    const { base64, date } = req.body;
     let myPlantsByID = [];
     if (userDoc.myPlantsByID) {
       myPlantsByID = userDoc.myPlantsByID;
@@ -95,7 +95,7 @@ module.exports = (app) => {
 
   authPut(app, '/myplants/:instanceID/image/:index', (req, res, userDoc) => {
     const { instanceID, index } = req.params;
-    const { base64, date } = req.body.image;
+    const { base64, date } = req.body;
     let myPlantsByID = [];
     if (userDoc.myPlantsByID) {
       myPlantsByID = userDoc.myPlantsByID;
