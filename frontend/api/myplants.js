@@ -185,7 +185,8 @@ function updateMyPlant(instanceID, plant) {
  * @param {string} instanceID The instance ID of the owned plant.
  * @param {string} base64 The base64-encoded JPEG data of the image to upload.
  * @param {Date} date The date when the picture was taken.
- * @returns {Promise} A Promise that resolves after the image has been uploaded. */
+ * @returns {Promise<Number>} A Promise that resolves after the image has been uploaded.
+ * The resolved value is the zero-based index of the image on the plant. */
 function addMyPlantImage(instanceID, base64, date) {
   return new Promise((added, rejected) => {
     if (!instanceID) {
@@ -198,8 +199,8 @@ function addMyPlantImage(instanceID, base64, date) {
       authFetch(`${SERVER_ADDR}/myplants/${instanceID}/image/`, 'POST', {
         base64, date,
       })
-        .then(() => {
-          added();
+        .then((res) => {
+          added(res);
         })
         .catch((error) => {
           rejected(error);
