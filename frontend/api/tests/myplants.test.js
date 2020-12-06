@@ -282,7 +282,103 @@ it('Can update multiple plant properties simultaneously', (done) => {
     });
 });
 
-//TODO: Test multiple plant images and removing plant images
+it('Can assign multiple plant images', (done) => {
+  // Add the plant
+  const when = '2020-12-06T07:19:48.680Z';
+  const newWhen = '2020-12-07T07:19:48.680Z';
+  addToMyPlants('MyPlantID', 'My Plant Name', 'Kitchen', [{ base64: 'SGVsbG8=', date: when }])
+    .then((instanceID) => {
+      expect(instanceID).toBeTruthy();
+
+      // Add another image for the plant
+      addMyPlantImage(instanceID, 'd29ybGQ=', newWhen)
+        .then((newImageIndex) => {
+          expect(newImageIndex).toBe(1);
+          // Ensure that it is now updated in 'myplants'
+          getMyPlants()
+            .then((myPlants) => {
+              expect(myPlants).toBeTruthy();
+              expect(myPlants).toHaveLength(1);
+
+              const newPlantState = myPlants.find((cur) => cur.instanceID === instanceID);
+              expect(newPlantState.images).toHaveLength(2);
+
+              // And ensure that we can both images via an authFetch
+              // Fetch the first image
+              authFetch(newPlantState.images[0].sourceURL)
+                .then((image0Response) => {
+                  expect(image0Response).toStrictEqual('SGVsbG8=');
+
+                  // Fetch the second image
+                  authFetch(newPlantState.images[1].sourceURL)
+                    .then((image1Response) => {
+                      expect(image1Response).toStrictEqual('d29ybGQ=');
+                      done();
+                    })
+                    .catch((error) => {
+                      done(error);
+                    });
+                })
+                .catch((error) => {
+                  done(error);
+                });
+            });
+        })
+        .catch((error) => {
+          done(error);
+        });
+    })
+    .catch((error) => {
+      done(error);
+    });
+});
+
+it('Can remove plant images', (done) => {
+  // Add the plant
+  const when = '2020-12-06T07:19:48.680Z';
+  const newWhen = '2020-12-07T07:19:48.680Z';
+  addToMyPlants('MyPlantID', 'My Plant Name', 'Kitchen', [{ base64: 'SGVsbG8=', date: when }])
+    .then((instanceID) => {
+      expect(instanceID).toBeTruthy();
+
+      // Add another image for the plant
+      addMyPlantImage(instanceID, 'd29ybGQ=', newWhen)
+        .then(() => {
+          // Remove the first image
+          removeMyPlantImage(instanceID, 0)
+            .then(() => {
+              // Ensure that it is now updated in 'myplants'
+              getMyPlants()
+                .then((myPlants) => {
+                  expect(myPlants).toBeTruthy();
+                  expect(myPlants).toHaveLength(1);
+
+                  const newPlantState = myPlants.find((cur) => cur.instanceID === instanceID);
+                  expect(newPlantState.images).toHaveLength(1);
+
+                  // Ensure that we can still fetch the remaining image
+                  authFetch(newPlantState.images[0].sourceURL)
+                    .then((image0Response) => {
+                      expect(image0Response).toStrictEqual('d29ybGQ=');
+                      done();
+                    })
+                    .catch((error) => {
+                      done(error);
+                    });
+                });
+            })
+            .catch((error) => {
+              done(error);
+            });
+        })
+        .catch((error) => {
+          done(error);
+        });
+    })
+    .catch((error) => {
+      done(error);
+    });
+});
 
 it('Can update plant image by base64', (done) => {
   // Add the plant
