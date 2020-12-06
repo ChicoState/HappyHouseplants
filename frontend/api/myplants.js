@@ -19,11 +19,11 @@ const DefaultPlantLocations = ['Living room', 'Kitchen', 'Bedroom', 'Porch'];
  *
  * `location` - The user-defined location of the plant.
  *
- * `image` - Contains a `sourceURL` property that points to the image, and an optional
- *           `authenticationRequired` property that indicates whether authentication is required
- *           to retrieve the image. Due to the potential requirement for authentication, the
- *           application should use a `PlantImage` component rather than React Native's
- *           `Image` component.
+ * `images` - An array where each value contains a `sourceURL` property that points to the image
+ *            , and an optional `authenticationRequired` property that indicates whether
+ *           authentication is required to retrieve the image. Due to the potential requirement for
+ *           authentication, the application should use a `PlantImage` component rather than React
+ *           Native's `Image` component.
  *  */
 function getMyPlants() {
   return new Promise((plantsLoaded, rejected) => {
@@ -93,14 +93,14 @@ function getMyPlantLocations(includeUnusedDefaults = false) {
  * @param {string} name The user-defined name of the plant.
  * @param {string} location The user-defined location where the plant is stored.
  * If the location does not already exist, then it will be created.
- * @param {*} image Object that contains the image. There are two possible
- * methods of specifying an image. You can specify an image by a URL, by passing
+ * @param {*} images Array of objects that contain the images. There are two possible
+ * methods of specifying each image. You can specify an image by a URL, by including
  * an object with a `sourceURL` property. Or you can upload an image by
- * passing an object with a `base64` property, which will contain the base64-encoded
+ * including an object with a `base64` property, which will contain the base64-encoded
  * JPEG image.
  * @returns {Promise<string>} A Promise that resolves to the instance ID of the owned plant.
  * The Promise will be rejected if any argument is invalid, or if there is a network error. */
-function addToMyPlants(plantID, name, location, image) {
+function addToMyPlants(plantID, name, location, images) {
   return new Promise((plantAdded, rejected) => {
     if (!plantID) {
       rejected(Error('The plantID argument cannot be falsey.'));
@@ -108,16 +108,14 @@ function addToMyPlants(plantID, name, location, image) {
       rejected(Error('The name argument cannot be falsey.'));
     } else if (!location) {
       rejected(Error('The location argument cannot be falsey.'));
-    } else if (!image) {
-      rejected(Error('The image argument cannot be falsey.'));
-    } else if (image.sourceURL === undefined && image.base64 === undefined) {
-      rejected(Error('The image must contain either a \'sourceURL\' or a \'base64\' property.'));
+    } else if (!images) {
+      rejected(Error('The images argument cannot be falsey.'));
     } else {
       authFetch(`${SERVER_ADDR}/myplants`, 'POST', {
         plantID,
         name,
         location,
-        image,
+        images,
       }).then((response) => {
         if (response.error) {
           rejected(Error(response.error));
@@ -161,11 +159,6 @@ function removeFromMyPlants(instanceID) {
  * `location` - The new location of the plant. If this does not refer to an existing
  *              location, then it will be created.
  *
- * `image` - The new image to assign. There are two possible methods of specifying an image.
- *           You can specify an image by a URL, by passing an object with a `sourceURL` property.
- *           Or you can upload an image by passing an object with a `base64` property, which will
- *           contain the base64-encoded JPEG image.
- *
  * @returns {Promise} A Promise that resolves to the new state of the plant.
  * The Promise will be rejected if any argument is invalid, or if there is a network error. */
 function updateMyPlant(instanceID, plant) {
@@ -174,9 +167,6 @@ function updateMyPlant(instanceID, plant) {
       rejected(Error('The instanceID argument cannot be falsey.'));
     } else if (!plant) {
       rejected(Error('The plant argument cannot be falsey.'));
-    } else if (plant.image
-        && (plant.image.sourceURL === undefined && plant.image.base64 === undefined)) {
-      rejected(Error('The image, when being updated, must contain either a \'sourceURL\' or a \'base64\' property.'));
     } else {
       authFetch(`${SERVER_ADDR}/myplants/${instanceID}`, 'PUT', plant).then((response) => {
         if (response.error) {
@@ -190,6 +180,87 @@ function updateMyPlant(instanceID, plant) {
     }
   });
 }
+/**
+ * Adds an image to an owned plant.
+ * @param {string} instanceID The instance ID of the owned plant.
+ * @param {string} base64 The base64-encoded JPEG data of the image to upload.
+ * @param {Date} date The date when the picture was taken.
+ * @returns {Promise} A Promise that resolves after the image has been uploaded. */
+function addMyPlantImage(instanceID, base64, date) {
+  return new Promise((added, rejected) => {
+    if (!instanceID) {
+      rejected(Error('The instanceID argument cannot be falsey.'));
+    } else if (!base64) {
+      rejected(Error('The base64 argument cannot be falsey.'));
+    } else if (!date) {
+      rejected(Error('The date argument cannot be falsey.'));
+    } else {
+      authFetch(`${SERVER_ADDR}/myplants/${instanceID}/image/`, 'POST', {
+        base64, date,
+      })
+        .then(() => {
+          added();
+        })
+        .catch((error) => {
+          rejected(error);
+        });
+    }
+  });
+}
+
+/**
+ * Removes an image of an owned plant.
+ * @param {string} instanceID The instance ID of the owned plant.
+ * @param {Number} index The index of the image to remove.
+ * @returns {Promise} A Promise that resolves after the image has been removed. */
+function removeMyPlantImage(instanceID, index) {
+  return new Promise((removed, rejected) => {
+    if (!instanceID) {
+      rejected(Error('The instanceID argument cannot be falsey.'));
+    } else if (index === undefined) {
+      rejected(Error('The index argument cannot be undefined.'));
+    } else {
+      authFetch(`${SERVER_ADDR}/myplants/${instanceID}/image/${index}`, 'DELETE')
+        .then(() => {
+          removed();
+        })
+        .catch((error) => {
+          rejected(error);
+        });
+    }
+  });
+}
+
+/**
+ * Updates an image of an owned plant.
+ * @param {string} instanceID The instance ID of the owned plant.
+ * @param {Number} index The index of the image to update.
+ * @param {string} base64 The base64-encoded JPEG data of the new image to upload.
+ * @param {string} date The date when the new picture was taken.
+ * @returns {Promise} A Promise that resolves after the image has been updated. */
+function updateMyPlantImage(instanceID, index, base64, date) {
+  return new Promise((updated, rejected) => {
+    if (!instanceID) {
+      rejected(Error('The instanceID argument cannot be falsey.'));
+    } else if (index === undefined) {
+      rejected(Error('The index argument cannot be undefined.'));
+    } else if (!base64) {
+      rejected(Error('The base64 argument cannot be falsey.'));
+    } else if (!date) {
+      rejected(Error('The date argument cannot be falsey.'));
+    } else {
+      authFetch(`${SERVER_ADDR}/myplants/${instanceID}/image/${index}`, 'PUT', {
+        base64, date,
+      })
+        .then(() => {
+          updated();
+        })
+        .catch((error) => {
+          rejected(error);
+        });
+    }
+  });
+}
 
 module.exports = {
   DefaultPlantLocations,
@@ -199,4 +270,7 @@ module.exports = {
   addToMyPlants,
   removeFromMyPlants,
   updateMyPlant,
+  addMyPlantImage,
+  removeMyPlantImage,
+  updateMyPlantImage,
 };
