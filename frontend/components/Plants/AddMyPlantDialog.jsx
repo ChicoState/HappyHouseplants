@@ -13,6 +13,7 @@ import {
   SelectItem,
   Button,
   Spinner,
+  Input,
   Layout,
   Icon,
 } from '@ui-kitten/components';
@@ -29,6 +30,7 @@ class AddMyPlantDialog extends React.Component {
       showCustomLocationPrompt: false,
       locations: undefined, // Initialized from fetch
       locationIndex: 0,
+      nickname: undefined,
       customImage: undefined,
       customImageMode: 'default',
       uploading: false,
@@ -51,6 +53,7 @@ class AddMyPlantDialog extends React.Component {
     const { visible } = this.props;
     if (visible !== this.prevVisible) {
       this.updateLocations();
+      this.nickname = undefined;
       this.prevVisible = visible;
     }
   }
@@ -77,7 +80,14 @@ class AddMyPlantDialog extends React.Component {
 
   submit() {
     const { plant, onSubmit, onCancel } = this.props;
-    const { locations, locationIndex, customImage } = this.state;
+    const {
+      locations,
+      locationIndex,
+      nickname,
+      customImage,
+    } = this.state;
+
+    const plantName = nickname ?? plant.plantName;
 
     let image;
     if (customImage) {
@@ -91,7 +101,7 @@ class AddMyPlantDialog extends React.Component {
     }
 
     this.setState({ uploading: true });
-    addToMyPlants(plant.plantID, plant.name, locations[locationIndex - 1], image)
+    addToMyPlants(plant.plantID, plantName, locations[locationIndex - 1], image)
       .then(() => {
         // Reset state for future use
         this.setState({ locationIndex: 0, uploading: false });
@@ -232,6 +242,12 @@ class AddMyPlantDialog extends React.Component {
           <Dialog visible={visible} onDismiss={() => this.cancel()}>
             <Dialog.Title>{`Add ${plant.name}`}</Dialog.Title>
             <Dialog.Content>
+              <Text>Nickname (optional)</Text>
+              <Input
+                placeholder="ex: Window Jade"
+                onChangeText={(newText) => this.setState({ nickname: newText })}
+              />
+              <Text />
               <Text>Location</Text>
               {locationSelection}
               <Text />
