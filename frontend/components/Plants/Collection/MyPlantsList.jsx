@@ -75,7 +75,7 @@ class MyPlantsList extends Component {
           styles={styles}
           onPressItem={onPressItem}
           onRemoveFromOwned={this.removePlant}
-          allowChangePicture
+          isCustomized
         />
       ));
       cardsAndHeaders.push((
