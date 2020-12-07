@@ -33,7 +33,6 @@ class PlantImage extends React.Component {
     const { source } = this.props;
     const { sourceURL, authenticationRequired } = source;
 
-    console.log(`Props are: ${JSON.stringify(this.props)}`);
     if (error) {
       return (<Icon name="alert-triangle-outline" fill="red" />);
     }
