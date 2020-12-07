@@ -284,8 +284,14 @@ class CardItem extends React.Component {
       image = (
         <SliderBox
           images={plant.images}
-          sliderBoxHeight={200}
           ImageComponent={PlantImage}
+          ImageComponentStyle={styles.image}
+          imageLoadingColor="#00000000"
+          style={{
+            height: 320,
+            marginRight: 85,
+            alignItems: 'center',
+          }}
         />
       );
     } else if (fallbackImage) {
