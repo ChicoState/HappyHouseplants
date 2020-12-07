@@ -79,21 +79,15 @@ class AddMyPlantDialog extends React.Component {
     const { plant, onSubmit, onCancel } = this.props;
     const { locations, locationIndex, customImage } = this.state;
 
-    let image;
+    const images = [];
     if (customImage) {
-      image = {
+      images.push({
         base64: customImage,
-      };
-    } else if (plant.image) {
-      image = {
-        sourceURL: plant.image.sourceURL,
-      };
-    } else {
-      image = { sourceURL: '' };// TODO: I don't like this
+      });
     }
 
     this.setState({ uploading: true });
-    addToMyPlants(plant.plantID, plant.name, locations[locationIndex - 1], image)
+    addToMyPlants(plant.plantID, plant.name, locations[locationIndex - 1], images)
       .then(() => {
         // Reset state for future use
         this.setState({ locationIndex: 0, uploading: false });
@@ -227,8 +221,6 @@ class AddMyPlantDialog extends React.Component {
     const galleryIcon = (info) => (<Icon {...info} name={customImageMode === 'gallery' ? 'image-outline' : 'image'} />);
     const pictureButtonStyle = { width: 25, height: 25, marginRight: '5%' };
 
-    const defaultImageURL = plant.image ? plant.image.sourceURL : '';// TODO: Use proper default?
-
     return (
       <View>
         <Portal>
@@ -262,7 +254,7 @@ class AddMyPlantDialog extends React.Component {
               </Layout>
               <View style={{ maxWidth: '100%', height: 220, flex: 0 }}>
                 <Image
-                  source={{ uri: customImage ? `data:image/jpeg;base64,${customImage}` : defaultImageURL }}
+                  source={{ uri: customImage ? `data:image/jpeg;base64,${customImage}` : plant.image.sourceURL }}
                   style={{ maxWidth: '100%', flex: 1 }}
                   resizeMode="cover"
                 />
