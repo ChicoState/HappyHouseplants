@@ -22,10 +22,10 @@ const userSchema = new mongoose.Schema({
       plantID: String,
       name: String,
       location: String,
-      image: {
-        sourceURL: String,
+      images: [{
+        date: Date,
         base64: String,
-      },
+      }],
     },
   ],
   calendarNotes: mongoose.Schema.Types.Mixed,

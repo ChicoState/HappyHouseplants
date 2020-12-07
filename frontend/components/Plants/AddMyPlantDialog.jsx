@@ -89,19 +89,15 @@ class AddMyPlantDialog extends React.Component {
 
     const plantName = nickname ?? plant.plantName;
 
-    let image;
+    const images = [];
     if (customImage) {
-      image = {
+      images.push({
         base64: customImage,
-      };
-    } else {
-      image = {
-        sourceURL: plant.image.sourceURL,
-      };
+      });
     }
 
     this.setState({ uploading: true });
-    addToMyPlants(plant.plantID, plantName, locations[locationIndex - 1], image)
+    addToMyPlants(plant.plantID, plantName, locations[locationIndex - 1], images)
       .then(() => {
         // Reset state for future use
         this.setState({ locationIndex: 0, uploading: false });
