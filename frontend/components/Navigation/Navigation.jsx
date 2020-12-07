@@ -5,7 +5,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import CameraScreen from '../Camera/Camera';
 import HomeScreen from '../Plants/Home/HomeScreen';
-import HeaderButtons from '../Plants/HeaderButtons';
 import CalendarScreen from '../Calendar/CalendarScreen';
 import SearchScreen from '../Plants/Search/SearchScreen';
 import RecommendScreen from '../Plants/Home/RecommendScreen';
@@ -15,6 +14,8 @@ import PlantProfileScreen from '../Plants/PlantProfileScreen';
 import LoginScreen from '../Profile/LoginScreen';
 import RegisterScreen from '../Profile/RegisterScreen';
 import BottomNavi from './BottomNavi';
+
+const { LoginContext } = require('../Profile/auth-react');
 
 const navigationRef = React.createRef();
 const Stack = createStackNavigator();
@@ -40,8 +41,6 @@ const personIcon = (props) => (
 );
 
 function Navigation() {
-  const [currentTab, setCurrentTab] = React.useState('Recommendations');
-
   const screens = [
     {
       name: 'Register',
@@ -51,15 +50,8 @@ function Navigation() {
       name: 'Home',
       isIntialRoute: true,
       component: HomeScreen,
-      initialParams: { tab: currentTab },
       options: {
-        headerTitle: () => (
-          <HeaderButtons
-            labels={['Recommendations', 'Tips']}
-            selectedLabel={currentTab}
-            onLabelChanged={(label) => { setCurrentTab(label); navigationRef.current.navigate('Home', { tab: label }); }}
-          />
-        ),
+        headerShown: false,
       },
       tab: {
         title: 'EXPLORE',
@@ -156,11 +148,24 @@ function Navigation() {
           screens.map((screen) => (<Stack.Screen {...screen} key={screen.name} />))
         }
       </Stack.Navigator>
-      <BottomNavi
-        screens={screens}
-        onRequestNavigate={(routeName) => navigationRef.current.navigate(routeName)}
-        selectedIndex={tabIndex}
-      />
+      <LoginContext.Consumer>
+        {
+          (loginState) => {
+            if (loginState.loginInfo) {
+              // Only show BottomNavi when logged in
+              return (
+                <BottomNavi
+                  screens={screens}
+                  onRequestNavigate={(routeName) => navigationRef.current.navigate(routeName)}
+                  selectedIndex={tabIndex}
+                />
+              );
+            }
+
+            return undefined;
+          }
+        }
+      </LoginContext.Consumer>
     </NavigationContainer>
   );
 }
