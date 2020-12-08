@@ -44,28 +44,36 @@ class LoginView extends React.Component {
   render() {
     const { username, password, errorMessage } = this.state;
     return (
-      <View style={{ width: '80%', alignSelf: 'center', flexDirection: 'column' }}>
+      <View style={{
+        width: '90%',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        backgroundColor: colorTheme['color-primary-transparent-100'],
+        paddingLeft: '1%',
+        paddingRight: '1%',
+        marginTop: '4%',
+      }}
+      >
         <Text>{ errorMessage}</Text>
-        <Image style={{ backgroundColor: colorTheme['color-primary-transparent-100'], width: '100%', height: '10%' }} source={hhptitle} />
-        <Image style={{ backgroundColor: colorTheme['color-primary-transparent-100'], width: '100%', height: '60%' }} source={hhpdark} />
-        <View style={{ paddingTop: '5%' }}>
+        <Image style={{ width: '100%', height: '10%' }} source={hhptitle} />
+        <View style={{ paddingTop: '5%', alignSelf: 'center' }}>
           <Input
-            style={{ paddingBottom: '1%' }}
+            style={{ paddingBottom: '1%', width: '90%' }}
             placeholder="Username"
             value={username}
             onChangeText={(newUsername) => this.setState({ username: newUsername })}
           />
           <Input
             placeholder="Password"
-            style={{ paddingBottom: '1%' }}
+            style={{ paddingBottom: '10%', width: '90%' }}
             value={password}
             onChangeText={(newPass) => this.setState({ password: newPass })}
             secureTextEntry
           />
-        </View>
-        <View style={{ paddingBottom: '5%' }}>
           <Button onPress={this.startLogin} title="Login"> Login </Button>
         </View>
+        <Image style={{ width: '100%', height: '50%' }} source={hhpdark} />
       </View>
     );
   }
