@@ -5,6 +5,7 @@ import { View, Alert, Image } from 'react-native';
 
 const { register } = require('../../api/auth');
 const hhpdark = require('../logos/hhpdark.png');
+const hhptitle = require('../logos/hhptitle.png');
 const colorTheme = require('../Util/colorTheme.json');
 
 const marginBottom = { marginBottom: '2%' };
@@ -76,9 +77,10 @@ class RegisterView extends React.Component {
           paddingTop: '2%',
         }}
         >
+          <Image style={{ width: '100%', height: '10%' }} source={hhptitle} />
           <Text />
           <Input
-            style={{ paddingBottom: '2%', paddingTop: '10%' }}
+            style={marginBottom}
             placeholder="Username"
             value={username}
             onChangeText={(newUsername) => this.setState({ username: newUsername })}
@@ -109,9 +111,9 @@ class RegisterView extends React.Component {
             onChangeText={(newPass) => this.setState({ confirmPassword: newPass })}
             secureTextEntry
           />
+          <Button onPress={this.startLogin} title="Register">Register</Button>
         </View>
-        <Button onPress={this.startLogin} title="Register">Register</Button>
-        <Image style={{ width: '100%', height: '60%' }} source={hhpdark} />
+        <Image style={{ width: '100%', height: '40%' }} source={hhpdark} />
       </View>
     );
   }
