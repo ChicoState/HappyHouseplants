@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  ScrollView, Text, StyleSheet,
+  ScrollView, Text,
 } from 'react-native';
 import {
   Input, Button, Layout, Select, SelectItem, IndexPath, SelectGroup,
@@ -8,28 +8,6 @@ import {
 import PropTypes from 'prop-types';
 import CardItem from '../CardItem';
 import { getPlants } from '../../../api/plants';
-
-const styles = StyleSheet.create({
-  searchResultsContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  card: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 10,
-    maxWidth: 300,
-    flex: 1,
-  },
-  container: {
-    paddingHorizontal: 70, paddingVertical: 80,
-  },
-  image: {
-    width: 150,
-    height: 150,
-  },
-});
 
 class SearchBar extends Component {
   constructor() {
@@ -298,61 +276,63 @@ class SearchBar extends Component {
     }
     const { Results, selectedIndex, Selected } = this.state;
     const myCards = Results.map((plant) => (
-      <CardItem key={plant.plantID} plant={plant} styles={styles} onPressItem={onPressItem} />
+      <CardItem key={plant.plantID} plant={plant} onPressItem={onPressItem} />
     ));
     return (
 
       <Layout>
-        <Layout>
-          <Input
-            placeholder="Enter your search terms"
-            onChangeText={(text) => this.setState({ searchString: text })}
-          />
-          <Button onPress={() => this.searchPress()}>
-            Search
-          </Button>
-          <Select
-            placeholder={Selected}
-            selectedIndex={selectedIndex}
-            onSelect={(index) => this.setState({ Filter: index },
-              () => this.setSelectedIndex())}
-          >
-            <SelectItem title="Plant Name" />
-            <SelectGroup title="Maintenance">
-              <SelectItem title="Easy" />
-              <SelectItem title="Medium" />
-              <SelectItem title="Hard" />
-            </SelectGroup>
-            <SelectGroup title="Lighting">
-              <SelectItem title="Low" />
-              <SelectItem title="Medium" />
-              <SelectItem title="High" />
-            </SelectGroup>
-            <SelectGroup title="Humidity">
-              <SelectItem title="Low" />
-              <SelectItem title="Medium" />
-              <SelectItem title="High" />
-            </SelectGroup>
-            <SelectGroup title="Indoor/Outdoor">
-              <SelectItem title="Indoor" />
-              <SelectItem title="Outdoor" />
-            </SelectGroup>
-            <SelectGroup title="Climate Tolerance">
-              <SelectItem title="Hot" />
-              <SelectItem title="Cold" />
-            </SelectGroup>
-            <SelectGroup title="Harmful To...">
-              <SelectItem title="Dogs" />
-              <SelectItem title="Cats" />
-              <SelectItem title="Horses" />
-            </SelectGroup>
-          </Select>
-        </Layout>
-        <Layout style={{ flex: 1 }}>
-          <ScrollView style={{ flex: 1 }}>
-            {myCards}
-          </ScrollView>
-        </Layout>
+        <Input
+          placeholder="Enter your search terms"
+          onChangeText={(text) => this.setState({ searchString: text })}
+        />
+        <Button onPress={() => this.searchPress()}>
+          Search
+        </Button>
+        <Select
+          placeholder={Selected}
+          selectedIndex={selectedIndex}
+          onSelect={(index) => this.setState({ Filter: index },
+            () => this.setSelectedIndex())}
+        >
+          <SelectItem title="Plant Name" />
+          <SelectGroup title="Maintenance">
+            <SelectItem title="Easy" />
+            <SelectItem title="Medium" />
+            <SelectItem title="Hard" />
+          </SelectGroup>
+          <SelectGroup title="Lighting">
+            <SelectItem title="Low" />
+            <SelectItem title="Medium" />
+            <SelectItem title="High" />
+          </SelectGroup>
+          <SelectGroup title="Humidity">
+            <SelectItem title="Low" />
+            <SelectItem title="Medium" />
+            <SelectItem title="High" />
+          </SelectGroup>
+          <SelectGroup title="Indoor/Outdoor">
+            <SelectItem title="Indoor" />
+            <SelectItem title="Outdoor" />
+          </SelectGroup>
+          <SelectGroup title="Climate Tolerance">
+            <SelectItem title="Hot" />
+            <SelectItem title="Cold" />
+          </SelectGroup>
+          <SelectGroup title="Harmful To...">
+            <SelectItem title="Dogs" />
+            <SelectItem title="Cats" />
+            <SelectItem title="Horses" />
+          </SelectGroup>
+        </Select>
+        <ScrollView>
+          {myCards}
+          <Text />
+          <Text />
+          <Text />
+          <Text />
+          <Text />
+          <Text />
+        </ScrollView>
       </Layout>
     );
   }
