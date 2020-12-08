@@ -102,7 +102,7 @@ function login(username, password) {
  * The returned Promise will be rejected only due to server errors.
  */
 function register(username, password, firstName, lastName) {
-  return new Promise((complete) => {
+  return new Promise((complete, rejected) => {
     findDocuments('Users', { userId: username.toLowerCase() }).then((docs) => {
       if (docs.length === 0) {
         bcrypt.hash(password, SALT_ROUNDS).then((hashedPassword) => {
@@ -114,12 +114,20 @@ function register(username, password, firstName, lastName) {
             lastName,
           }).then(() => {
             complete({ success: true });
-          });
+          })
+            .catch((error) => {
+              console.error(`Failed to insert a new user document for registration due to an error: ${error}`);
+              rejected(error);
+            });
         });
       } else {
         complete({ success: false, userMessage: 'The username already exists.' });
       }
-    });
+    })
+      .catch((error) => {
+        console.error(`While trying to register a new user '${username}', failed to check if that account already exists due to an error: ${error}`);
+        rejected(error);
+      });
   });
 }
 
@@ -141,6 +149,48 @@ function updateUserDocument(userId, state) {
         console.error(`Failed to update the User document for ${userId} due to an error: ${saveError}`);
         rejected(saveError);
       });
+    }
+  });
+}
+
+/**
+ * Changes a user's password.
+ * @param {String} username The username of the account.
+ * @param {String} newPassword The new password, in plaintext.
+ * @param {*} auditLog Object with auditing properties, such as IP address,
+ * used for logging.
+ * @returns {Promise} A Promise that resolves after the password has been changed. */
+function changePassword(username, newPassword, auditLog) {
+  return new Promise((complete, rejected) => {
+    if (!username) {
+      rejected(Error('The username argument cannot be falsey.'));
+    } else if (!newPassword) {
+      rejected(Error('The newPassword argument cannot be falsey.'));
+    } else if (!auditLog) {
+      rejected(Error('For security, the auditLog argument cannot be falsey.'));
+    } else {
+      findOneDocument('Users', { userId: username.toLowerCase() })
+        .then((userDoc) => {
+          bcrypt.hash(newPassword, SALT_ROUNDS)
+            .then((newHashedPassword) => {
+              updateUserDocument(userDoc.userId, { password: newHashedPassword })
+                .then(() => {
+                  console.log(`Changed ${username}'s password. Audit log: ${JSON.stringify(auditLog)}`);
+                })
+                .catch((error) => {
+                  console.error(`Failed to update a user's document for password change due to an error: ${error}`);
+                  rejected(error);
+                });
+            })
+            .catch((error) => {
+              console.error(`Failed to change a password due to bcrypt failure: ${error}`);
+              rejected(error);
+            });
+        })
+        .catch((error) => {
+          console.error(`Failed to change user ${username}'s password because their user document could not be found: ${error}`);
+          rejected(error);
+        });
     }
   });
 }
@@ -325,4 +375,5 @@ module.exports = {
   authPut,
   authDelete,
   updateUserDocument,
+  changePassword,
 };

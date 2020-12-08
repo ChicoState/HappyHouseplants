@@ -4,6 +4,7 @@ const {
   authGet,
   authPost,
   updateUserDocument,
+  changePassword,
 } = require('../api/auth');
 
 module.exports = (app) => {
@@ -56,5 +57,22 @@ module.exports = (app) => {
     }
 
     updateUserDocument(user.userId, newInfo);
+  }, true);
+
+  authPost(app, '/change_password', (req, res, user) => {
+    const { password } = req.body;
+    const auditLog = {
+      remoteAddress: req.connection.remoteAddress,
+      headers: req.headers,
+      date: new Date(),
+    };
+    changePassword(user.username, password, auditLog)
+      .then(() => {
+        res.json({ success: true });
+      })
+      .catch((error) => {
+        console.error(`Failed to change a user's password due to an error: ${error}`);
+        res.status(500).json({});
+      });
   }, true);
 };
