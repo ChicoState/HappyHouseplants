@@ -109,7 +109,7 @@ class SplashScreen extends React.Component {
               Login
             </Button>
             <Text> </Text>
-            <Button style={{ borderWidth: 5, borderBottomColor: colorTheme['color-primary-200'], borderRightColor: colorTheme['color-primary-200'] }} onPress={this.registerRequested}>Register</Button>
+            <Button style={{ borderWidth: 5, borderBottomColor: colorTheme['color-primary-200'] }} onPress={this.registerRequested}>Register</Button>
           </View>
         </View>
       );
