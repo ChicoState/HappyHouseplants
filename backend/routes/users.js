@@ -56,7 +56,14 @@ module.exports = (app) => {
       newInfo.lastName = req.body.lastName;
     }
 
-    updateUserDocument(user.userId, newInfo);
+    updateUserDocument(user.userId, newInfo)
+      .then(() => {
+        res.json(true);
+      })
+      .catch((error) => {
+        console.error(`Failed to update properties (${JSON.stringify(newInfo)}) for ${user.userId}'s user document due to an error: ${error}`);
+        res.status(500).send({});
+      });
   }, true);
 
   authPost(app, '/change_password', (req, res, user) => {
