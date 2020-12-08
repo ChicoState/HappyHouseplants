@@ -25,7 +25,7 @@ function registerAndLogin() {
           login(username, 'MyPassword')
             .then((loginStatus) => {
               if (loginStatus.success === true) {
-                loginResolved(username);
+                loginResolved({ username, password: 'MyPassword' });
               } else {
                 rejected(Error(`Failed to login: ${loginStatus.userMessage}`));
               }
