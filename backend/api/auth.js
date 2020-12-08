@@ -176,6 +176,7 @@ function changePassword(username, newPassword, auditLog) {
               updateUserDocument(userDoc.userId, { password: newHashedPassword })
                 .then(() => {
                   console.log(`Changed ${username}'s password. Audit log: ${JSON.stringify(auditLog)}`);
+                  complete();
                 })
                 .catch((error) => {
                   console.error(`Failed to update a user's document for password change due to an error: ${error}`);
