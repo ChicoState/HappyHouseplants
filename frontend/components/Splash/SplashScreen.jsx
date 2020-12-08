@@ -1,4 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
+/* eslint-disable global-require */
 import React from 'react';
 import { Alert, Image } from 'react-native';
 import {
