@@ -2,6 +2,8 @@ const {
   register,
   login,
   authGet,
+  authPost,
+  updateUserDocument,
 } = require('../api/auth');
 
 module.exports = (app) => {
@@ -41,4 +43,18 @@ module.exports = (app) => {
       res.json(null);
     }
   }, false);
+
+  authPost(app, '/login_info', (req, res, user) => {
+    const newInfo = {};
+
+    // Only update these hard-coded properties
+    if (req.body.firstName) {
+      newInfo.firstName = req.body.firstName;
+    }
+    if (req.body.lastName) {
+      newInfo.lastName = req.body.lastName;
+    }
+
+    updateUserDocument(user.userId, newInfo);
+  }, true);
 };
