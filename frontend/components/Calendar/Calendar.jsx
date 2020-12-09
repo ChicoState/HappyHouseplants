@@ -18,7 +18,7 @@ const {
   getCalendarThemeDark,
   calendarThemeDark,
   calendarThemeLight,
-} = require('./CalendarTheme');
+} = require('./calendarTheme');
 
 const colorTheme = require('../Util/colorTheme.json');
 const {
