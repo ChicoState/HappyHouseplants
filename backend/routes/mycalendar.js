@@ -1,5 +1,6 @@
 const {
   authGet,
+  authPut,
   authPost,
   authDelete,
   updateUserDocument,
@@ -83,6 +84,74 @@ module.exports = (app) => {
         })
         .catch((error) => {
           console.error(`Failed to remove a calendar note for user ${userDoc.userId} due to an error: ${error}`);
+          res.status(500).json({});
+        });
+    } else {
+      res.json(false);
+    }
+  }, true);
+
+  authGet(app, '/mycalendar/labels/', (req, res, userDoc) => {
+    let customLabels = [];
+    if (userDoc.customLabels) {
+      customLabels = userDoc.customLabels;
+    }
+
+    // Remove the unnecessary _id property from labels
+    const userReadableLabels = customLabels.map((label) => ({
+      text: label.text,
+      color: label.color,
+    }));
+
+    res.json(userReadableLabels);
+  }, true);
+
+  authPut(app, '/mycalendar/labels/', (req, res, userDoc) => {
+    const { text, color } = req.body;
+
+    let customLabels = [];
+    if (userDoc.customLabels) {
+      customLabels = userDoc.customLabels;
+    }
+
+    const label = { text, color };
+    const existingIndex = customLabels.findIndex((cur) => cur.text === text);
+    if (existingIndex !== -1) {
+      customLabels[existingIndex] = label;
+    } else {
+      customLabels.push(label);
+    }
+
+    updateUserDocument(userDoc.userId, { customLabels })
+      .then(() => {
+        res.status(existingIndex === -1 ? 201 : 200).json({});
+      })
+      .catch((error) => {
+        console.error(`Failed to save a calendar label due to an error: ${error}`);
+        res.status(500).json({});
+      });
+  }, true);
+
+  authDelete(app, '/mycalendar/labels', (req, res, userDoc) => {
+    const { text } = req.body;
+
+    let customLabels = [];
+    if (userDoc.customLabels) {
+      customLabels = userDoc.customLabels;
+    }
+
+    const removeIndex = customLabels.findIndex((cur) => cur.text === text);
+    if (removeIndex > -1) {
+      customLabels.splice(removeIndex, 1);
+    }
+
+    if (removeIndex !== -1) {
+      updateUserDocument(userDoc.userId, { customLabels })
+        .then(() => {
+          res.json(true);
+        })
+        .catch((error) => {
+          console.error(`Failed to remove a calendar label for user ${userDoc.userId} due to an error: ${error}`);
           res.status(500).json({});
         });
     } else {

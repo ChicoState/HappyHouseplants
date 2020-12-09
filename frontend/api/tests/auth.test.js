@@ -71,7 +71,7 @@ it('Can register then login', (done) => {
       expect(registerStatus).toStrictEqual({ success: true });
 
       // Login
-      login(username, 'MyPassword')
+      login(username, 'MyPassword', 'ExponentPushToken[10928s0ad9832]')
         .then((loginStatus) => {
           expect(loginStatus.success).toBe(true);
           expect(loginStatus.sessionAuthToken).toBeTruthy();
@@ -82,6 +82,7 @@ it('Can register then login', (done) => {
             expect(loginInfo.username).toStrictEqual(username);
             expect(loginInfo.firstName).toStrictEqual('Hello');
             expect(loginInfo.lastName).toStrictEqual('World');
+            expect(loginInfo.expoPushToken).toStrictEqual('ExponentPushToken[10928s0ad9832]');
             done();
           })
             .catch((error) => {

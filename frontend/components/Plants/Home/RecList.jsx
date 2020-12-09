@@ -28,7 +28,6 @@ class RecList extends Component {
     const listThis = this;
     getPlants()
       .then((data) => {
-        console.log(data);
         listThis.setState({
           loaded: true,
           recList: data,

@@ -1,13 +1,14 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable global-require */
 import React from 'react';
-import { Alert, Image } from 'react-native';
-import {
-  Layout, Spinner, Text, Button,
-} from '@ui-kitten/components';
+import { View, Alert, Image } from 'react-native';
+import { Spinner, Text, Button } from '@ui-kitten/components';
 import { PropTypes } from 'prop-types';
 
+const colorTheme = require('../Util/colorTheme.json');
 const { autoLogin } = require('../Profile/auth-react');
+const hhp = require('../logos/hhp.png');
+const hhptitle = require('../logos/hhptitle.png');
 
 class SplashScreen extends React.Component {
   constructor(props) {
@@ -51,7 +52,7 @@ class SplashScreen extends React.Component {
           [
             {
               text: 'Retry',
-              onPress: () => { this.tryAutoLogin.tryAutoLogin(); },
+              onPress: () => { this.tryAutoLogin(); },
             },
             {
               text: 'Cancel',
@@ -65,6 +66,7 @@ class SplashScreen extends React.Component {
     const { loadingLoginInfo, loginRequired } = this.state;
     if (loginRequired && !loadingLoginInfo) {
       return (
+<<<<<<< HEAD
         <Layout style={{ flex: 1, alignItems: 'center' }}>
           <Text />
           <Text>Welcome! Please login or create an account.</Text>
@@ -76,6 +78,55 @@ class SplashScreen extends React.Component {
             <Button onPress={this.registerRequested}>Register</Button>
           </Layout>
         </Layout>
+=======
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <View style={{
+            flexDirection: 'column',
+            backgroundColor: colorTheme['color-primary-500'],
+            borderWidth: 5,
+            borderColor: colorTheme['color-primary-500'],
+            borderBottomColor: colorTheme['color-primary-200'],
+            width: '100%',
+          }}
+          >
+            <Text />
+            <Text style={{
+              textAlign: 'center',
+              fontWeight: 'bold',
+              paddingBottom: '1%',
+              color: 'white',
+              fontSize: 20,
+            }}
+            >
+              Welcome
+            </Text>
+            <Text />
+          </View>
+          <Text />
+          <Image style={{ width: '90%', height: '7%' }} source={hhptitle} />
+          <Image style={{ width: '80%', height: '45%', backgroundColor: colorTheme['color-primary-transparent-100'] }} source={hhp} />
+          <View style={{
+            flex: 1,
+            width: '80%',
+            flexDirection: 'column-reverse',
+            alignContent: 'center',
+            paddingBottom: '10%',
+            paddingTop: '2%',
+          }}
+          >
+            <Button
+              style={{
+                borderWidth: 5, borderColor: colorTheme['color-primary-500'], borderBottomColor: colorTheme['color-primary-200'],
+              }}
+              onPress={this.loginRequested}
+            >
+              Login
+            </Button>
+            <Text> </Text>
+            <Button style={{ borderWidth: 5, borderBottomColor: colorTheme['color-primary-200'] }} onPress={this.registerRequested}>Register</Button>
+          </View>
+        </View>
+>>>>>>> upstream/main
       );
     }
 
