@@ -1,14 +1,15 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { Component } from 'react';
 import {
-  Layout, Button, Divider, Card,
+  Button, Card, Layout,
 } from '@ui-kitten/components';
 import {
   StyleSheet,
   Text,
 } from 'react-native';
 import { PropTypes } from 'prop-types';
-import { NavigationHelpersContext } from '@react-navigation/native';
 
+const Prompt = require('../Util/Prompt');
 const colorTheme = require('../Util/colorTheme.json');
 const { updateUserProfile, changePassword } = require('../../api/users');
 const { getLoginInfo } = require('../../api/auth');
@@ -17,7 +18,20 @@ const { logout } = require('./auth-react');
 class UserProfileView extends Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      changeUsername: 
+      {
+        errorMessage: '',
+        isPassword: false,
+        isVisible: false,
+        message: '',
+        onCancel: () => this.setState({ changeUsername: {isVisible: false}}),
+        onConfirm: () => {},
+        placeholder: 'New Username',
+        title: 'Change Username',
+      }
+      ,
+    };
     this.styles = StyleSheet.create({
       container: {
       },
@@ -25,7 +39,7 @@ class UserProfileView extends Component {
         height: '20%',
       },
       headerContent: {
-        //backgroundColor: colorTheme['color-primary-transparent-500'],
+        // backgroundColor: colorTheme['color-primary-transparent-500'],
         backgroundColor: colorTheme['color-success-transparent-200'],
         padding: '10%',
         width: '100%',
@@ -59,7 +73,7 @@ class UserProfileView extends Component {
         fontWeight: 'bold',
       },
       editCard: {
-        //backgroundColor: colorTheme['color-primary-transparent-500'],
+        // backgroundColor : colorTheme['color-primary-transparent-500'],
         height: '73%',
         alignContent: 'space-between',
       },
@@ -92,7 +106,9 @@ class UserProfileView extends Component {
       firstName,
       lastName,
       userName,
+      changeUsername,
     } = this.state;
+    // const changeUsernameDialog = ();
     return (
       <Layout style={this.styles.container}>
 
@@ -123,8 +139,11 @@ class UserProfileView extends Component {
               <Button style={this.styles.button} onPress={() => { logout(); }}>
                 Change Last Name
               </Button>
-              <Button style={this.styles.button} onPress={() => { logout(); }}>
-                Change User Name
+              <Button
+                style={this.styles.button}
+                onPress={() => { this.setState({ changeUsername: { isVisible: true } }); }}
+              >
+                Change Username
               </Button>
               <Button style={this.styles.button} onPress={() => { logout(); }}>
                 Change Password
@@ -133,6 +152,7 @@ class UserProfileView extends Component {
             <Button style={this.styles.logoutButton} onPress={() => { logout(); onLogout(); }}>
               Logout
             </Button>
+            <Prompt {...changeUsername} />
           </Layout>
         </Layout>
 
