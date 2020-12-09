@@ -4,12 +4,13 @@ import {
   Button, Card, Layout,
 } from '@ui-kitten/components';
 import {
+  Alert,
   StyleSheet,
   Text,
 } from 'react-native';
+import Prompt from 'react-native-input-prompt';
 import { PropTypes } from 'prop-types';
 
-const Prompt = require('../Util/Prompt');
 const colorTheme = require('../Util/colorTheme.json');
 const { updateUserProfile, changePassword } = require('../../api/users');
 const { getLoginInfo } = require('../../api/auth');
@@ -19,18 +20,10 @@ class UserProfileView extends Component {
   constructor() {
     super();
     this.state = {
-      changeUsername: 
-      {
-        errorMessage: '',
-        isPassword: false,
-        isVisible: false,
-        message: '',
-        onCancel: () => this.setState({ changeUsername: {isVisible: false}}),
-        onConfirm: () => {},
-        placeholder: 'New Username',
-        title: 'Change Username',
-      }
-      ,
+      changingUser: false,
+      changingFirst: false,
+      changingLast: false,
+      changingPass: false,
     };
     this.styles = StyleSheet.create({
       container: {
@@ -39,14 +32,12 @@ class UserProfileView extends Component {
         height: '20%',
       },
       headerContent: {
-        // backgroundColor: colorTheme['color-primary-transparent-500'],
         backgroundColor: colorTheme['color-success-transparent-200'],
         padding: '10%',
         width: '100%',
         justifyContent: 'center',
       },
       headerCard: {
-        backgroundColor: colorTheme['color-primary-transparent-600'],
         justifyContent: 'space-between',
       },
       fullName: {
@@ -73,7 +64,6 @@ class UserProfileView extends Component {
         fontWeight: 'bold',
       },
       editCard: {
-        // backgroundColor : colorTheme['color-primary-transparent-500'],
         height: '73%',
         alignContent: 'space-between',
       },
@@ -106,7 +96,10 @@ class UserProfileView extends Component {
       firstName,
       lastName,
       userName,
-      changeUsername,
+      changingUser,
+      changingFirst,
+      changingLast,
+      changingPass,
     } = this.state;
     // const changeUsernameDialog = ();
     return (
@@ -133,26 +126,107 @@ class UserProfileView extends Component {
               Account
             </Text>
             <Card style={this.styles.editCard}>
-              <Button style={this.styles.button} onPress={() => { logout(); }}>
-                Change First Name
-              </Button>
-              <Button style={this.styles.button} onPress={() => { logout(); }}>
-                Change Last Name
-              </Button>
+
+              <Prompt
+                visible={changingFirst}
+                title="Change Firstname"
+                placeholder="New First Name"
+                onCancel={() => this.setState({ changingFirst: false })}
+                onSubmit={(input) => {
+                  updateUserProfile({ firstName: input })
+                    .then(() => {
+                      this.setState({ firstName: input, changingFirst: false });
+                    })
+                    .catch((error) => {
+                      console.error(`Failed to update first name due to an error: ${error}`);
+                      Alert.alert('Sorry, Failed to update first name.');
+                    });
+                }}
+              />
               <Button
                 style={this.styles.button}
-                onPress={() => { this.setState({ changeUsername: { isVisible: true } }); }}
+                onPress={() => { this.setState({ changingFirst: true }); }}
+              >
+                Change First Name
+              </Button>
+
+              <Prompt
+                visible={changingLast}
+                title="Change Lastname"
+                placeholder="New Last Name"
+                onCancel={() => this.setState({ changingLast: false })}
+                onSubmit={(input) => {
+                  updateUserProfile({ lastName: input })
+                    .then(() => {
+                      this.setState({ lastName: input, changingLast: false });
+                    })
+                    .catch((error) => {
+                      console.error(`Failed to update last name due to an error: ${error}`);
+                      Alert.alert('Sorry, Failed to update last name.');
+                    });
+                }}
+              />
+              <Button
+                style={this.styles.button}
+                onPress={() => { this.setState({ changingLast: true }); }}
+              >
+                Change Last Name
+              </Button>
+
+              <Prompt
+                visible={changingUser}
+                title="Change Username"
+                placeholder="New Username"
+                onCancel={() => this.setState({ changingUser: false })}
+                onSubmit={(input) => {
+                  updateUserProfile({ username: input })
+                    .then(() => {
+                      this.setState({ userName: input, changingUser: false });
+                    })
+                    .catch((error) => {
+                      console.error(`Failed to update username due to an error: ${error}`);
+                      Alert.alert('Sorry, Failed to update username.');
+                    });
+                }}
+              />
+              <Button
+                style={this.styles.button}
+                onPress={() => { this.setState({ changingUser: true }); }}
               >
                 Change Username
               </Button>
-              <Button style={this.styles.button} onPress={() => { logout(); }}>
+
+              <Prompt
+                visible={changingPass}
+                title="Change Password"
+                placeholder="New Password"
+                onCancel={() => this.setState({ changingPass: false })}
+                onSubmit={(input) => {
+                  changePassword(input)
+                    .then((state) => {
+                      if (state.success) {
+                        this.setState({ changingPass: false });
+                      } else {
+                        console.error(`Failed to update password due to : ${state.userMessage}`);
+                        Alert.alert(`Sorry, Failed to update password.\n ${state.userMessage}`);
+                      }
+                    })
+                    .catch((error) => {
+                      console.error(`Failed to update password due to an error: ${error}`);
+                      Alert.alert('Sorry, Failed to update password.');
+                    });
+                }}
+              />
+              <Button
+                style={this.styles.button}
+                onPress={() => { this.setState({ changingPass: true }); }}
+              >
                 Change Password
               </Button>
             </Card>
             <Button style={this.styles.logoutButton} onPress={() => { logout(); onLogout(); }}>
               Logout
             </Button>
-            <Prompt {...changeUsername} />
           </Layout>
         </Layout>
 
