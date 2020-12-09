@@ -12,6 +12,7 @@ import {
 import { Icon } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Picker } from '@react-native-picker/picker';
+import { object } from 'prop-types';
 
 const {
   getCalendarTheme,
@@ -23,7 +24,9 @@ const {
 const colorTheme = require('../Util/colorTheme.json');
 const {
   getCalendarNotes,
+  getCalendarLabels,
   addCalendarNote,
+  addCalendarLabel,
 } = require('../../api/calendar');
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
@@ -43,16 +46,19 @@ class CalendarView extends React.Component {
       noteTag: 'water',
       tagColor: 'blue',
       customLabel: '',
+      PickerItemCustom: [],
       currentDate: todaysDate,
       currentMonthView: (todaysDate.getMonth() + 1),
       currentYearView: todaysDate.getFullYear(),
       currentMonthNotes: [],
     };
     this.updateNotes = this.updateNotes.bind(this);
+    this.updateLabels = this.updateLabels.bind(this);
   }
 
   componentDidMount() {
     this.updateNotes();
+    this.updateLabels();
   }
 
   /**
@@ -117,6 +123,32 @@ class CalendarView extends React.Component {
       });
   }
 
+  updateLabels() {
+    const PickerItemCustom = [];
+    getCalendarLabels().then((downloadedLabels) => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const [objectIndex, label] of Object.entries(downloadedLabels)) {
+        console.log(`Iterating over label: ${objectIndex}`);
+        PickerItemCustom.push(<Picker.Item
+          label={label.text}
+          value={label.color}
+          key={Math.random()}
+        />);
+      }
+      this.setState({ PickerItemCustom });
+    })
+      .catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'An error occured while trying to fetch calendar labels',
+          [
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ],
+        );
+        console.error(`Error while fetching calendar lotes: ${error}`);
+      });
+  }
+
   render() {
     const {
       notes, tempNote, selectedDate,
@@ -144,7 +176,7 @@ class CalendarView extends React.Component {
     });
 
     if (showInputView) {
-      const { noteTag } = this.state;
+      const { noteTag, PickerItemCustom } = this.state;
       let { tagColor } = this.state;
       let selector = <></>;
       if (noteTag === 'custom') {
@@ -160,6 +192,7 @@ class CalendarView extends React.Component {
               selectedValue={tagColor}
               style={{ width: '100%' }}
               onValueChange={(itemValue) => {
+                console.log(itemValue);
                 this.setState({ tagColor: itemValue });
               }}
             >
@@ -227,6 +260,7 @@ class CalendarView extends React.Component {
               { // TODO, ADD custom labels that were created
               // <Picker.Item label={} value={} />
               }
+              {PickerItemCustom}
               <Picker.Item label="Add Custom Label" value="custom" />
             </Picker>
             {selector}
@@ -251,6 +285,11 @@ class CalendarView extends React.Component {
                     );
                     console.error(`Error while trying to save a note: ${error}`);
                   });
+                  if (customLabel) {
+                    addCalendarLabel(customLabel, tagColor).then(() => {
+                      this.updateLabels();
+                    });
+                  }
                 } else {
                   Alert.alert(
                     'Error',
