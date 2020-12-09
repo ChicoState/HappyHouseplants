@@ -3,7 +3,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Alert, Image } from 'react-native';
 
-
 const { registerForPushNotificationsAsync } = require('../../Notifications');
 const hhpdark = require('../logos/hhpdark.png');
 const hhptitle = require('../logos/hhptitle.png');
