@@ -12,7 +12,6 @@ import {
 import { Icon } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Picker } from '@react-native-picker/picker';
-import { object } from 'prop-types';
 
 const {
   getCalendarTheme,
