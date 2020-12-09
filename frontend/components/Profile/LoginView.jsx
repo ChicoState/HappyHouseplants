@@ -17,7 +17,6 @@ class LoginView extends React.Component {
       username: '',
       password: '',
     };
-
     this.startLogin = this.startLogin.bind(this);
   }
 
