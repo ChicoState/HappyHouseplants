@@ -24,6 +24,10 @@ const colorTheme = require('../Util/colorTheme.json');
 const {
   getCalendarNotes,
   addCalendarNote,
+  getCalendarLabels,
+  addCalendarLabel,
+  removeCalendarLabel,
+
 } = require('../../api/calendar');
 
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
@@ -104,6 +108,28 @@ class CalendarView extends React.Component {
         }
       }
       this.setState({ currentMonthNotes: currentNotes, notes: downloadedNotes });
+    })
+      .catch((error) => {
+        Alert.alert(
+          'Network Error',
+          'An error occured while trying to fetch calendar notes',
+          [
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ],
+        );
+        console.error(`Error while fetching calendar notes: ${error}`);
+      });
+  }
+
+  updateLabels() {
+    const { currentMonthView, currentYearView } = this.state;
+    const currentNotes = [];
+    getCalendarLabels().then((downloadedLabels) => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const [date, note] of Object.entries(downloadedLabels)) {
+        // get the month out of the current date
+        
+      this.setState({ customLabel: downloadedLabels });
     })
       .catch((error) => {
         Alert.alert(
@@ -224,9 +250,7 @@ class CalendarView extends React.Component {
             >
               <Picker.Item label="Water Plant" value="water" />
               <Picker.Item label="Plant Seedling" value="seed" />
-              { // TODO, ADD custom labels that were created
-              // <Picker.Item label={} value={} />
-              }
+              <Picker.Item label={plantLabels} value={getCalendarLabels} />
               <Picker.Item label="Add Custom Label" value="custom" />
             </Picker>
             {selector}
