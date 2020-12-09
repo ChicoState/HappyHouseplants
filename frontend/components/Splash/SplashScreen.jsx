@@ -65,20 +65,6 @@ class SplashScreen extends React.Component {
     const { loadingLoginInfo, loginRequired } = this.state;
     if (loginRequired && !loadingLoginInfo) {
       return (
-<<<<<<< HEAD
-<<<<<<< HEAD
-        <Layout style={{ flex: 1, alignItems: 'center' }}>
-          <Text />
-          <Text>Welcome! Please login or create an account.</Text>
-          <Image source={require('./fr.png')} />
-          <Text />
-          <Layout style={{ flexDirection: 'row' }}>
-            <Button onPress={this.loginRequested}> Login  </Button>
-            <Text> </Text>
-            <Button onPress={this.registerRequested}>Register</Button>
-          </Layout>
-        </Layout>
-=======
         <View style={{ flex: 1, alignItems: 'center' }}>
           <View style={{
             flexDirection: 'column',
@@ -126,14 +112,6 @@ class SplashScreen extends React.Component {
             <Button style={{ borderWidth: 5, borderBottomColor: colorTheme['color-primary-200'] }} onPress={this.registerRequested}>Register</Button>
           </View>
         </View>
->>>>>>> upstream/main
-=======
-        <View>
-          <Text>Welcome, please login or create an account.</Text>
-          <Button onPress={this.loginRequested}>Login</Button>
-          <Button onPress={this.registerRequested}>Create account</Button>
-        </View>
->>>>>>> 6d1013fb20845618cb1ac80c1a956c749cc9f414
       );
     }
 
