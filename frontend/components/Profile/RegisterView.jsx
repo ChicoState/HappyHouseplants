@@ -1,11 +1,14 @@
-import { Input } from '@ui-kitten/components';
+import { Input, Button, Text } from '@ui-kitten/components';
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Button, View, Text, Alert,
-} from 'react-native';
+import { View, Alert, Image } from 'react-native';
 
 const { register } = require('../../api/auth');
+const hhpdark = require('../logos/hhpdark.png');
+const hhptitle = require('../logos/hhptitle.png');
+const colorTheme = require('../Util/colorTheme.json');
+
+const marginBottom = { marginBottom: '2%' };
 
 class RegisterView extends React.Component {
   constructor() {
@@ -55,36 +58,62 @@ class RegisterView extends React.Component {
       username, firstName, lastName, password, confirmPassword, errorMessage,
     } = this.state;
     return (
-      <View>
+      <View style={{
+        width: '90%',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        backgroundColor: colorTheme['color-primary-transparent-100'],
+        paddingLeft: '1%',
+        paddingRight: '1%',
+        marginTop: '4%',
+      }}
+      >
         <Text>{ errorMessage}</Text>
-        <Input
-          placeholder="Username"
-          value={username}
-          onChangeText={(newUsername) => this.setState({ username: newUsername })}
-        />
-        <Input
-          placeholder="First Name"
-          value={firstName}
-          onChangeText={(newFName) => this.setState({ firstName: newFName })}
-        />
-        <Input
-          placeholder="Last Name"
-          value={lastName}
-          onChangeText={(newLName) => this.setState({ lastName: newLName })}
-        />
-        <Input
-          placeholder="Password"
-          value={password}
-          onChangeText={(newPass) => this.setState({ password: newPass })}
-          secureTextEntry
-        />
-        <Input
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChangeText={(newPass) => this.setState({ confirmPassword: newPass })}
-          secureTextEntry
-        />
-        <Button onPress={this.startLogin} title="Register" />
+        <View style={{
+          paddingBottom: '1%',
+          width: '90%',
+          alignSelf: 'center',
+          paddingTop: '2%',
+        }}
+        >
+          <Image style={{ width: '100%', height: '10%' }} source={hhptitle} />
+          <Text />
+          <Input
+            style={marginBottom}
+            placeholder="Username"
+            value={username}
+            onChangeText={(newUsername) => this.setState({ username: newUsername })}
+          />
+          <Input
+            style={marginBottom}
+            placeholder="First Name"
+            value={firstName}
+            onChangeText={(newFName) => this.setState({ firstName: newFName })}
+          />
+          <Input
+            style={marginBottom}
+            placeholder="Last Name"
+            value={lastName}
+            onChangeText={(newLName) => this.setState({ lastName: newLName })}
+          />
+          <Input
+            style={marginBottom}
+            placeholder="Password"
+            value={password}
+            onChangeText={(newPass) => this.setState({ password: newPass })}
+            secureTextEntry
+          />
+          <Input
+            style={marginBottom}
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChangeText={(newPass) => this.setState({ confirmPassword: newPass })}
+            secureTextEntry
+          />
+          <Button onPress={this.startLogin} title="Register">Register</Button>
+        </View>
+        <Image style={{ width: '100%', height: '40%' }} source={hhpdark} />
       </View>
     );
   }
