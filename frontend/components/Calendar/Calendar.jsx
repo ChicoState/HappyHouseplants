@@ -127,7 +127,6 @@ class CalendarView extends React.Component {
       });
   }
 
-
   updatePlants() {
     const picker = [];
     getMyPlants().then((plant) => {
