@@ -6,7 +6,7 @@ function SearchScreen(obj) {
   /* 2. Get the param */
   const { navigation } = obj;
   return (
-    <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <Layout style={{ flex: 1 }}>
       <SearchBar onPressItem={(plant) => {
         navigation.navigate('PlantProfile', { plantID: plant.plantID, plantName: plant.plantName });
       }}
