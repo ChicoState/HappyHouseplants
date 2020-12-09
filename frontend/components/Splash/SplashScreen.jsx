@@ -1,5 +1,4 @@
 /* eslint-disable react/forbid-prop-types */
-/* eslint-disable global-require */
 import React from 'react';
 import { View, Alert, Image } from 'react-native';
 import { Spinner, Text, Button } from '@ui-kitten/components';
@@ -67,6 +66,7 @@ class SplashScreen extends React.Component {
     if (loginRequired && !loadingLoginInfo) {
       return (
 <<<<<<< HEAD
+<<<<<<< HEAD
         <Layout style={{ flex: 1, alignItems: 'center' }}>
           <Text />
           <Text>Welcome! Please login or create an account.</Text>
@@ -127,6 +127,13 @@ class SplashScreen extends React.Component {
           </View>
         </View>
 >>>>>>> upstream/main
+=======
+        <View>
+          <Text>Welcome, please login or create an account.</Text>
+          <Button onPress={this.loginRequested}>Login</Button>
+          <Button onPress={this.registerRequested}>Create account</Button>
+        </View>
+>>>>>>> 6d1013fb20845618cb1ac80c1a956c749cc9f414
       );
     }
 

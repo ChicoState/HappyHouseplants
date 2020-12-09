@@ -280,7 +280,7 @@ class SearchBar extends Component {
     ));
     return (
 
-      <Layout>
+      <Layout style={{ padding: '5%' }}>
         <Input
           placeholder="Enter your search terms"
           onChangeText={(text) => this.setState({ searchString: text })}
