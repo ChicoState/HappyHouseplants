@@ -40,9 +40,9 @@ function autoLogin() {
   });
 }
 
-function login(username, password) {
+function login(username, password, expoToken) {
   return new Promise((statusResolved, rejected) => {
-    AuthBase.login(username, password)
+    AuthBase.login(username, password, expoToken)
       .then((status) => {
         if (status.success) {
           setAuthToken(status.sessionAuthToken)

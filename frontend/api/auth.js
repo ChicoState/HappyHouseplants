@@ -112,14 +112,14 @@ function getLoginInfo() {
  * If login failed, a `userMessage` property will contain a human-readable explanation
  * of why login failed. If login was successful, then a `sessionAuthToken` property
  * will contain a token that can be used for future logins by calling `loginByToken`. */
-function login(username, password) {
+function login(username, password, expoToken) {
   return new Promise((statusResolved, rejected) => {
     fetch(`${SERVER_ADDR}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, password, expoToken }),
     }).then((resRaw) => resRaw.json())
       .then((status) => {
         if (status.success) {

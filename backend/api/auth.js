@@ -4,6 +4,28 @@ const { SESSIONS } = require('../database/models/sessions');
 const { USERS } = require('../database/models/users');
 const { findDocuments, findOneDocument } = require('../database/findDocuments');
 
+/**
+ * Updates the state of a `User` document.
+ * @param {string} userId The userId of the `User` document to update.
+ * @param {*} state The new state of the `User` document.
+ * @returns {Promise} A Promise that resolves when the state has been saved.
+ */
+function updateUserDocument(userId, state) {
+  return new Promise((resolved, rejected) => {
+    if (!userId) {
+      rejected(Error('Invalid userId'));
+    } else {
+      const query = { userId };
+      USERS.updateOne(query, state).then(() => {
+        resolved();
+      }).catch((saveError) => {
+        console.error(`Failed to update the User document for ${userId} due to an error: ${saveError}`);
+        rejected(saveError);
+      });
+    }
+  });
+}
+
 const SALT_ROUNDS = 12;
 
 /** Updates the `lastLogin` property of a Session.
@@ -28,7 +50,7 @@ function keepaliveSession(session) {
  * @param { string } userId The ID of the user account for which to create the session.
  * @returns { Promise } A Promise that resolves to the session's authentication token,
  * which the user will need for future session logins. */
-function createSession(userId) {
+function createSession(userId, expoToken) {
   return new Promise((complete) => {
     const now = new Date();
     const crngToken = cryptoRandomHex(32);
@@ -37,6 +59,7 @@ function createSession(userId) {
       userId,
       creationDate: now,
       lastLoginDate: now,
+      expoToken,
     };
     SESSIONS.insertMany(session).then(() => {
       complete(session.authToken);
@@ -57,7 +80,7 @@ function createSession(userId) {
  * The Promise will resolve even if an incorrect password was supplied, so check the resolved
  * object's 'success' property to verify that login was successful.
  * The Promise will only be rejected due to server errors. */
-function login(username, password) {
+function login(username, password, expoPushToken) {
   return new Promise((complete, serverError) => {
     findDocuments('Users', { userId: username.toLowerCase() }).then((docs) => {
       if (docs.length === 0) {
@@ -68,9 +91,14 @@ function login(username, password) {
           if (passResult) {
             // The password was correct, so create a session
             createSession(user.userId).then((sessionAuthToken) => {
-              // Login successful
-              console.log(`User ID ${user.userId} has logged in.`);
-              complete({ success: true, userMessage: null, sessionAuthToken });
+              updateUserDocument(user.userId, { expoPushToken }).then(() => {
+                // Login successful
+                console.log(`User ID ${user.userId} has logged in.`);
+                complete({ success: true, userMessage: null, sessionAuthToken });
+              }).catch((error) => {
+                console.error(`Error: ${error}`);
+                serverError(error);
+              });
             }).catch((reason) => {
               // Failed to create a session due to server error
               console.error(`User ID ${user.userId} has successfully logged in, but the session could not be created due to an error: ${reason}`);
@@ -102,7 +130,7 @@ function login(username, password) {
  * The returned Promise will be rejected only due to server errors.
  */
 function register(username, password, firstName, lastName) {
-  return new Promise((complete, rejected) => {
+  return new Promise((complete) => {
     findDocuments('Users', { userId: username.toLowerCase() }).then((docs) => {
       if (docs.length === 0) {
         bcrypt.hash(password, SALT_ROUNDS).then((hashedPassword) => {
@@ -114,85 +142,12 @@ function register(username, password, firstName, lastName) {
             lastName,
           }).then(() => {
             complete({ success: true });
-          })
-            .catch((error) => {
-              console.error(`Failed to insert a new user document for registration due to an error: ${error}`);
-              rejected(error);
-            });
+          });
         });
       } else {
         complete({ success: false, userMessage: 'The username already exists.' });
       }
-    })
-      .catch((error) => {
-        console.error(`While trying to register a new user '${username}', failed to check if that account already exists due to an error: ${error}`);
-        rejected(error);
-      });
-  });
-}
-
-/**
- * Updates the state of a `User` document.
- * @param {string} userId The userId of the `User` document to update.
- * @param {*} state The new state of the `User` document.
- * @returns {Promise} A Promise that resolves when the state has been saved.
- */
-function updateUserDocument(userId, state) {
-  return new Promise((resolved, rejected) => {
-    if (!userId) {
-      rejected(Error('Invalid userId'));
-    } else {
-      const query = { userId };
-      USERS.updateOne(query, state).then(() => {
-        resolved();
-      }).catch((saveError) => {
-        console.error(`Failed to update the User document for ${userId} due to an error: ${saveError}`);
-        rejected(saveError);
-      });
-    }
-  });
-}
-
-/**
- * Changes a user's password.
- * @param {String} username The username of the account.
- * @param {String} newPassword The new password, in plaintext.
- * @param {*} auditLog Object with auditing properties, such as IP address,
- * used for logging.
- * @returns {Promise} A Promise that resolves after the password has been changed. */
-function changePassword(username, newPassword, auditLog) {
-  return new Promise((complete, rejected) => {
-    if (!username) {
-      rejected(Error('The username argument cannot be falsey.'));
-    } else if (!newPassword) {
-      rejected(Error('The newPassword argument cannot be falsey.'));
-    } else if (!auditLog) {
-      rejected(Error('For security, the auditLog argument cannot be falsey.'));
-    } else {
-      findOneDocument('Users', { userId: username.toLowerCase() })
-        .then((userDoc) => {
-          bcrypt.hash(newPassword, SALT_ROUNDS)
-            .then((newHashedPassword) => {
-              updateUserDocument(userDoc.userId, { password: newHashedPassword })
-                .then(() => {
-                  console.log(`Changed ${username}'s password. Audit log: ${JSON.stringify(auditLog)}`);
-                  complete();
-                })
-                .catch((error) => {
-                  console.error(`Failed to update a user's document for password change due to an error: ${error}`);
-                  rejected(error);
-                });
-            })
-            .catch((error) => {
-              console.error(`Failed to change a password due to bcrypt failure: ${error}`);
-              rejected(error);
-            });
-        })
-        .catch((error) => {
-          console.error(`Failed to change user ${username}'s password because their user document could not be found: ${error}`);
-          rejected(error);
-        });
-    }
+    });
   });
 }
 
@@ -376,5 +331,4 @@ module.exports = {
   authPut,
   authDelete,
   updateUserDocument,
-  changePassword,
 };

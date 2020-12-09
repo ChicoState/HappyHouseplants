@@ -29,6 +29,8 @@ const userSchema = new mongoose.Schema({
     },
   ],
   calendarNotes: mongoose.Schema.Types.Mixed,
+
+  expoPushToken: String,
   customLabels: [{
     text: String,
     color: String,
