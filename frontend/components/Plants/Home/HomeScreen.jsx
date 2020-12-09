@@ -5,7 +5,6 @@ import {
 import 'react-native-gesture-handler';
 import RecommendScreen from './RecommendScreen';
 import TipScreen from './TipScreen';
-import AccountButtons from '../../Profile/AccountButtons';
 import SplashScreen from '../../Splash/SplashScreen';
 import HeaderButtons from '../HeaderButtons';
 
@@ -43,10 +42,6 @@ function HomeScreen(obj) {
                 onLabelChanged={(label) => { setCurrentTab(label); navigation.navigate('Home', { tab: label }); }}
               />
               {tabView}
-              <AccountButtons
-                onRequestLogin={() => { navigation.navigate('Login'); }}
-                onRequestRegister={() => { navigation.navigate('Register'); }}
-              />
             </Layout>
           );
         }}
