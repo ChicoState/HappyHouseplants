@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 mongoose.pluralize(null);
 const plantSchema = new mongoose.Schema({
   plantID: { type: String, index: true },
-  plantName: String,
-  plantSummary: String,
+  name: String,
+  summary: String,
   maintenance: {
     level: Number,
     comment: String,

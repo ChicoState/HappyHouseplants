@@ -8,10 +8,10 @@ const userSchema = new mongoose.Schema({
   userId: { type: String, index: true },
   password: String, // Salted+Hashed
   savedTipsByID: Array,
-  savedPlantsByID: [
+  favoritePlants: [
     {
       plantID: String,
-      plantName: String,
+      name: String,
       image: {
         sourceURL: String,
       },
@@ -20,15 +20,21 @@ const userSchema = new mongoose.Schema({
   myPlantsByID: [
     {
       plantID: String,
-      plantName: String,
+      name: String,
       location: String,
-      image: {
-        sourceURL: String,
-      },
+      images: [{
+        date: Date,
+        base64: String,
+      }],
     },
   ],
   calendarNotes: mongoose.Schema.Types.Mixed,
-  customLabels: Array,
+
+  expoPushToken: String,
+  customLabels: [{
+    text: String,
+    color: String,
+  }],
 });
 
 const USERS = mongoose.model('Users', userSchema);
