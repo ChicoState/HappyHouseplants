@@ -14,6 +14,7 @@ import PlantProfileScreen from '../Plants/PlantProfileScreen';
 import LoginScreen from '../Profile/LoginScreen';
 import RegisterScreen from '../Profile/RegisterScreen';
 import BottomNavi from './BottomNavi';
+import UserProfileScreen from '../Profile/UserProfileScreen';
 
 const { LoginContext } = require('../Profile/auth-react');
 
@@ -116,7 +117,7 @@ function Navigation() {
     {
       // TODO: CREATE A PROFILE SCREEN
       name: 'Profile',
-      component: RecommendScreen,
+      component: UserProfileScreen,
       tab: {
         title: 'USER',
         icon: personIcon,
