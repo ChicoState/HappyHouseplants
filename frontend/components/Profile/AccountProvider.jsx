@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import * as Notifications from 'expo-notifications';
 
 const { getLoginInfo } = require('../../api/auth');
 const { LoginContext } = require('./auth-react');
@@ -9,6 +10,8 @@ class AccountProvider extends React.Component {
     super();
     this.afterLogout = this.afterLogout.bind(this);
     this.afterLogin = this.afterLogin.bind(this);
+    this.notificationListener = React.createRef();
+    this.responseListener = React.createRef();
     this.state = {
       login: {
         loading: true,
@@ -46,6 +49,18 @@ class AccountProvider extends React.Component {
         },
       });
     });
+    // This listener is fired whenever a user taps on or interacts with a notification
+    // (works when app is foregrounded, backgrounded, or killed)
+    this.responseListener.current = Notifications
+      .addNotificationResponseReceivedListener((response) => {
+        console.log(`response: ${response}`);
+      });
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    this.notificationListener.current = Notifications
+      .addNotificationReceivedListener((notifier) => {
+        // setNotification(notifier);
+        console.log(notifier);
+      });
   }
 
   render() {

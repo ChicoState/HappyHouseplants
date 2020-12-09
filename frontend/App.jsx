@@ -1,5 +1,6 @@
 import React from 'react';
 import * as eva from '@eva-design/eva';
+import * as Notifications from 'expo-notifications';
 import {
   ApplicationProvider, IconRegistry,
 } from '@ui-kitten/components';
@@ -9,6 +10,14 @@ import 'react-native-gesture-handler';
 import theme from './components/Util/colorTheme.json';
 import Navigation from './components/Navigation/Navigation';
 import AccountProvider from './components/Profile/AccountProvider';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 function App() {
   return (
