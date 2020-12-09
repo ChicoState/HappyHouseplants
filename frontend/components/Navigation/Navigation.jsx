@@ -61,13 +61,8 @@ function Navigation() {
     {
       name: 'PlantProfile',
       component: PlantProfileScreen,
-      options: (navContext) => {
-        if (navContext.route.params) {
-          return ({
-            title: navContext.route.params.plantName ?? 'Plant Profile',
-          });
-        }
-        return { title: 'Plant Profile' };
+      options: {
+        headerShown: false,
       },
     },
     {

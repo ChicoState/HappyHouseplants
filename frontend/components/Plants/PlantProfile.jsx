@@ -4,10 +4,14 @@ import {
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  View, Image,
+  View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { SERVER_ADDR } from '../../server';
+import CardItem from './CardItem';
+
+const {
+  getPlantInfo,
+} = require('../../api/plants');
 
 class PlantProfile extends Component {
   constructor() {
@@ -23,15 +27,14 @@ class PlantProfile extends Component {
     const profileThis = this;
     const { plantID } = this.props;
 
-    fetch(`${SERVER_ADDR}/plants/${plantID}`)
-      .then((response) => response.json())
+    getPlantInfo(plantID)
       .then((data) => {
         profileThis.setState({
           loaded: true,
           plantData: data,
         });
       }, (error) => {
-        console.log(`Failed to load a tip. Reason: ${error}`);
+        console.log(`Failed to load plant data. Reason: ${error}`);
         profileThis.setState({ error });
       });
   }
@@ -169,7 +172,6 @@ class PlantProfile extends Component {
   }
 
   render() {
-    const { hideTitle } = this.props;
     const { loaded, error, plantData } = this.state;
     if (error) {
       const errMsg = `Failed to load plant data.\n${error}`;
@@ -192,16 +194,25 @@ class PlantProfile extends Component {
       && <ListItem title={item.title} description={item.message} key={item.title} />);
 
     return (
-      <ScrollView style={{ flex: 1, width: '90%', marginLeft: '5%' }}>
-        {
-          !hideTitle
-          && (<Text category="h1">{plantData.plantName}</Text>)
-        }
-        <View style={{ width: '100%', minHeight: 250 }}>
-          <Image
-            source={{ uri: plantData.image.sourceURL }}
-            style={{
-              width: null, height: null, flex: 1, resizeMode: 'contain',
+      <ScrollView style={{
+        flex: 1,
+        width: '90%',
+        marginLeft: '5%',
+        marginTop: '15%',
+      }}
+      >
+        <View style={{ width: '100%', minHeight: 250, marginBottom: '5%' }}>
+          <CardItem
+            plant={plantData}
+            showNumOwned
+            onPressItem={() => {}}
+            styles={{
+              card: {
+                marginVertical: 0,
+              },
+              image: {
+                height: 250,
+              },
             }}
           />
         </View>
@@ -212,7 +223,9 @@ class PlantProfile extends Component {
             </Card>
           ) }
         <Divider />
-        {items}
+        <View style={{ marginBottom: '5%' }}>
+          {items}
+        </View>
       </ScrollView>
     );
   }
@@ -220,7 +233,6 @@ class PlantProfile extends Component {
 
 PlantProfile.propTypes = {
   plantID: PropTypes.string.isRequired,
-  hideTitle: PropTypes.bool.isRequired,
 };
 
 export default PlantProfile;
