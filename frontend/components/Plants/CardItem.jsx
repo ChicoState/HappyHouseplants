@@ -49,26 +49,13 @@ class CardItem extends React.Component {
     this.startChangePicture = this.startChangePicture.bind(this);
     this.toggleOwned = this.toggleOwned.bind(this);
     this.toggleFavorited = this.toggleFavorited.bind(this);
+    this.updateDynamicState = this.updateDynamicState.bind(this);
   }
 
   componentDidMount() {
     const { plant } = this.props;
     const itemThis = this;
-    isFavorite(plant.plantID)
-      .then((isFavResult) => {
-        itemThis.setState({ favorited: isFavResult });
-      }).catch((error) => {
-        console.error(`Failed to determine favorite status of plant ID ${plant.plantID} due to an error: ${error}.`);
-      });
-
-    getMyPlants()
-      .then((myPlants) => {
-        itemThis.setState({
-          owned: myPlants.filter((cur) => cur.plantID === plant.plantID).length,
-        });
-      }).catch((error) => {
-        console.error(`Failed to determine ownership status of plant ID ${plant.plantID} due to an error: ${error}.`);
-      });
+    this.updateDynamicState();
 
     if (!plant.image && (!plant.images || plant.images.length === 0)) {
       // No image(s) have been specified, so start loading the fallback/default
@@ -86,6 +73,26 @@ class CardItem extends React.Component {
           });
         });
     }
+  }
+
+  updateDynamicState() {
+    const { plant } = this.props;
+    const itemThis = this;
+    isFavorite(plant.plantID)
+      .then((isFavResult) => {
+        itemThis.setState({ favorited: isFavResult });
+      }).catch((error) => {
+        console.error(`Failed to determine favorite status of plant ID ${plant.plantID} due to an error: ${error}.`);
+      });
+
+    getMyPlants()
+      .then((myPlants) => {
+        itemThis.setState({
+          owned: myPlants.filter((cur) => cur.plantID === plant.plantID).length,
+        });
+      }).catch((error) => {
+        console.error(`Failed to determine ownership status of plant ID ${plant.plantID} due to an error: ${error}.`);
+      });
   }
 
   startChangePicture() {
@@ -205,6 +212,7 @@ class CardItem extends React.Component {
       onPressItem,
       isCustomized,
       onRemoveFromOwned,
+      showNumOwned,
     } = this.props;
     const {
       favorited,
@@ -245,27 +253,44 @@ class CardItem extends React.Component {
       />
     ) : undefined;
 
-    const renderItemFooter = (footerProps) => (
-      <Layout
-        {...footerProps}
-        style={styles.cardFooter}
+    const numOwnedLabel = showNumOwned ? (
+      <Text
+        style={{
+          width: '100%',
+          alignItems: 'center',
+          textAlign: 'right',
+          paddingRight: '2%',
+        }}
+        status="primary"
       >
-        <Button
-          style={styles.button}
-          status="primary"
-          appearance={favorited ? 'filled' : 'outline'}
-          accessoryLeft={saveIcon}
-          onPress={this.toggleFavorited}
-        />
-        <Button
-          style={styles.button}
-          status="primary"
-          appearance={(owned && onRemoveFromOwned === undefined) ? 'filled' : 'outline'}
-          accessoryLeft={collectionIcon}
-          onPress={this.toggleOwned}
-        />
-        {cameraButton}
-      </Layout>
+        {owned !== undefined ? `You own ${owned}` : '\t'}
+      </Text>
+    ) : undefined;
+
+    const renderItemFooter = (footerProps) => (
+      <View>
+        <Layout
+          {...footerProps}
+          style={styles.cardFooter}
+        >
+          <Button
+            style={styles.button}
+            status="primary"
+            appearance={favorited ? 'filled' : 'outline'}
+            accessoryLeft={saveIcon}
+            onPress={this.toggleFavorited}
+          />
+          <Button
+            style={styles.button}
+            status="primary"
+            appearance={(owned && onRemoveFromOwned === undefined) ? 'filled' : 'outline'}
+            accessoryLeft={collectionIcon}
+            onPress={this.toggleOwned}
+          />
+          {cameraButton}
+        </Layout>
+        {numOwnedLabel}
+      </View>
     );
 
     let image;
@@ -319,7 +344,10 @@ class CardItem extends React.Component {
         plant={plant}
         name={plant.name}
         plantID={plant.plantID}
-        onSubmit={() => this.setState({ showAddDialog: false })}
+        onSubmit={() => {
+          this.setState({ showAddDialog: false });
+          this.updateDynamicState();
+        }}
         onCancel={() => this.setState({ showAddDialog: false })}
       />
     ) : undefined;
@@ -348,6 +376,7 @@ CardItem.propTypes = {
   onRemoveFromOwned: PropTypes.func,
   onRemoveFromFavorites: PropTypes.func,
   isCustomized: PropTypes.bool,
+  showNumOwned: PropTypes.bool,
   styles: PropTypes.objectOf(ViewPropTypes.style),
 };
 
@@ -373,6 +402,7 @@ CardItem.defaultProps = {
   },
   onRemoveFromOwned: undefined,
   onRemoveFromFavorites: undefined,
+  showNumOwned: false,
   isCustomized: false,
 };
 

@@ -87,7 +87,7 @@ class AddMyPlantDialog extends React.Component {
       customImage,
     } = this.state;
 
-    const plantName = nickname ?? plant.plantName;
+    const plantName = nickname ?? plant.name;
 
     const images = [];
     if (customImage) {
