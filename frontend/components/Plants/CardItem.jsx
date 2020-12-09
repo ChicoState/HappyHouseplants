@@ -10,11 +10,13 @@ import { PropTypes } from 'prop-types';
 import {
   Button, Card, Icon, Layout, Spinner, Text,
 } from '@ui-kitten/components';
+import { SliderBox } from 'react-native-image-slider-box';
 import * as ImagePicker from 'expo-image-picker';
 import AddMyPlantDialog from './AddMyPlantDialog';
 import PlantImage from './PlantImage';
 
-const { getMyPlants, updateMyPlant, removeFromMyPlants } = require('../../api/myplants');
+const { getPlantInfo } = require('../../api/plants');
+const { getMyPlants, removeFromMyPlants, addMyPlantImage } = require('../../api/myplants');
 const { isFavorite, addToFavorites, removeFromFavorites } = require('../../api/favoritePlants');
 
 class CardItem extends React.Component {
@@ -41,6 +43,7 @@ class CardItem extends React.Component {
       showAddDialog: false,
       imageRefreshCounter: 0,
       imageUploading: false,
+      fallbackImage: undefined,
     };
 
     this.startChangePicture = this.startChangePicture.bind(this);
@@ -66,6 +69,23 @@ class CardItem extends React.Component {
       }).catch((error) => {
         console.error(`Failed to determine ownership status of plant ID ${plant.plantID} due to an error: ${error}.`);
       });
+
+    if (!plant.image && (!plant.images || plant.images.length === 0)) {
+      // No image(s) have been specified, so start loading the fallback/default
+      getPlantInfo(plant.plantID)
+        .then((plantInfo) => {
+          itemThis.setState({ fallbackImage: plantInfo.image });
+        })
+        .catch((error) => {
+          console.warn(`Error while loading image for plant with ID ${plant.plantID}: ${error}`);
+          itemThis.setState({
+            fallbackImage: {
+              // TODO: Link to a LICENSED image
+              sourceURL: 'https://p0.pikist.com/photos/1016/922/plant-houseplant-cactus-potted-plant-flowerpot-green-flora-houseplants-pot.jpg',
+            },
+          });
+        });
+    }
   }
 
   startChangePicture() {
@@ -83,7 +103,7 @@ class CardItem extends React.Component {
         }).then((imageResult) => {
           if (!imageResult.cancelled) {
             this.setState({ imageUploading: true });
-            updateMyPlant(plant.instanceID, { image: { base64: imageResult.base64 } })
+            addMyPlantImage(plant.instanceID, imageResult.base64, new Date())
               .then(() => {
                 this.setState({
                   imageUploading: false,
@@ -183,7 +203,7 @@ class CardItem extends React.Component {
       plant,
       styles,
       onPressItem,
-      allowChangePicture,
+      isCustomized,
       onRemoveFromOwned,
     } = this.props;
     const {
@@ -192,6 +212,7 @@ class CardItem extends React.Component {
       showAddDialog,
       imageUploading,
       imageRefreshCounter,
+      fallbackImage,
     } = this.state;
 
     const saveIcon = (info) => (
@@ -199,7 +220,7 @@ class CardItem extends React.Component {
     );
 
     const collectionIcon = (info) => (
-      <Icon {...info} name={onRemoveFromOwned === undefined ? 'plus-outline' : 'trash-outline'} />
+      <Icon {...info} name={!isCustomized ? 'plus-outline' : 'trash-outline'} />
     );
 
     const cameraIcon = (info) => (
@@ -214,7 +235,7 @@ class CardItem extends React.Component {
       </Layout>
     );
 
-    const cameraButton = allowChangePicture ? (
+    const cameraButton = isCustomized ? (
       <Button
         style={styles.button}
         status="primary"
@@ -247,16 +268,65 @@ class CardItem extends React.Component {
       </Layout>
     );
 
+    let image;
+    if (plant.image) {
+      image = (
+        <PlantImage
+          source={{
+            sourceURL: plant.image.sourceURL,
+            authenticationRequired: plant.image.authenticationRequired === true,
+          }}
+          style={styles.image}
+          imageRefreshCounter={imageRefreshCounter}
+        />
+      );
+    } else if (plant.images && plant.images.length !== 0) {
+      image = (
+        <SliderBox
+          images={plant.images}
+          ImageComponent={PlantImage}
+          ImageComponentStyle={styles.image}
+          imageLoadingColor="#00000000"
+          style={{
+            height: 320,
+            marginRight: 85,
+            alignItems: 'center',
+          }}
+        />
+      );
+    } else if (fallbackImage) {
+      image = (
+        <PlantImage
+          source={{
+            sourceURL: fallbackImage.sourceURL,
+            authenticationRequired: fallbackImage.authenticationRequired === true,
+          }}
+          style={styles.image}
+          imageRefreshCounter={imageRefreshCounter}
+        />
+      );
+    } else {
+      image = (<Spinner />);
+    }
+
+    if (imageUploading) {
+      image = undefined;
+    }
+
+    const addPlantDialog = !isCustomized ? (
+      <AddMyPlantDialog
+        visible={showAddDialog}
+        plant={plant}
+        name={plant.name}
+        plantID={plant.plantID}
+        onSubmit={() => this.setState({ showAddDialog: false })}
+        onCancel={() => this.setState({ showAddDialog: false })}
+      />
+    ) : undefined;
+
     return (
       <View>
-        <AddMyPlantDialog
-          visible={showAddDialog}
-          plant={plant}
-          name={plant.name}
-          plantID={plant.plantID}
-          onSubmit={() => this.setState({ showAddDialog: false })}
-          onCancel={() => this.setState({ showAddDialog: false })}
-        />
+        {addPlantDialog}
         <Card
           key={plant.plantID}
           style={styles.card}
@@ -265,16 +335,7 @@ class CardItem extends React.Component {
           footer={renderItemFooter}
           onPress={() => { onPressItem(plant); }}
         >
-          {imageUploading
-            ? (<Spinner />)
-            : (
-              <PlantImage
-                sourceURL={plant.image.sourceURL}
-                authenticationRequired={plant.image.authenticationRequired}
-                style={styles.image}
-                imageRefreshCounter={imageRefreshCounter}
-              />
-            )}
+          {image}
         </Card>
       </View>
     );
@@ -286,7 +347,7 @@ CardItem.propTypes = {
   onPressItem: PropTypes.func.isRequired,
   onRemoveFromOwned: PropTypes.func,
   onRemoveFromFavorites: PropTypes.func,
-  allowChangePicture: PropTypes.bool,
+  isCustomized: PropTypes.bool,
   styles: PropTypes.objectOf(ViewPropTypes.style),
 };
 
@@ -312,7 +373,7 @@ CardItem.defaultProps = {
   },
   onRemoveFromOwned: undefined,
   onRemoveFromFavorites: undefined,
-  allowChangePicture: false,
+  isCustomized: false,
 };
 
 export default CardItem;

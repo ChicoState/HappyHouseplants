@@ -22,15 +22,19 @@ const userSchema = new mongoose.Schema({
       plantID: String,
       name: String,
       location: String,
-      image: {
-        sourceURL: String,
+      images: [{
+        date: Date,
         base64: String,
-      },
+      }],
     },
   ],
   calendarNotes: mongoose.Schema.Types.Mixed,
-  customLabels: Array,
+
   expoPushToken: String,
+  customLabels: [{
+    text: String,
+    color: String,
+  }],
 });
 
 const USERS = mongoose.model('Users', userSchema);
