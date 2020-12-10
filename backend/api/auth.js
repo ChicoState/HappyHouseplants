@@ -28,6 +28,49 @@ function updateUserDocument(userId, state) {
 
 const SALT_ROUNDS = 12;
 
+/**
+ * Changes a user's password.
+ * @param {String} username The username of the account.
+ * @param {String} newPassword The new password, in plaintext.
+ * @param {*} auditLog Object with auditing properties, such as IP address,
+ * used for logging.
+ * @returns {Promise} A Promise that resolves after the password has been changed. */
+function changePassword(username, newPassword, auditLog) {
+  return new Promise((complete, rejected) => {
+    if (!username) {
+      rejected(Error('The username argument cannot be falsey.'));
+    } else if (!newPassword) {
+      rejected(Error('The newPassword argument cannot be falsey.'));
+    } else if (!auditLog) {
+      rejected(Error('For security, the auditLog argument cannot be falsey.'));
+    } else {
+      findOneDocument('Users', { userId: username.toLowerCase() })
+        .then((userDoc) => {
+          bcrypt.hash(newPassword, SALT_ROUNDS)
+            .then((newHashedPassword) => {
+              updateUserDocument(userDoc.userId, { password: newHashedPassword })
+                .then(() => {
+                  console.log(`Changed ${username}'s password. Audit log: ${JSON.stringify(auditLog)}`);
+                  complete();
+                })
+                .catch((error) => {
+                  console.error(`Failed to update a user's document for password change due to an error: ${error}`);
+                  rejected(error);
+                });
+            })
+            .catch((error) => {
+              console.error(`Failed to change a password due to bcrypt failure: ${error}`);
+              rejected(error);
+            });
+        })
+        .catch((error) => {
+          console.error(`Failed to change user ${username}'s password because their user document could not be found: ${error}`);
+          rejected(error);
+        });
+    }
+  });
+}
+
 /** Updates the `lastLogin` property of a Session.
  * @param {*} session The session to update.
  * @returns { Promise } A Promise that resolves to the updated session. */
@@ -331,4 +374,5 @@ module.exports = {
   authPut,
   authDelete,
   updateUserDocument,
+  changePassword,
 };
