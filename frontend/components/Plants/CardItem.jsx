@@ -96,7 +96,7 @@ class CardItem extends React.Component {
   }
 
   startChangePicture() {
-    const { plant } = this.props;
+    const { plant, onRefresh } = this.props;
     const { imageRefreshCounter } = this.state;
     ImagePicker.requestCameraPermissionsAsync().then((permissionResult) => {
       if (permissionResult.status !== 'granted') {
@@ -116,6 +116,7 @@ class CardItem extends React.Component {
                   imageUploading: false,
                   imageRefreshCounter: imageRefreshCounter + 1,
                 });
+                onRefresh();// TODO: Do a proper refresh solution
               }).catch((error) => {
                 Alert.alert(
                   'Error',
@@ -312,6 +313,7 @@ class CardItem extends React.Component {
           ImageComponent={PlantImage}
           ImageComponentStyle={styles.image}
           imageLoadingColor="#00000000"
+          imageRefreshCounter={imageRefreshCounter}
           style={{
             height: 320,
             marginRight: 85,
@@ -374,6 +376,7 @@ CardItem.propTypes = {
   plant: PropTypes.object.isRequired,
   onPressItem: PropTypes.func.isRequired,
   onRemoveFromOwned: PropTypes.func,
+  onRefresh: PropTypes.func,
   onRemoveFromFavorites: PropTypes.func,
   isCustomized: PropTypes.bool,
   showNumOwned: PropTypes.bool,
@@ -404,6 +407,7 @@ CardItem.defaultProps = {
   onRemoveFromFavorites: undefined,
   showNumOwned: false,
   isCustomized: false,
+  onRefresh: () => {},
 };
 
 export default CardItem;

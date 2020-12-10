@@ -23,9 +23,14 @@ class MyPlantsList extends Component {
       error: null,
       plants: [],
     };
+    this.refresh = this.refresh.bind(this);
   }
 
   componentDidMount() {
+    this.refresh();
+  }
+
+  refresh() {
     const listThis = this;
     getMyPlants()
       .then((plants) => {
@@ -75,6 +80,7 @@ class MyPlantsList extends Component {
           styles={styles}
           onPressItem={onPressItem}
           onRemoveFromOwned={this.removePlant}
+          onRefresh={this.refresh}
           isCustomized
         />
       ));
