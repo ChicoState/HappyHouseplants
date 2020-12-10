@@ -28,8 +28,9 @@ const {
   addCalendarLabel,
 } = require('../../api/calendar');
 
+const { getMyPlants } = require('../../api/myplants');
+
 const firstDayOfYear = new Date(new Date().getFullYear(), 0, 1);
-// TODO: add getMyLabels for custom label select, and update labels
 // TODO add getMyDotColors() fetch
 const todaysDate = new Date();
 
@@ -50,13 +51,16 @@ class CalendarView extends React.Component {
       currentMonthView: (todaysDate.getMonth() + 1),
       currentYearView: todaysDate.getFullYear(),
       currentMonthNotes: [],
+      PickerPlant: <></>,
     };
     this.updateNotes = this.updateNotes.bind(this);
+    this.updatePlants = this.updatePlants.bind(this);
     this.updateLabels = this.updateLabels.bind(this);
   }
 
   componentDidMount() {
     this.updateNotes();
+    this.updatePlants();
     this.updateLabels();
   }
 
@@ -122,6 +126,17 @@ class CalendarView extends React.Component {
       });
   }
 
+  updatePlants() {
+    const picker = [];
+    getMyPlants().then((plant) => {
+      plant.forEach((plantName) => {
+        console.log(plantName.name);
+        picker.push(<Picker.Item label={plantName.name} value="blue" key={Math.random()} />);
+      });
+      this.setState({ PickerPlant: picker });
+    });
+  }
+
   updateLabels() {
     const PickerItemCustom = [];
     getCalendarLabels().then((downloadedLabels) => {
@@ -175,7 +190,7 @@ class CalendarView extends React.Component {
     });
 
     if (showInputView) {
-      const { noteTag, PickerItemCustom } = this.state;
+      const { noteTag, PickerPlant, PickerItemCustom } = this.state;
       let { tagColor } = this.state;
       let selector = <></>;
       if (noteTag === 'custom') {
@@ -212,9 +227,7 @@ class CalendarView extends React.Component {
               this.setState({ tagColor: 'blue' });
             }}
           >
-            {// TODO: Loop through all owned plants and give option to add owned plant here
-            }
-            <Picker.Item label="Jade Plant" value="blue" />
+            {PickerPlant}
           </Picker>
         );
       } else {
@@ -256,9 +269,6 @@ class CalendarView extends React.Component {
             >
               <Picker.Item label="Water Plant" value="water" />
               <Picker.Item label="Plant Seedling" value="seed" />
-              { // TODO, ADD custom labels that were created
-              // <Picker.Item label={} value={} />
-              }
               {PickerItemCustom}
               <Picker.Item label="Add Custom Label" value="custom" />
             </Picker>
